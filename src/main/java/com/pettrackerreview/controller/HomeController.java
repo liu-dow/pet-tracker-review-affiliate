@@ -3,18 +3,27 @@ package com.pettrackerreview.controller;
 import com.pettrackerreview.model.BlogPost;
 import com.pettrackerreview.model.Review;
 import com.pettrackerreview.service.YamlContentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Controller
 public class HomeController {
+    
+    private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
     
     @Autowired
     private YamlContentService contentService;
@@ -190,5 +199,53 @@ public class HomeController {
         model.addAttribute("metaDescription", "Learn about our affiliate partnerships and how we maintain editorial independence while providing valuable pet tracker reviews.");
         
         return "affiliate-disclosure";
+    }
+    
+    /**
+     * Handle newsletter subscription
+     */
+    @PostMapping("/newsletter/subscribe")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> subscribeNewsletter(@RequestParam String email) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // Validate email format
+            if (email == null || email.trim().isEmpty() || !isValidEmail(email)) {
+                logger.warn("Invalid email subscription attempt: {}", email);
+                response.put("success", false);
+                response.put("message", "Please enter a valid email address.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // Log the subscription
+            logger.info("Newsletter subscription received - Email: {}, Timestamp: {}, IP: Request IP not available in this context", 
+                       email.trim(), java.time.LocalDateTime.now());
+            
+            // TODO: Here you would typically:
+            // 1. Save email to database
+            // 2. Send welcome email
+            // 3. Add to mailing list service (Mailchimp, SendGrid, etc.)
+            
+            // For now, just log and return success
+            logger.info("Newsletter subscription processed successfully for email: {}", email.trim());
+            
+            response.put("success", true);
+            response.put("message", "Thank you for subscribing! Get the latest pet tracker reviews delivered to your inbox.");
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("Error processing newsletter subscription for email: {}", email, e);
+            response.put("success", false);
+            response.put("message", "An error occurred. Please try again later.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+    
+    /**
+     * Simple email validation
+     */
+    private boolean isValidEmail(String email) {
+        return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
     }
 }
