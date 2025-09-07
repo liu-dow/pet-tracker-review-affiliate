@@ -143,7 +143,17 @@ public class HomeController {
     }
     
     @GetMapping("/search")
-    public String search(@RequestParam String q, Model model) {
+    public String search(@RequestParam(required = false) String q, Model model) {
+        // Handle empty or null query
+        if (q == null || q.trim().isEmpty()) {
+            model.addAttribute("query", "");
+            model.addAttribute("blogResults", java.util.Collections.emptyList());
+            model.addAttribute("reviewResults", java.util.Collections.emptyList());
+            model.addAttribute("pageTitle", "Search - Pet Tracker Review");
+            model.addAttribute("metaDescription", "Search our pet tracker reviews and guides to find the perfect GPS tracker for your pet.");
+            return "search";
+        }
+        
         String query = q.toLowerCase().trim();
         
         // Simple search implementation
