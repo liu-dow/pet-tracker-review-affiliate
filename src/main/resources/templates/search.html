@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Search Results - Pet Tracker Reviews</title>
+    <meta name="description" th:content="${metaDescription}">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <a th:href="@{/}" class="brand-link">
+                        <i class="fas fa-paw"></i>
+                        <span>Pet Tracker Review</span>
+                    </a>
+                </div>
+                
+                <div class="nav-menu">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a th:href="@{/}" class="nav-link">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/blog}" class="nav-link">Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/reviews}" class="nav-link">Reviews</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-search">
+                    <form th:action="@{/search}" method="get" class="search-form">
+                        <input type="text" name="q" th:value="${query}" placeholder="Search..." class="search-input">
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Search Results</h1>
+            <p th:if="${query != null and !query.isEmpty()}">
+                Results for "<span th:text="${query}"></span>"
+            </p>
+        </div>
+    </section>
+
+    <!-- Search Results -->
+    <section class="section">
+        <div class="container">
+            <!-- Blog Results -->
+            <div th:if="${blogResults != null and !blogResults.isEmpty()}">
+                <h2>Blog Posts</h2>
+                <div class="blog-grid">
+                    <div class="blog-card" th:each="blog : ${blogResults}">
+                        <div class="blog-header">
+                            <h3>
+                                <a th:href="@{'/blog/' + ${blog.slug}}" th:text="${blog.title}">Blog Title</a>
+                            </h3>
+                        </div>
+                        
+                        <div class="blog-meta">
+                            <span class="blog-author">
+                                <i class="fas fa-user"></i>
+                                <span th:text="${blog.author}">Author</span>
+                            </span>
+                            <span class="blog-date">
+                                <i class="fas fa-calendar"></i>
+                                <span th:text="${#temporals.format(blog.date, 'MMM dd, yyyy')}">Date</span>
+                            </span>
+                        </div>
+                        
+                        <div class="blog-excerpt" th:utext="${#strings.abbreviate(#strings.replace(blog.content, '<[^>]*>', ''), 150)}">
+                            Blog excerpt...
+                        </div>
+                        
+                        <div class="blog-tags" th:if="${blog.tags != null and !blog.tags.isEmpty()}">
+                            <span class="tag" th:each="tag : ${blog.tags}" th:text="${tag}">tag</span>
+                        </div>
+                        
+                        <div class="blog-footer">
+                            <a th:href="@{'/blog/' + ${blog.slug}}" class="read-more">
+                                Read More <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Results -->
+            <div th:if="${reviewResults != null and !reviewResults.isEmpty()}" 
+                 th:style="${blogResults != null and !blogResults.isEmpty() ? 'margin-top: 3rem;' : ''}">
+                <h2>Reviews</h2>
+                <div class="reviews-grid">
+                    <div class="review-card" th:each="review : ${reviewResults}">
+                        <div class="review-header">
+                            <div class="review-title-section">
+                                <h3>
+                                    <a th:href="@{'/reviews/' + ${review.slug}}" th:text="${review.title}">Review Title</a>
+                                </h3>
+                                <div class="review-product-info">
+                                    <span class="product-brand" th:text="${review.productBrand}">Brand</span>
+                                    <span class="product-name" th:text="${review.productName}">Product Name</span>
+                                </div>
+                            </div>
+                            
+                            <div class="review-rating">
+                                <div class="rating-display">
+                                    <span class="stars" th:text="${review.starRating}">★★★★☆</span>
+                                    <span class="rating-text" th:text="${review.rating} + '/5'">4.5/5</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="review-meta">
+                            <span class="review-author">
+                                <i class="fas fa-user"></i>
+                                <span th:text="${review.author}">Author</span>
+                            </span>
+                            <span class="review-date">
+                                <i class="fas fa-calendar"></i>
+                                <span th:text="${#temporals.format(review.date, 'MMM dd, yyyy')}">Date</span>
+                            </span>
+                        </div>
+                        
+                        <div class="review-excerpt" th:utext="${#strings.abbreviate(review.conclusion, 150)}">
+                            Review conclusion excerpt...
+                        </div>
+                        
+                        <div class="review-tags" th:if="${review.tags != null and !review.tags.isEmpty()}">
+                            <span class="tag" th:each="tag : ${review.tags}" th:text="${tag}">tag</span>
+                        </div>
+                        
+                        <div class="review-footer">
+                            <a th:href="@{'/reviews/' + ${review.slug}}" class="read-more">
+                                Read Full Review <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No Results -->
+            <div th:if="${(blogResults == null or blogResults.isEmpty()) and (reviewResults == null or reviewResults.isEmpty())}" 
+                 class="no-results">
+                <i class="fas fa-search"></i>
+                <h3>No results found</h3>
+                <p th:if="${query != null and !query.isEmpty()}">
+                    No content found for "<span th:text="${query}"></span>". Try different keywords or browse our categories.
+                </p>
+                <p th:if="${query == null or query.isEmpty()}">
+                    Please enter a search term to find content.
+                </p>
+                <div style="margin-top: 2rem;">
+                    <a th:href="@{/blog}" class="btn btn-primary">Browse Blog</a>
+                    <a th:href="@{/reviews}" class="btn btn-secondary">Browse Reviews</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Pet Tracker Review</h3>
+                    <p>Your trusted source for pet tracker reviews, guides, and comparisons.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a th:href="@{/}">Home</a></li>
+                        <li><a th:href="@{/blog}">Blog</a></li>
+                        <li><a th:href="@{/reviews}">Reviews</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Pet Tracker Review. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

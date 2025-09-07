@@ -1,0 +1,15 @@
+# Image Management Configuration
+# This file is created to ensure the images directory exists and is tracked by git
+
+# Directory structure:
+# /src/main/resources/images/          - Image metadata (YAML files)
+# /src/main/resources/static/images/   - Actual image files
+# /src/main/resources/static/images/thumbnails/ - Thumbnail files
+
+# Configuration notes:
+# - Maximum file size: 10MB
+# - Supported formats: JPG, PNG, GIF, WebP, BMP
+# - Thumbnails are automatically generated at 300px
+# - Compression quality: 0.8 (80%)
+# - Images are organized by categories
+# - Metadata is stored in YAML format for easy management

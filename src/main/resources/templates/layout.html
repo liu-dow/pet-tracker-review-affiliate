@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Pet Tracker Reviews</title>
+    <meta name="description" th:content="${metaDescription}">
+    <meta name="keywords" th:content="${keywords}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://pettrackerreview.com/">
+    <meta property="og:title" th:content="${pageTitle}">
+    <meta property="og:description" th:content="${metaDescription}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="http://pettrackerreview.com/">
+    <meta property="twitter:title" th:content="${pageTitle}">
+    <meta property="twitter:description" th:content="${metaDescription}">
+    
+    <!-- Favicon 完整支持 -->
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/favicon-48x48.svg}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicon.svg}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicon-16x16.svg}">
+    <link rel="manifest" th:href="@{/site.webmanifest}">
+    <meta name="theme-color" content="#2563eb">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <a th:href="@{/}" class="brand-link">
+                        <i class="fas fa-paw"></i>
+                        <span>Pet Tracker Review</span>
+                    </a>
+                </div>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a th:href="@{/}" class="nav-link">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/blog}" class="nav-link">Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/reviews}" class="nav-link">Reviews</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-search">
+                    <form th:action="@{/search}" method="get" class="search-form">
+                        <input type="text" name="q" placeholder="Search..." class="search-input">
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="nav-toggle" id="nav-toggle">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div layout:fragment="content">
+            <!-- Page content will be inserted here -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Pet Tracker Review</h3>
+                    <p>Your trusted source for pet tracker reviews, guides, and comparisons. Keeping your furry friends safe with the latest GPS technology.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a th:href="@{/}">Home</a></li>
+                        <li><a th:href="@{/blog}">Blog</a></li>
+                        <li><a th:href="@{/reviews}">Reviews</a></li>
+                        <li><a th:href="@{/search}">Search</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Categories</h4>
+                    <ul class="footer-links">
+                        <li><a th:href="@{/blog(tag='GPS')}">GPS Trackers</a></li>
+                        <li><a th:href="@{/blog(tag='dogs')}">Dog Trackers</a></li>
+                        <li><a th:href="@{/blog(tag='cats')}">Cat Trackers</a></li>
+                        <li><a th:href="@{/blog(tag='buying guide')}">Buying Guides</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a th:href="@{/affiliate-disclosure}">Affiliate Disclosure</a></li>
+                
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Pet Tracker Review. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

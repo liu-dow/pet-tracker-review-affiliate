@@ -1,0 +1,396 @@
+package com.pettrackerreview.service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.pettrackerreview.model.Image;
+import net.coobird.thumbnailator.Thumbnails;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * Service class for managing images - upload, compress, crop, and metadata operations
+ */
+@Service
+public class ImageService {
+    
+    private final ObjectMapper yamlMapper;
+    
+    @Value("${app.image.upload.dir:uploads/images}")
+    private String uploadDir;
+    
+    @Value("${app.image.metadata.dir:uploads/metadata}")
+    private String metadataDir;
+    
+    @Value("${app.image.max.size:10485760}") // 10MB default
+    private long maxFileSize;
+    
+    @Value("${app.image.thumbnail.size:300}")
+    private int thumbnailSize;
+    
+    @Value("${app.image.compression.quality:0.8}")
+    private double compressionQuality;
+    
+    private static final Set<String> ALLOWED_TYPES = new HashSet<>(Arrays.asList(
+        "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp", "image/bmp"
+    ));
+    
+    private static final Set<String> ALLOWED_EXTENSIONS = new HashSet<>(Arrays.asList(
+        "jpg", "jpeg", "png", "gif", "webp", "bmp"
+    ));
+    
+    public ImageService() {
+        this.yamlMapper = new ObjectMapper(new YAMLFactory());
+        this.yamlMapper.registerModule(new JavaTimeModule());
+        this.yamlMapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    }
+    
+    @PostConstruct
+    public void initDirectories() {
+        try {
+            // Get working directory and create absolute paths
+            String workingDir = System.getProperty("user.dir");
+            
+            // Create upload directory
+            Path uploadPath = Paths.get(workingDir, uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            
+            // Create thumbnails directory
+            Path thumbnailPath = Paths.get(workingDir, uploadDir, "thumbnails");
+            if (!Files.exists(thumbnailPath)) {
+                Files.createDirectories(thumbnailPath);
+            }
+            
+            // Create metadata directory
+            Path metadataPath = Paths.get(workingDir, metadataDir);
+            if (!Files.exists(metadataPath)) {
+                Files.createDirectories(metadataPath);
+            }
+            
+            // Update paths to absolute paths
+            this.uploadDir = uploadPath.toString();
+            this.metadataDir = metadataPath.toString();
+            
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to initialize image directories", e);
+        }
+    }
+    
+    /**
+     * Upload and process a new image
+     */
+    public Image uploadImage(MultipartFile file, String title, String description, 
+                           String altText, String category, String tags) throws IOException {
+        
+        // Validate file
+        validateImageFile(file);
+        
+        // Create image metadata
+        Image image = new Image();
+        image.setTitle(StringUtils.isNotBlank(title) ? title : file.getOriginalFilename());
+        image.setDescription(description);
+        image.setOriginalFilename(file.getOriginalFilename());
+        image.setMimeType(file.getContentType());
+        image.setFileSize(file.getSize());
+        image.setAltText(altText);
+        image.setCategory(category);
+        image.setTags(tags);
+        
+        // Generate unique filename
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        String baseFilename = generateUniqueFilename(image.getTitle(), extension);
+        image.setFilename(baseFilename);
+        image.setId(image.generateId());
+        
+        // Save original file
+        Path originalPath = Paths.get(uploadDir, baseFilename);
+        file.transferTo(originalPath.toFile());
+        image.setFilePath("uploads/images/" + baseFilename);
+        
+        // Get image dimensions
+        BufferedImage bufferedImage = ImageIO.read(originalPath.toFile());
+        if (bufferedImage != null) {
+            image.setWidth(bufferedImage.getWidth());
+            image.setHeight(bufferedImage.getHeight());
+        }
+        
+        // Create compressed version if needed
+        compressImageIfNeeded(originalPath.toFile(), image);
+        
+        // Create thumbnail
+        createThumbnail(originalPath.toFile(), image);
+        
+        // Save metadata
+        saveImageMetadata(image);
+        
+        return image;
+    }
+    
+    /**
+     * Compress image if file size exceeds threshold
+     */
+    private void compressImageIfNeeded(File originalFile, Image image) throws IOException {
+        if (image.getFileSize() > maxFileSize / 2) { // Compress if over 5MB
+            String extension = FilenameUtils.getExtension(image.getFilename());
+            String compressedFilename = FilenameUtils.getBaseName(image.getFilename()) + 
+                                      "_compressed." + extension;
+            
+            Path compressedPath = Paths.get(uploadDir, compressedFilename);
+            
+            Thumbnails.of(originalFile)
+                    .scale(1.0)
+                    .outputQuality(compressionQuality)
+                    .toFile(compressedPath.toFile());
+            
+            // Replace original with compressed if smaller
+            if (Files.size(compressedPath) < Files.size(originalFile.toPath())) {
+                Files.delete(originalFile.toPath());
+                Files.move(compressedPath, originalFile.toPath());
+                image.setFileSize(Files.size(originalFile.toPath()));
+            } else {
+                Files.deleteIfExists(compressedPath);
+            }
+        }
+    }
+    
+    /**
+     * Create thumbnail for image
+     */
+    private void createThumbnail(File originalFile, Image image) throws IOException {
+        String extension = FilenameUtils.getExtension(image.getFilename());
+        String thumbnailFilename = FilenameUtils.getBaseName(image.getFilename()) + 
+                                 "_thumb." + extension;
+        
+        Path thumbnailPath = Paths.get(uploadDir, "thumbnails", thumbnailFilename);
+        
+        Thumbnails.of(originalFile)
+                .size(thumbnailSize, thumbnailSize)
+                .outputQuality(0.8)
+                .toFile(thumbnailPath.toFile());
+        
+        image.setThumbnailPath("uploads/images/thumbnails/" + thumbnailFilename);
+    }
+    
+
+    
+    /**
+     * Get all images with optional filtering
+     */
+    public List<Image> getAllImages(String category, String searchTerm) {
+        List<Image> allImages = getAllImages();
+        
+        return allImages.stream()
+                .filter(image -> category == null || category.isEmpty() || 
+                               category.equals(image.getCategory()))
+                .filter(image -> searchTerm == null || searchTerm.isEmpty() ||
+                               containsSearchTerm(image, searchTerm))
+                .sorted((a, b) -> b.getUploadDate().compareTo(a.getUploadDate()))
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Get all images
+     */
+    public List<Image> getAllImages() {
+        List<Image> images = new ArrayList<>();
+        
+        try {
+            Path metadataPath = Paths.get(metadataDir);
+            System.out.println("Checking metadata directory: " + metadataPath.toAbsolutePath());
+            if (Files.exists(metadataPath)) {
+                System.out.println("Metadata directory exists, scanning for YAML files...");
+                Files.walk(metadataPath)
+                        .filter(path -> path.toString().endsWith(".yaml"))
+                        .forEach(path -> {
+                            try {
+                                System.out.println("Processing file: " + path + ", size: " + Files.size(path) + " bytes");
+                                // Check if file is not empty
+                                if (Files.size(path) > 0) {
+                                    Image image = yamlMapper.readValue(path.toFile(), Image.class);
+                                    if (image != null && image.getId() != null) {
+                                        System.out.println("Successfully loaded image: " + image.getTitle() + " (ID: " + image.getId() + ")");
+                                        images.add(image);
+                                    } else {
+                                        System.err.println("Invalid image data in file: " + path);
+                                    }
+                                } else {
+                                    System.err.println("Empty metadata file found, skipping: " + path);
+                                }
+                            } catch (IOException e) {
+                                System.err.println("Error reading image metadata: " + path + ", Error: " + e.getMessage());
+                            }
+                        });
+                System.out.println("Total images loaded: " + images.size());
+            } else {
+                System.err.println("Metadata directory does not exist: " + metadataPath.toAbsolutePath());
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading image metadata directory: " + e.getMessage());
+            throw new RuntimeException("Error reading image metadata directory", e);
+        }
+        
+        return images;
+    }
+    
+    /**
+     * Get image by ID
+     */
+    public Image getImageById(String id) {
+        return getAllImages().stream()
+                .filter(image -> id.equals(image.getId()))
+                .findFirst()
+                .orElse(null);
+    }
+    
+    /**
+     * Update image metadata
+     */
+    public void updateImage(Image image) throws IOException {
+        image.setModifiedDate(LocalDateTime.now());
+        saveImageMetadata(image);
+    }
+    
+    /**
+     * Delete image and its files
+     */
+    public void deleteImage(String id) throws IOException {
+        Image image = getImageById(id);
+        if (image == null) {
+            throw new IllegalArgumentException("Image not found: " + id);
+        }
+        
+        // Delete image files - use the full file path properly
+        if (StringUtils.isNotBlank(image.getFilename())) {
+            Path imagePath = Paths.get(uploadDir, image.getFilename());
+            if (Files.exists(imagePath)) {
+                Files.delete(imagePath);
+                System.out.println("Deleted main image file: " + imagePath);
+            } else {
+                System.out.println("Main image file not found: " + imagePath);
+            }
+        }
+        
+        // Delete thumbnail - properly construct the path
+        if (StringUtils.isNotBlank(image.getThumbnailPath())) {
+            // Extract filename from thumbnail path like "uploads/images/thumbnails/filename_thumb.png"
+            String thumbnailFileName = Paths.get(image.getThumbnailPath()).getFileName().toString();
+            Path thumbnailPath = Paths.get(uploadDir, "thumbnails", thumbnailFileName);
+            if (Files.exists(thumbnailPath)) {
+                Files.delete(thumbnailPath);
+                System.out.println("Deleted thumbnail file: " + thumbnailPath);
+            } else {
+                System.out.println("Thumbnail file not found: " + thumbnailPath);
+            }
+        }
+        
+        // Delete metadata file - construct proper metadata file path
+        Path metadataPath = Paths.get(metadataDir, id + ".yaml");
+        if (Files.exists(metadataPath)) {
+            Files.delete(metadataPath);
+            System.out.println("Deleted metadata file: " + metadataPath);
+        } else {
+            System.out.println("Metadata file not found: " + metadataPath);
+        }
+    }
+    
+    /**
+     * Get image categories
+     */
+    public List<String> getCategories() {
+        return getAllImages().stream()
+                .map(Image::getCategory)
+                .filter(Objects::nonNull)
+                .filter(category -> !category.trim().isEmpty())
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Get image statistics
+     */
+    public Map<String, Object> getImageStatistics() {
+        List<Image> images = getAllImages();
+        
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalImages", images.size());
+        stats.put("totalSize", images.stream().mapToLong(Image::getFileSize).sum());
+        stats.put("categories", getCategories().size());
+        
+        // Group by category
+        Map<String, Long> categoryStats = images.stream()
+                .filter(image -> StringUtils.isNotBlank(image.getCategory()))
+                .collect(Collectors.groupingBy(Image::getCategory, Collectors.counting()));
+        stats.put("categoryStats", categoryStats);
+        
+        return stats;
+    }
+    
+    // Helper methods
+    
+    private void validateImageFile(MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("File is empty");
+        }
+        
+        if (file.getSize() > maxFileSize) {
+            throw new IllegalArgumentException("File size exceeds maximum limit of " + 
+                                             (maxFileSize / (1024 * 1024)) + "MB");
+        }
+        
+        String mimeType = file.getContentType();
+        if (!ALLOWED_TYPES.contains(mimeType)) {
+            throw new IllegalArgumentException("Invalid file type. Allowed types: " + 
+                                             String.join(", ", ALLOWED_TYPES));
+        }
+        
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        if (!ALLOWED_EXTENSIONS.contains(extension.toLowerCase())) {
+            throw new IllegalArgumentException("Invalid file extension. Allowed extensions: " + 
+                                             String.join(", ", ALLOWED_EXTENSIONS));
+        }
+    }
+    
+    private String generateUniqueFilename(String title, String extension) {
+        String baseName = StringUtils.isNotBlank(title) ? 
+                         title.toLowerCase().replaceAll("[^a-z0-9]", "-") :
+                         "image";
+        
+        baseName = baseName.replaceAll("-+", "-").replaceAll("^-|-$", "");
+        
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
+        return baseName + "-" + timestamp + "." + extension;
+    }
+    
+    private boolean containsSearchTerm(Image image, String searchTerm) {
+        String term = searchTerm.toLowerCase();
+        return (image.getTitle() != null && image.getTitle().toLowerCase().contains(term)) ||
+               (image.getDescription() != null && image.getDescription().toLowerCase().contains(term)) ||
+               (image.getTags() != null && image.getTags().toLowerCase().contains(term)) ||
+               (image.getAltText() != null && image.getAltText().toLowerCase().contains(term));
+    }
+    
+    private void saveImageMetadata(Image image) throws IOException {
+        Path metadataPath = Paths.get(metadataDir, image.getId() + ".yaml");
+        yamlMapper.writeValue(metadataPath.toFile(), image);
+    }
+}

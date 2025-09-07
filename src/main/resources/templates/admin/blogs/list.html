@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Blogs - Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        .admin-sidebar {
+            background-color: #2d3748;
+            color: white;
+            padding: 2rem 0;
+        }
+        .admin-content {
+            padding: 2rem;
+            background-color: #f7fafc;
+        }
+        .sidebar-header {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .sidebar-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .sidebar-nav li a {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #a0aec0;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .sidebar-nav li a:hover,
+        .sidebar-nav li a.active {
+            background-color: #4a5568;
+            color: white;
+        }
+        .sidebar-nav li a i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .table th {
+            background-color: #f7fafc;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .table tr:hover {
+            background-color: #f7fafc;
+        }
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+            border: 1px solid transparent;
+        }
+        .alert-success {
+            background-color: #f0fff4;
+            border-color: #9ae6b4;
+            color: #2f855a;
+        }
+        .alert-danger {
+            background-color: #fed7d7;
+            border-color: #feb2b2;
+            color: #c53030;
+        }
+        .tag-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+        .tag-small {
+            background-color: #edf2f7;
+            color: #4a5568;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-paw"></i> Admin Panel</h3>
+            </div>
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="/admin/blogs" class="active"><i class="fas fa-blog"></i> Blogs</a></li>
+                    <li><a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a></li>
+                    <li><a href="/admin/images"><i class="fas fa-images"></i> Images</a></li>
+                    <li><a href="/admin/import"><i class="fas fa-upload"></i> Import Data</a></li>
+                    <li><a href="#" onclick="exportContent()"><i class="fas fa-download"></i> Export Data</a></li>
+                    <li><a href="/"><i class="fas fa-external-link-alt"></i> View Site</a></li>
+                    <li><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="content-header">
+                <h1>Manage Blog Posts</h1>
+                <a href="/admin/blogs/new" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> New Blog Post
+                </a>
+            </div>
+            
+            <!-- Flash Messages -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+            </div>
+            
+            <!-- Blog Posts Table -->
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Date</th>
+                            <th>Tags</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="blog : ${blogs}">
+                            <td>
+                                <div style="font-weight: 500;" th:text="${blog.title}">Blog Title</div>
+                                <div style="font-size: 0.9rem; color: #718096;" th:text="${blog.slug}">blog-slug</div>
+                            </td>
+                            <td th:text="${blog.author}">Author</td>
+                            <td th:text="${#temporals.format(blog.date, 'MMM dd, yyyy')}">Date</td>
+                            <td>
+                                <div class="tag-display" th:if="${blog.tags != null and !blog.tags.isEmpty()}">
+                                    <span class="tag-small" th:each="tag : ${blog.tags}" th:text="${tag}">tag</span>
+                                </div>
+                                <span th:if="${blog.tags == null or blog.tags.isEmpty()}" style="color: #a0aec0;">No tags</span>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <a th:href="@{'/blog/' + ${blog.slug}}" class="btn btn-outline btn-sm" target="_blank">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <a th:href="@{'/admin/blogs/edit/' + ${blog.slug}}" class="btn btn-secondary btn-sm">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form th:action="@{'/admin/blogs/delete/' + ${blog.slug}}" method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-outline btn-sm" style="color: #e53e3e; border-color: #e53e3e;" 
+                                                onclick="return confirm('Are you sure you want to delete this blog post?')">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div th:if="${blogs == null or blogs.isEmpty()}" style="padding: 3rem; text-align: center; color: #718096;">
+                    <i class="fas fa-blog" style="font-size: 3rem; margin-bottom: 1rem; color: #cbd5e0;"></i>
+                    <h3>No blog posts found</h3>
+                    <p>Create your first blog post to get started.</p>
+                    <a href="/admin/blogs/new" class="btn btn-primary">Create Blog Post</a>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        function exportContent() {
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = '/admin/export';
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

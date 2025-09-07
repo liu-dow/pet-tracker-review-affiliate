@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Blog Post - Pet Tracker Reviews</title>
+    <meta name="description" th:content="${metaDescription}">
+    <meta name="keywords" th:content="${keywords}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" th:content="${blogPost.title}">
+    <meta property="og:description" th:content="${blogPost.metaDescription}">
+    <meta property="article:author" th:content="${blogPost.author}">
+    <meta property="article:published_time" th:content="${blogPost.date}">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <a th:href="@{/}" class="brand-link">
+                        <i class="fas fa-paw"></i>
+                        <span>Pet Tracker Review</span>
+                    </a>
+                </div>
+                
+                <div class="nav-menu">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a th:href="@{/}" class="nav-link">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/blog}" class="nav-link active">Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/reviews}" class="nav-link">Reviews</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <div class="container">
+            <ol class="breadcrumb-list">
+                <li><a th:href="@{/}">Home</a></li>
+                <li><a th:href="@{/blog}">Blog</a></li>
+                <li th:text="${blogPost.title}">Current Post</li>
+            </ol>
+        </div>
+    </nav>
+
+    <!-- Article Content -->
+    <article class="article">
+        <div class="container">
+            <div class="article-wrapper">
+                <!-- Main Content -->
+                <main class="article-content">
+                    <header class="article-header">
+                        <h1 th:text="${blogPost.title}">Article Title</h1>
+                        
+                        <div class="article-meta">
+                            <span class="article-author">
+                                <i class="fas fa-user"></i>
+                                <span th:text="${blogPost.author}">Author</span>
+                            </span>
+                            <span class="article-date">
+                                <i class="fas fa-calendar"></i>
+                                <span th:text="${#temporals.format(blogPost.date, 'MMMM dd, yyyy')}">Date</span>
+                            </span>
+                        </div>
+                        
+                        <div class="article-tags" th:if="${blogPost.tags != null and !blogPost.tags.isEmpty()}">
+                            <span class="tag" th:each="tag : ${blogPost.tags}" th:text="${tag}">tag</span>
+                        </div>
+                    </header>
+                    
+                    <div class="article-body" th:utext="${blogPost.content}">
+                        Article content goes here...
+                    </div>
+                    
+                    <footer class="article-footer">
+                        <div class="share-buttons">
+                            <h4>Share this article:</h4>
+                            <a href="#" class="share-btn facebook" onclick="shareOnFacebook()">
+                                <i class="fab fa-facebook"></i> Facebook
+                            </a>
+                            <a href="#" class="share-btn twitter" onclick="shareOnTwitter()">
+                                <i class="fab fa-twitter"></i> Twitter
+                            </a>
+                            <a href="#" class="share-btn linkedin" onclick="shareOnLinkedIn()">
+                                <i class="fab fa-linkedin"></i> LinkedIn
+                            </a>
+                        </div>
+                    </footer>
+                </main>
+                
+                <!-- Sidebar -->
+                <aside class="article-sidebar">
+                    <!-- Related Posts -->
+                    <div class="sidebar-section" th:if="${relatedPosts != null and !relatedPosts.isEmpty()}">
+                        <h3>Related Articles</h3>
+                        <div class="related-posts">
+                            <div class="related-post" th:each="post : ${relatedPosts}">
+                                <h4>
+                                    <a th:href="@{'/blog/' + ${post.slug}}" th:text="${post.title}">Related Post Title</a>
+                                </h4>
+                                <div class="related-meta">
+                                    <span th:text="${#temporals.format(post.date, 'MMM dd')}">Date</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Newsletter Signup -->
+                    <div class="sidebar-section">
+                        <h3>Stay Updated</h3>
+                        <p>Get the latest pet tracker reviews and guides delivered to your inbox.</p>
+                        <form class="newsletter-form">
+                            <input type="email" placeholder="Your email address" class="form-input">
+                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                        </form>
+                    </div>
+                    
+                    <!-- Popular Posts -->
+                    <div class="sidebar-section">
+                        <h3>Popular Articles</h3>
+                        <div class="popular-posts">
+                            <div class="popular-post">
+                                <a href="#">Best GPS Pet Trackers for Dogs in 2024</a>
+                            </div>
+                            <div class="popular-post">
+                                <a href="#">How to Choose the Right Pet Tracker for Your Cat</a>
+                            </div>
+                            <div class="popular-post">
+                                <a href="#">Pet Tracker Battery Life: What to Expect</a>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </article>
+
+    <!-- Navigation -->
+    <section class="article-nav">
+        <div class="container">
+            <div class="nav-buttons">
+                <a th:href="@{/blog}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Blog
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Pet Tracker Review</h3>
+                    <p>Your trusted source for pet tracker reviews, guides, and comparisons.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a th:href="@{/}">Home</a></li>
+                        <li><a th:href="@{/blog}">Blog</a></li>
+                        <li><a th:href="@{/reviews}">Reviews</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Pet Tracker Review. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        function shareOnFacebook() {
+            const url = window.location.href;
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        }
+        
+        function shareOnTwitter() {
+            const url = window.location.href;
+            const title = document.title;
+            window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
+        }
+        
+        function shareOnLinkedIn() {
+            const url = window.location.href;
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+        }
+    </script>
+</body>
+</html>

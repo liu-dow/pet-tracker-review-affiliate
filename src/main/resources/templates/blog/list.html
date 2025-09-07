@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Blog - Pet Tracker Reviews</title>
+    <meta name="description" th:content="${metaDescription}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" th:content="${pageTitle}">
+    <meta property="og:description" th:content="${metaDescription}">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <a th:href="@{/}" class="brand-link">
+                        <i class="fas fa-paw"></i>
+                        <span>Pet Tracker Review</span>
+                    </a>
+                </div>
+                
+                <div class="nav-menu">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a th:href="@{/}" class="nav-link">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/blog}" class="nav-link active">Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/reviews}" class="nav-link">Reviews</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-search">
+                    <form th:action="@{/search}" method="get" class="search-form">
+                        <input type="text" name="q" placeholder="Search..." class="search-input">
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Pet Tracker Blog</h1>
+            <p>Expert guides, tips, and insights for pet safety</p>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <section class="section">
+        <div class="container">
+            <div class="content-wrapper">
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <div class="sidebar-section">
+                        <h3>Filter by Tag</h3>
+                        <div class="tag-filter">
+                            <a th:href="@{/blog}" 
+                               th:class="${selectedTag == null ? 'tag-link active' : 'tag-link'}">All</a>
+                            <a th:each="tag : ${allTags}" 
+                               th:href="@{/blog(tag=${tag})}" 
+                               th:text="${tag}"
+                               th:class="${selectedTag == tag ? 'tag-link active' : 'tag-link'}">tag</a>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Main Content -->
+                <main class="main-content">
+                    <div class="blog-list">
+                        <div class="blog-card" th:each="blog : ${blogPosts}">
+                            <div class="blog-header">
+                                <h2>
+                                    <a th:href="@{'/blog/' + ${blog.slug}}" th:text="${blog.title}">Blog Title</a>
+                                </h2>
+                            </div>
+                            
+                            <div class="blog-meta">
+                                <span class="blog-author">
+                                    <i class="fas fa-user"></i>
+                                    <span th:text="${blog.author}">Author</span>
+                                </span>
+                                <span class="blog-date">
+                                    <i class="fas fa-calendar"></i>
+                                    <span th:text="${#temporals.format(blog.date, 'MMM dd, yyyy')}">Date</span>
+                                </span>
+                            </div>
+                            
+                            <div class="blog-excerpt" th:utext="${#strings.abbreviate(#strings.replace(blog.content, '<[^>]*>', ''), 200)}">
+                                Blog excerpt content...
+                            </div>
+                            
+                            <div class="blog-tags" th:if="${blog.tags != null and !blog.tags.isEmpty()}">
+                                <span class="tag" th:each="tag : ${blog.tags}" th:text="${tag}">tag</span>
+                            </div>
+                            
+                            <div class="blog-footer">
+                                <a th:href="@{'/blog/' + ${blog.slug}}" class="read-more">
+                                    Read More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- No Results -->
+                    <div th:if="${blogPosts == null or blogPosts.isEmpty()}" class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h3>No blog posts found</h3>
+                        <p th:if="${selectedTag != null}">
+                            No blog posts found for tag "<span th:text="${selectedTag}"></span>".
+                        </p>
+                        <p th:if="${selectedTag == null}">
+                            No blog posts available at the moment.
+                        </p>
+                        <a th:href="@{/blog}" class="btn btn-primary">View All Posts</a>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Pet Tracker Review</h3>
+                    <p>Your trusted source for pet tracker reviews, guides, and comparisons.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a th:href="@{/}">Home</a></li>
+                        <li><a th:href="@{/blog}">Blog</a></li>
+                        <li><a th:href="@{/reviews}">Reviews</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Pet Tracker Review. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

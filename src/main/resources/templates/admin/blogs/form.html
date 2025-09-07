@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${action == 'create' ? 'New Blog Post' : 'Edit Blog Post'} + ' - Admin Panel'">Blog Form - Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        .admin-sidebar {
+            background-color: #2d3748;
+            color: white;
+            padding: 2rem 0;
+        }
+        .admin-content {
+            padding: 2rem;
+            background-color: #f7fafc;
+        }
+        .sidebar-header {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .sidebar-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .sidebar-nav li a {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #a0aec0;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .sidebar-nav li a:hover,
+        .sidebar-nav li a.active {
+            background-color: #4a5568;
+            color: white;
+        }
+        .sidebar-nav li a i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            max-width: 800px;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #3182ce;
+        }
+        .form-control.large {
+            min-height: 300px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .help-text {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-paw"></i> Admin Panel</h3>
+            </div>
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="/admin/blogs" class="active"><i class="fas fa-blog"></i> Blogs</a></li>
+                    <li><a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a></li>
+                    <li><a href="/admin/images"><i class="fas fa-images"></i> Images</a></li>
+                    <li><a href="/admin/import"><i class="fas fa-upload"></i> Import Data</a></li>
+                    <li><a href="#" onclick="exportContent()"><i class="fas fa-download"></i> Export Data</a></li>
+                    <li><a href="/"><i class="fas fa-external-link-alt"></i> View Site</a></li>
+                    <li><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="content-header">
+                <h1 th:text="${action == 'create' ? 'New Blog Post' : 'Edit Blog Post'}">Blog Form</h1>
+                <a href="/admin/blogs" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Blogs
+                </a>
+            </div>
+            
+            <div class="form-container">
+                <form th:action="@{/admin/blogs/save}" method="post" th:object="${blog}">
+                    <input type="hidden" name="originalSlug" th:value="${blog.slug}">
+                    
+                    <div class="form-group">
+                        <label for="title" class="form-label">Title *</label>
+                        <input type="text" id="title" name="title" class="form-control" 
+                               th:field="*{title}" required>
+                        <div class="help-text">The main title of your blog post</div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="author" class="form-label">Author *</label>
+                            <input type="text" id="author" name="author" class="form-control" 
+                                   th:field="*{author}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="slug" class="form-label">Slug</label>
+                            <input type="text" id="slug" name="slug" class="form-control" 
+                                   th:field="*{slug}">
+                            <div class="help-text">URL-friendly version (auto-generated if empty)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="metaDescription" class="form-label">Meta Description *</label>
+                        <textarea id="metaDescription" name="metaDescription" class="form-control" 
+                                  rows="3" th:field="*{metaDescription}" required></textarea>
+                        <div class="help-text">SEO description for search engines (150-160 characters recommended)</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tags" class="form-label">Tags</label>
+                        <input type="text" id="tags" name="tags" class="form-control" 
+                               th:value="${blog.tags != null ? #strings.listJoin(blog.tags, ', ') : ''}">
+                        <div class="help-text">Comma-separated tags (e.g. pet tracker, GPS, dogs)</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="content" class="form-label">Content *</label>
+                        <textarea id="content" name="content" class="form-control large" 
+                                  th:field="*{content}" required></textarea>
+                        <div class="help-text">Full blog post content (HTML supported)</div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Blog Post
+                        </button>
+                        <a href="/admin/blogs" class="btn btn-outline">Cancel</a>
+                        <div th:if="${action == 'edit'}" style="margin-left: auto;">
+                            <a th:href="@{'/blog/' + ${blog.slug}}" class="btn btn-secondary" target="_blank">
+                                <i class="fas fa-eye"></i> Preview
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Auto-generate slug from title
+        document.getElementById('title').addEventListener('input', function() {
+            const title = this.value;
+            const slugField = document.getElementById('slug');
+            
+            if (!slugField.value || slugField.dataset.autoGenerated === 'true') {
+                const slug = title
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+                
+                slugField.value = slug;
+                slugField.dataset.autoGenerated = 'true';
+            }
+        });
+        
+        // Mark slug as manually edited if user changes it
+        document.getElementById('slug').addEventListener('input', function() {
+            this.dataset.autoGenerated = 'false';
+        });
+        
+        // Character counter for meta description
+        const metaDescField = document.getElementById('metaDescription');
+        const helpText = metaDescField.nextElementSibling;
+        
+        function updateMetaDescCounter() {
+            const length = metaDescField.value.length;
+            const optimal = length >= 150 && length <= 160;
+            const color = optimal ? '#38a169' : (length > 160 ? '#e53e3e' : '#718096');
+            
+            helpText.innerHTML = `SEO description for search engines (<span style="color: ${color}">${length} characters</span>) - 150-160 recommended`;
+        }
+        
+        metaDescField.addEventListener('input', updateMetaDescCounter);
+        updateMetaDescCounter();
+    </script>
+    
+    <script>
+        function exportContent() {
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = '/admin/export';
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

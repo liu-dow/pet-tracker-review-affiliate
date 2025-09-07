@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Pet Tracker Review</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        .admin-sidebar {
+            background-color: #2d3748;
+            color: white;
+            padding: 2rem 0;
+        }
+        .admin-content {
+            padding: 2rem;
+            background-color: #f7fafc;
+        }
+        .sidebar-header {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .sidebar-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .sidebar-nav li a {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #a0aec0;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .sidebar-nav li a:hover,
+        .sidebar-nav li a.active {
+            background-color: #4a5568;
+            color: white;
+        }
+        .sidebar-nav li a i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3182ce;
+        }
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        .recent-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .content-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .content-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .content-item:last-child {
+            border-bottom: none;
+        }
+        .content-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        .content-meta {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: #3182ce;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background-color: #2c5aa0;
+        }
+        .btn-outline {
+            background-color: transparent;
+            color: #3182ce;
+            border: 1px solid #3182ce;
+        }
+        .btn-outline:hover {
+            background-color: #3182ce;
+            color: white;
+        }
+        .btn-success {
+            background-color: #38a169;
+        }
+        .btn-success:hover {
+            background-color: #2f855a;
+        }
+        .btn-primary {
+            background-color: #3182ce;
+        }
+        .btn-primary:hover {
+            background-color: #2c5aa0;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-paw"></i> Admin Panel</h3>
+            </div>
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="/admin/dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="/admin/blogs"><i class="fas fa-blog"></i> Blogs</a></li>
+                    <li><a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a></li>
+                    <li><a href="/admin/images"><i class="fas fa-images"></i> Images</a></li>
+                    <li><a href="/admin/import"><i class="fas fa-upload"></i> Import Data</a></li>
+                    <li><a href="#" onclick="exportContent()"><i class="fas fa-download"></i> Export Data</a></li>
+                    <li><a href="/"><i class="fas fa-external-link-alt"></i> View Site</a></li>
+                    <li><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="logout-btn">
+                <a href="/admin/logout" class="btn btn-outline">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+            
+            <h1>Dashboard</h1>
+            
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${totalBlogs}">0</div>
+                    <div class="stat-label">Total Blog Posts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${totalReviews}">0</div>
+                    <div class="stat-label">Total Reviews</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${totalImages ?: 0}">0</div>
+                    <div class="stat-label">Total Images</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${totalBlogs + totalReviews + (totalImages ?: 0)}">0</div>
+                    <div class="stat-label">Total Content</div>
+                </div>
+                <div class="stat-card">
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="/admin/import" class="btn btn-primary" style="flex: 1; text-align: center; font-size: 0.9rem;">
+                            <i class="fas fa-upload"></i> Import
+                        </a>
+                        <button onclick="exportContent()" class="btn btn-success" style="flex: 1; font-size: 0.9rem;">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    <div class="stat-label" style="margin-top: 0.5rem;">Data Management</div>
+                </div>
+            </div>
+            
+            <!-- Recent Content -->
+            <div class="recent-content">
+                <div class="content-section">
+                    <h3>Recent Blog Posts</h3>
+                    <div th:if="${recentBlogs != null and !recentBlogs.isEmpty()}">
+                        <div class="content-item" th:each="blog : ${recentBlogs}">
+                            <div class="content-title" th:text="${blog.title}">Blog Title</div>
+                            <div class="content-meta">
+                                By <span th:text="${blog.author}">Author</span> • 
+                                <span th:text="${#temporals.format(blog.date, 'MMM dd, yyyy')}">Date</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${recentBlogs == null or recentBlogs.isEmpty()}">
+                        <p>No blog posts found.</p>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <a href="/admin/blogs" class="btn btn-primary">Manage Blogs</a>
+                    </div>
+                </div>
+                
+                <div class="content-section">
+                    <h3>Recent Reviews</h3>
+                    <div th:if="${recentReviews != null and !recentReviews.isEmpty()}">
+                        <div class="content-item" th:each="review : ${recentReviews}">
+                            <div class="content-title" th:text="${review.title}">Review Title</div>
+                            <div class="content-meta">
+                                <span th:text="${review.productBrand}">Brand</span> • 
+                                Rating: <span th:text="${review.rating}">0</span>/5 • 
+                                <span th:text="${#temporals.format(review.date, 'MMM dd, yyyy')}">Date</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${recentReviews == null or recentReviews.isEmpty()}">
+                        <p>No reviews found.</p>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <a href="/admin/reviews" class="btn btn-primary">Manage Reviews</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Export Modal -->
+    <div id="exportModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); max-width: 400px; width: 90%;">
+            <h3 style="margin-top: 0; color: #2d3748;"><i class="fas fa-download"></i> Export Content</h3>
+            <p style="color: #718096; margin-bottom: 1.5rem;">This will download a ZIP file containing all your blog posts and reviews in YAML format.</p>
+            
+            <div id="exportInfo" style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #3182ce;">
+                <div style="font-size: 0.9rem; color: #4a5568;">
+                    <div>📝 Blog files: <span id="blogCount">-</span></div>
+                    <div>⭐ Review files: <span id="reviewCount">-</span></div>
+                    <div style="font-weight: 600; margin-top: 0.5rem;">📦 Total files: <span id="totalCount">-</span></div>
+                </div>
+            </div>
+            
+            <div style="text-align: right;">
+                <button onclick="closeExportModal()" class="btn btn-outline" style="margin-right: 1rem;">Cancel</button>
+                <button onclick="downloadExport()" class="btn btn-success">
+                    <i class="fas fa-download"></i> Download ZIP
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function exportContent() {
+            // Show modal
+            document.getElementById('exportModal').style.display = 'block';
+            
+            // Load export info
+            fetch('/admin/export/info')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('blogCount').textContent = data.blogFiles || 0;
+                    document.getElementById('reviewCount').textContent = data.reviewFiles || 0;
+                    document.getElementById('totalCount').textContent = data.totalFiles || 0;
+                })
+                .catch(error => {
+                    console.error('Error loading export info:', error);
+                    document.getElementById('blogCount').textContent = 'Error';
+                    document.getElementById('reviewCount').textContent = 'Error';
+                    document.getElementById('totalCount').textContent = 'Error';
+                });
+        }
+        
+        function closeExportModal() {
+            document.getElementById('exportModal').style.display = 'none';
+        }
+        
+        function downloadExport() {
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = '/admin/export';
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Close modal
+            closeExportModal();
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('exportModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeExportModal();
+            }
+        });
+    </script>
+</body>
+</html>

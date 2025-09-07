@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${action == 'create' ? 'New Review' : 'Edit Review'} + ' - Admin Panel'">Review Form - Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        .admin-sidebar {
+            background-color: #2d3748;
+            color: white;
+            padding: 2rem 0;
+        }
+        .admin-content {
+            padding: 2rem;
+            background-color: #f7fafc;
+        }
+        .sidebar-header {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .sidebar-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .sidebar-nav li a {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #a0aec0;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .sidebar-nav li a:hover,
+        .sidebar-nav li a.active {
+            background-color: #4a5568;
+            color: white;
+        }
+        .sidebar-nav li a i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            max-width: 800px;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #3182ce;
+        }
+        .form-control.large {
+            min-height: 200px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .help-text {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 0.25rem;
+        }
+        .rating-input {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .rating-stars {
+            display: flex;
+            gap: 0.25rem;
+            font-size: 1.5rem;
+            color: #e2e8f0;
+        }
+        .rating-stars.active {
+            color: #f6ad55;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-paw"></i> Admin Panel</h3>
+            </div>
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="/admin/blogs"><i class="fas fa-blog"></i> Blogs</a></li>
+                    <li><a href="/admin/reviews" class="active"><i class="fas fa-star"></i> Reviews</a></li>
+                    <li><a href="/admin/images"><i class="fas fa-images"></i> Images</a></li>
+                    <li><a href="/admin/import"><i class="fas fa-upload"></i> Import Data</a></li>
+                    <li><a href="#" onclick="exportContent()"><i class="fas fa-download"></i> Export Data</a></li>
+                    <li><a href="/"><i class="fas fa-external-link-alt"></i> View Site</a></li>
+                    <li><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="content-header">
+                <h1 th:text="${action == 'create' ? 'New Review' : 'Edit Review'}">Review Form</h1>
+                <a href="/admin/reviews" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Reviews
+                </a>
+            </div>
+            
+            <div class="form-container">
+                <form th:action="@{/admin/reviews/save}" method="post" th:object="${review}">
+                    <input type="hidden" name="originalSlug" th:value="${review.slug}">
+                    
+                    <div class="form-group">
+                        <label for="title" class="form-label">Review Title *</label>
+                        <input type="text" id="title" name="title" class="form-control" 
+                               th:field="*{title}" required>
+                        <div class="help-text">The main title of your product review</div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productName" class="form-label">Product Name *</label>
+                            <input type="text" id="productName" name="productName" class="form-control" 
+                                   th:field="*{productName}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productBrand" class="form-label">Product Brand *</label>
+                            <input type="text" id="productBrand" name="productBrand" class="form-control" 
+                                   th:field="*{productBrand}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label for="author" class="form-label">Author *</label>
+                            <input type="text" id="author" name="author" class="form-control" 
+                                   th:field="*{author}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="rating" class="form-label">Rating *</label>
+                            <div class="rating-input">
+                                <input type="number" id="rating" name="rating" class="form-control" 
+                                       th:field="*{rating}" min="1" max="5" step="0.1" required 
+                                       style="max-width: 100px;">
+                                <div class="rating-stars" id="ratingStars">★★★★★</div>
+                            </div>
+                            <div class="help-text">1-5 stars (0.1 increments allowed)</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="slug" class="form-label">Slug</label>
+                            <input type="text" id="slug" name="slug" class="form-control" 
+                                   th:field="*{slug}">
+                            <div class="help-text">URL-friendly version (auto-generated if empty)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="metaDescription" class="form-label">Meta Description *</label>
+                        <textarea id="metaDescription" name="metaDescription" class="form-control" 
+                                  rows="3" th:field="*{metaDescription}" required></textarea>
+                        <div class="help-text">SEO description for search engines (150-160 characters recommended)</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tags" class="form-label">Tags</label>
+                        <input type="text" id="tags" name="tags" class="form-control" 
+                               th:value="${review.tags != null ? #strings.listJoin(review.tags, ', ') : ''}">
+                        <div class="help-text">Comma-separated tags (e.g. pet tracker, GPS, waterproof)</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="content" class="form-label">Review Content *</label>
+                        <textarea id="content" name="content" class="form-control large" 
+                                  th:field="*{content}" required></textarea>
+                        <div class="help-text">Main review content (HTML supported)</div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pros" class="form-label">Pros</label>
+                            <textarea id="pros" name="pros" class="form-control" 
+                                      rows="4" th:field="*{pros}"></textarea>
+                            <div class="help-text">What's good about this product</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cons" class="form-label">Cons</label>
+                            <textarea id="cons" name="cons" class="form-control" 
+                                      rows="4" th:field="*{cons}"></textarea>
+                            <div class="help-text">What could be improved</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="conclusion" class="form-label">Conclusion</label>
+                        <textarea id="conclusion" name="conclusion" class="form-control" 
+                                  rows="3" th:field="*{conclusion}"></textarea>
+                        <div class="help-text">Final thoughts and recommendation</div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Review
+                        </button>
+                        <a href="/admin/reviews" class="btn btn-outline">Cancel</a>
+                        <div th:if="${action == 'edit'}" style="margin-left: auto;">
+                            <a th:href="@{'/reviews/' + ${review.slug}}" class="btn btn-secondary" target="_blank">
+                                <i class="fas fa-eye"></i> Preview
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Auto-generate slug from title
+        document.getElementById('title').addEventListener('input', function() {
+            const title = this.value;
+            const slugField = document.getElementById('slug');
+            
+            if (!slugField.value || slugField.dataset.autoGenerated === 'true') {
+                const slug = title
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+                
+                slugField.value = slug;
+                slugField.dataset.autoGenerated = 'true';
+            }
+        });
+        
+        // Mark slug as manually edited if user changes it
+        document.getElementById('slug').addEventListener('input', function() {
+            this.dataset.autoGenerated = 'false';
+        });
+        
+        // Rating visual feedback
+        const ratingInput = document.getElementById('rating');
+        const ratingStars = document.getElementById('ratingStars');
+        
+        function updateStars() {
+            const rating = parseFloat(ratingInput.value) || 0;
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = (rating - fullStars) >= 0.5;
+            
+            let starsHtml = '';
+            for (let i = 0; i < fullStars; i++) {
+                starsHtml += '★';
+            }
+            if (hasHalfStar) {
+                starsHtml += '☆';
+            }
+            for (let i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) {
+                starsHtml += '☆';
+            }
+            
+            ratingStars.innerHTML = starsHtml;
+            ratingStars.className = rating > 0 ? 'rating-stars active' : 'rating-stars';
+        }
+        
+        ratingInput.addEventListener('input', updateStars);
+        updateStars(); // Initialize
+        
+        // Character counter for meta description
+        const metaDescField = document.getElementById('metaDescription');
+        const helpText = metaDescField.nextElementSibling;
+        
+        function updateMetaDescCounter() {
+            const length = metaDescField.value.length;
+            const optimal = length >= 150 && length <= 160;
+            const color = optimal ? '#38a169' : (length > 160 ? '#e53e3e' : '#718096');
+            
+            helpText.innerHTML = `SEO description for search engines (<span style="color: ${color}">${length} characters</span>) - 150-160 recommended`;
+        }
+        
+        metaDescField.addEventListener('input', updateMetaDescCounter);
+        updateMetaDescCounter();
+    </script>
+    
+    <script>
+        function exportContent() {
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = '/admin/export';
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

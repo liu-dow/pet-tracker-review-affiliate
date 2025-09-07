@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Review - Pet Tracker Reviews</title>
+    <meta name="description" th:content="${metaDescription}">
+    <meta name="keywords" th:content="${keywords}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" th:content="${review.title}">
+    <meta property="og:description" th:content="${review.metaDescription}">
+    <meta property="article:author" th:content="${review.author}">
+    <meta property="article:published_time" th:content="${review.date}">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <a th:href="@{/}" class="brand-link">
+                        <i class="fas fa-paw"></i>
+                        <span>Pet Tracker Review</span>
+                    </a>
+                </div>
+                
+                <div class="nav-menu">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a th:href="@{/}" class="nav-link">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/blog}" class="nav-link">Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/reviews}" class="nav-link active">Reviews</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <div class="container">
+            <ol class="breadcrumb-list">
+                <li><a th:href="@{/}">Home</a></li>
+                <li><a th:href="@{/reviews}">Reviews</a></li>
+                <li th:text="${review.productName}">Product Name</li>
+            </ol>
+        </div>
+    </nav>
+
+    <!-- Review Content -->
+    <article class="review-article">
+        <div class="container">
+            <div class="review-wrapper">
+                <!-- Main Content -->
+                <main class="review-content">
+                    <header class="review-header">
+                        <div class="product-info">
+                            <h1 th:text="${review.title}">Review Title</h1>
+                            <div class="product-details">
+                                <span class="product-brand" th:text="${review.productBrand}">Brand</span>
+                                <span class="product-name" th:text="${review.productName}">Product</span>
+                            </div>
+                        </div>
+                        
+                        <div class="review-rating-section">
+                            <div class="rating-display">
+                                <span class="stars large" th:text="${review.starRating}">★★★★☆</span>
+                                <span class="rating-text large" th:text="${review.rating} + '/5'">4.5/5</span>
+                            </div>
+                        </div>
+                        
+                        <div class="review-meta">
+                            <span class="review-author">
+                                <i class="fas fa-user"></i>
+                                <span th:text="${review.author}">Author</span>
+                            </span>
+                            <span class="review-date">
+                                <i class="fas fa-calendar"></i>
+                                <span th:text="${#temporals.format(review.date, 'MMMM dd, yyyy')}">Date</span>
+                            </span>
+                        </div>
+                        
+                        <div class="review-tags" th:if="${review.tags != null and !review.tags.isEmpty()}">
+                            <span class="tag" th:each="tag : ${review.tags}" th:text="${tag}">tag</span>
+                        </div>
+                    </header>
+                    
+                    <!-- Pros and Cons Summary -->
+                    <section class="pros-cons-section">
+                        <div class="pros-cons-grid">
+                            <div class="pros-section" th:if="${review.pros != null and !review.pros.isEmpty()}">
+                                <h3><i class="fas fa-check-circle text-green"></i> Pros</h3>
+                                <div class="content" th:utext="${review.pros}">
+                                    Pros content...
+                                </div>
+                            </div>
+                            
+                            <div class="cons-section" th:if="${review.cons != null and !review.cons.isEmpty()}">
+                                <h3><i class="fas fa-times-circle text-red"></i> Cons</h3>
+                                <div class="content" th:utext="${review.cons}">
+                                    Cons content...
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Review Content -->
+                    <section class="review-body">
+                        <div th:utext="${review.content}">
+                            Detailed review content goes here...
+                        </div>
+                    </section>
+                    
+                    <!-- Conclusion -->
+                    <section class="review-conclusion" th:if="${review.conclusion != null and !review.conclusion.isEmpty()}">
+                        <h3>Final Verdict</h3>
+                        <div class="conclusion-content" th:utext="${review.conclusion}">
+                            Review conclusion...
+                        </div>
+                    </section>
+                    
+                    <footer class="review-footer">
+                        <div class="share-buttons">
+                            <h4>Share this review:</h4>
+                            <a href="#" class="share-btn facebook" onclick="shareOnFacebook()">
+                                <i class="fab fa-facebook"></i> Facebook
+                            </a>
+                            <a href="#" class="share-btn twitter" onclick="shareOnTwitter()">
+                                <i class="fab fa-twitter"></i> Twitter
+                            </a>
+                            <a href="#" class="share-btn linkedin" onclick="shareOnLinkedIn()">
+                                <i class="fab fa-linkedin"></i> LinkedIn
+                            </a>
+                        </div>
+                    </footer>
+                </main>
+                
+                <!-- Sidebar -->
+                <aside class="review-sidebar">
+                    <!-- Product Summary -->
+                    <div class="sidebar-section">
+                        <h3>Product Summary</h3>
+                        <div class="product-summary">
+                            <div class="summary-item">
+                                <strong>Brand:</strong> <span th:text="${review.productBrand}">Brand</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Product:</strong> <span th:text="${review.productName}">Product</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Rating:</strong> 
+                                <span class="rating-display">
+                                    <span th:text="${review.starRating}">★★★★☆</span>
+                                    <span th:text="${review.rating} + '/5'">4.5/5</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Related Reviews -->
+                    <div class="sidebar-section" th:if="${relatedReviews != null and !relatedReviews.isEmpty()}">
+                        <h3>Related Reviews</h3>
+                        <div class="related-reviews">
+                            <div class="related-review" th:each="related : ${relatedReviews}">
+                                <h4>
+                                    <a th:href="@{'/reviews/' + ${related.slug}}" th:text="${related.title}">Related Review Title</a>
+                                </h4>
+                                <div class="related-meta">
+                                    <span class="related-rating" th:text="${related.starRating}">★★★★☆</span>
+                                    <span th:text="${related.productBrand}">Brand</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Newsletter Signup -->
+                    <div class="sidebar-section">
+                        <h3>Stay Updated</h3>
+                        <p>Get the latest pet tracker reviews delivered to your inbox.</p>
+                        <form class="newsletter-form">
+                            <input type="email" placeholder="Your email address" class="form-input">
+                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                        </form>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </article>
+
+    <!-- Navigation -->
+    <section class="article-nav">
+        <div class="container">
+            <div class="nav-buttons">
+                <a th:href="@{/reviews}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Reviews
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Pet Tracker Review</h3>
+                    <p>Your trusted source for pet tracker reviews, guides, and comparisons.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a th:href="@{/}">Home</a></li>
+                        <li><a th:href="@{/blog}">Blog</a></li>
+                        <li><a th:href="@{/reviews}">Reviews</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Pet Tracker Review. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        function shareOnFacebook() {
+            const url = window.location.href;
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        }
+        
+        function shareOnTwitter() {
+            const url = window.location.href;
+            const title = document.title;
+            window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
+        }
+        
+        function shareOnLinkedIn() {
+            const url = window.location.href;
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+        }
+    </script>
+</body>
+</html>

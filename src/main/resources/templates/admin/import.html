@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Content - Pet Tracker Review</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        .admin-sidebar {
+            background-color: #2d3748;
+            color: white;
+            padding: 2rem 0;
+        }
+        .admin-content {
+            padding: 2rem;
+            background-color: #f7fafc;
+        }
+        .sidebar-header {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .sidebar-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .sidebar-nav li a {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #a0aec0;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .sidebar-nav li a:hover {
+            background-color: #4a5568;
+            color: white;
+        }
+        .sidebar-nav li a i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+        .import-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .file-upload-area {
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: border-color 0.2s;
+            background: #f7fafc;
+        }
+        .file-upload-area:hover {
+            border-color: #3182ce;
+        }
+        .file-upload-area.dragover {
+            border-color: #3182ce;
+            background: #ebf8ff;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: #3182ce;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background-color: #2c5aa0;
+        }
+        .btn-outline {
+            background-color: transparent;
+            color: #3182ce;
+            border: 1px solid #3182ce;
+        }
+        .btn-outline:hover {
+            background-color: #3182ce;
+            color: white;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        .alert-success {
+            background-color: #f0fff4;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+        .alert-error {
+            background-color: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #f56565;
+        }
+        .help-text {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 0.5rem;
+        }
+        .requirements {
+            background: #ebf8ff;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid #3182ce;
+            margin-bottom: 1.5rem;
+        }
+        .requirements h4 {
+            margin: 0 0 0.5rem 0;
+            color: #2d3748;
+        }
+        .requirements ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+        .requirements li {
+            margin-bottom: 0.25rem;
+            color: #4a5568;
+        }
+        code {
+            background-color: #f1f5f9;
+            padding: 0.125rem 0.25rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: #1a202c;
+        }
+        .yaml-example {
+            background-color: #1a202c;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .yaml-example pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .yaml-example code {
+            background-color: transparent;
+            color: #a0aec0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-paw"></i> Admin Panel</h3>
+            </div>
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="/admin/blogs"><i class="fas fa-blog"></i> Blogs</a></li>
+                    <li><a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a></li>
+                    <li><a href="/admin/images"><i class="fas fa-images"></i> Images</a></li>
+                    <li><a href="/admin/import" class="active"><i class="fas fa-upload"></i> Import Data</a></li>
+                    <li><a href="#" onclick="exportContent()"><i class="fas fa-download"></i> Export Data</a></li>
+                    <li><a href="/"><i class="fas fa-external-link-alt"></i> View Site</a></li>
+                    <li><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-content">
+            <h1><i class="fas fa-upload"></i> Import Content</h1>
+            <p>Upload YAML files to import blog posts or reviews into the system.</p>
+            
+            <!-- Alert Messages -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+            </div>
+            
+            <div class="import-container">
+                <!-- Requirements -->
+                <div class="requirements">
+                    <h4><i class="fas fa-info-circle"></i> Import Requirements</h4>
+                    <ul>
+                        <li>Files must be in YAML format (.yaml or .yml extension)</li>
+                        <li><strong>Blog posts must contain:</strong>
+                            <ul style="margin-top: 0.5rem; margin-left: 1rem;">
+                                <li><code>title</code> - Blog post title (required)</li>
+                                <li><code>content</code> - Blog post content (required)</li>
+                                <li><code>author</code> - Author name (optional, defaults to "Admin")</li>
+                                <li><code>date</code> - Publication date (optional, defaults to current time)</li>
+                                <li><code>tags</code> - List of tags (optional)</li>
+                                <li><code>metaDescription</code> - SEO meta description (optional)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Reviews must contain:</strong>
+                            <ul style="margin-top: 0.5rem; margin-left: 1rem;">
+                                <li><code>title</code> - Review title (required)</li>
+                                <li><code>content</code> - Review content (required)</li>
+                                <li><code>productBrand</code> - Product brand name (required)</li>
+                                <li><code>productName</code> - Product name (optional)</li>
+                                <li><code>rating</code> - Rating 1-5 (optional, defaults to 5.0)</li>
+                                <li><code>pros</code> - Product advantages (optional)</li>
+                                <li><code>cons</code> - Product disadvantages (optional)</li>
+                                <li><code>conclusion</code> - Review conclusion (optional)</li>
+                            </ul>
+                        </li>
+                        <li>Missing required fields will show specific error messages</li>
+                        <li>File size limit: Maximum 5MB</li>
+                        <li>Invalid YAML syntax will be detected and reported</li>
+                    </ul>
+                </div>
+                
+                <!-- YAML Examples -->
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="margin-bottom: 1rem; color: #2d3748;"><i class="fas fa-code"></i> YAML Format Examples</h4>
+                    
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <button type="button" class="btn btn-outline" onclick="showExample('blog')" id="blogExampleBtn">
+                            Blog Post Example
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="showExample('review')" id="reviewExampleBtn">
+                            Review Example
+                        </button>
+                    </div>
+                    
+                    <div id="blogExample" class="yaml-example" style="display: none;">
+                        <pre><code>title: "Best GPS Pet Trackers for Dogs in 2024"
+author: "John Smith"
+date: "2024-01-15 10:30:00"
+tags:
+  - "pet tracker"
+  - "dogs"
+  - "GPS"
+metaDescription: "Comprehensive guide to the best GPS pet trackers for dogs in 2024"
+content: |
+  In this comprehensive guide, we'll explore the top GPS pet trackers
+  available for dogs in 2024. These devices help you keep track of
+  your furry friends and ensure their safety.
+  
+  ## Key Features to Consider
+  - Battery life
+  - GPS accuracy
+  - Water resistance
+  - Mobile app quality</code></pre>
+                    </div>
+                    
+                    <div id="reviewExample" class="yaml-example" style="display: none;">
+                        <pre><code>title: "Fi Series 3 Smart Dog Collar Review"
+productName: "Fi Series 3 Smart Dog Collar"
+productBrand: "Fi"
+rating: 4.5
+date: "2024-01-10 14:20:00"
+tags:
+  - "Fi collar"
+  - "smart collar"
+  - "review"
+content: |
+  The Fi Series 3 Smart Dog Collar is a comprehensive pet tracking
+  solution that combines GPS tracking with activity monitoring.
+  
+  ## Key Features
+  - Nationwide LTE coverage
+  - Long battery life
+  - Activity tracking
+  - Escape alerts
+  
+pros: |
+  - Excellent battery life (up to 3 months)
+  - Accurate GPS tracking
+  - Great mobile app
+  - Durable construction
+  
+cons: |
+  - Monthly subscription required
+  - Higher upfront cost
+  - Collar can be bulky for small dogs
+  
+conclusion: |
+  Overall, the Fi Series 3 is an excellent choice for dog owners
+  who want reliable tracking and health monitoring.</code></pre>
+                    </div>
+                </div>
+                
+                <!-- Import Form -->
+                <form method="post" enctype="multipart/form-data" th:action="@{/admin/import}">
+                    <!-- Content Type Selection -->
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-list"></i> Content Type</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="blogs" name="contentType" value="blogs" checked>
+                                <label for="blogs"><i class="fas fa-blog"></i> Blog Posts</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="reviews" name="contentType" value="reviews">
+                                <label for="reviews"><i class="fas fa-star"></i> Product Reviews</label>
+                            </div>
+                        </div>
+                        <div class="help-text">Select the type of content to import</div>
+                    </div>
+                    
+                    <!-- File Upload -->
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-file-upload"></i> Select File</label>
+                        <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #3182ce; margin-bottom: 1rem;"></i>
+                            <p>Click to select file or drag and drop here</p>
+                            <p style="font-size: 0.9rem; color: #718096;">Supports .yaml and .yml files</p>
+                            <input type="file" id="fileInput" name="file" accept=".yaml,.yml" style="display: none;" required>
+                        </div>
+                        <div id="fileName" class="help-text" style="margin-top: 1rem; display: none;"></div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div style="text-align: right; margin-top: 2rem;">
+                        <a href="/admin/dashboard" class="btn btn-outline" style="margin-right: 1rem;">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn">
+                            <i class="fas fa-upload"></i> Import File
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // File input handling
+        const fileInput = document.getElementById('fileInput');
+        const fileUploadArea = document.querySelector('.file-upload-area');
+        const fileName = document.getElementById('fileName');
+        
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                fileName.textContent = 'Selected file: ' + file.name;
+                fileName.style.display = 'block';
+            }
+        });
+        
+        // Drag and drop handling
+        fileUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.add('dragover');
+        });
+        
+        fileUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+        });
+        
+        fileUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.name.endsWith('.yaml') || file.name.endsWith('.yml')) {
+                    fileInput.files = files;
+                    fileName.textContent = 'Selected file: ' + file.name;
+                    fileName.style.display = 'block';
+                } else {
+                    alert('Please select a YAML file (.yaml or .yml)');
+                }
+            }
+        });
+        
+        // Content type change handling
+        const contentTypeRadios = document.querySelectorAll('input[name="contentType"]');
+        contentTypeRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Update requirements or help text based on content type if needed
+                console.log('Content type changed to:', this.value);
+            });
+        });
+        
+        // YAML example functions
+        function showExample(type) {
+            const blogExample = document.getElementById('blogExample');
+            const reviewExample = document.getElementById('reviewExample');
+            const blogBtn = document.getElementById('blogExampleBtn');
+            const reviewBtn = document.getElementById('reviewExampleBtn');
+            
+            if (type === 'blog') {
+                blogExample.style.display = 'block';
+                reviewExample.style.display = 'none';
+                blogBtn.style.backgroundColor = '#3182ce';
+                blogBtn.style.color = 'white';
+                reviewBtn.style.backgroundColor = 'transparent';
+                reviewBtn.style.color = '#3182ce';
+            } else {
+                blogExample.style.display = 'none';
+                reviewExample.style.display = 'block';
+                reviewBtn.style.backgroundColor = '#3182ce';
+                reviewBtn.style.color = 'white';
+                blogBtn.style.backgroundColor = 'transparent';
+                blogBtn.style.color = '#3182ce';
+            }
+        }
+        
+        function exportContent() {
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = '/admin/export';
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

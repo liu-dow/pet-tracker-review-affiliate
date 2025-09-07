@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${action == 'create' ? 'Upload New Image' : 'Edit Image'} + ' - Admin Panel'">Image Form - Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        .admin-sidebar {
+            background-color: #2d3748;
+            color: white;
+            padding: 2rem 0;
+        }
+        .admin-content {
+            padding: 2rem;
+            background-color: #f7fafc;
+        }
+        .sidebar-header {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .sidebar-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .sidebar-nav li a {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #a0aec0;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .sidebar-nav li a:hover,
+        .sidebar-nav li a.active {
+            background-color: #4a5568;
+            color: white;
+        }
+        .sidebar-nav li a i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .form-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            max-width: 1200px;
+        }
+        .form-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .preview-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #3182ce;
+        }
+        .form-control.file-input {
+            padding: 0.5rem;
+        }
+        .form-help {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 0.25rem;
+        }
+        .file-upload-area {
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .file-upload-area:hover {
+            border-color: #3182ce;
+            background-color: #f7fafc;
+        }
+        .file-upload-area.dragover {
+            border-color: #3182ce;
+            background-color: #ebf4ff;
+        }
+        .file-upload-icon {
+            font-size: 3rem;
+            color: #cbd5e0;
+            margin-bottom: 1rem;
+        }
+        .image-preview-container {
+            position: relative;
+            max-width: 100%;
+            margin-bottom: 1rem;
+        }
+        .image-preview {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .image-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .info-item {
+            padding: 0.75rem;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+        .info-label {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-bottom: 0.25rem;
+        }
+        .info-value {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: #3182ce;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background-color: #2c5aa0;
+        }
+        .btn-primary { background-color: #3182ce; }
+        .btn-success { background-color: #38a169; }
+        .btn-warning { background-color: #d69e2e; }
+        .btn-secondary { 
+            background-color: #718096; 
+            color: white;
+        }
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #3182ce;
+            color: #3182ce;
+        }
+        .btn-outline:hover {
+            background-color: #3182ce;
+            color: white;
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        .alert-success {
+            background-color: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+        .alert-error {
+            background-color: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            min-height: 2.5rem;
+            padding: 0.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: text;
+        }
+        .tag-item {
+            background: #3182ce;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .tag-remove {
+            cursor: pointer;
+            margin-left: 0.25rem;
+        }
+        .tag-input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 100px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-paw"></i> Admin Panel</h3>
+            </div>
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="/admin/blogs"><i class="fas fa-blog"></i> Blogs</a></li>
+                    <li><a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a></li>
+                    <li><a href="/admin/images" class="active"><i class="fas fa-images"></i> Images</a></li>
+                    <li><a href="/admin/import"><i class="fas fa-upload"></i> Import Data</a></li>
+                    <li><a href="#" onclick="exportContent()"><i class="fas fa-download"></i> Export Data</a></li>
+                    <li><a href="/"><i class="fas fa-external-link-alt"></i> View Site</a></li>
+                    <li><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1>
+                        <i class="fas fa-images"></i> 
+                        <span th:text="${action == 'create' ? 'Upload New Image' : 'Edit Image'}">Image Form</span>
+                    </h1>
+                    <p th:text="${action == 'create' ? 'Upload and configure a new image' : 'Update image details'}">Form description</p>
+                </div>
+                <a href="/admin/images" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Images
+                </a>
+            </div>
+            
+            <!-- Flash Messages -->
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+            
+            <!-- Form Container -->
+            <div class="form-container">
+                <!-- Form Section -->
+                <div class="form-section">
+                    <form th:action="${action == 'create' ? '/admin/images/upload' : '/admin/images/update/' + image.id}" 
+                          method="post" 
+                          enctype="multipart/form-data" 
+                          id="imageForm">
+                        
+                        <!-- File Upload (only for create) -->
+                        <div class="form-group" th:if="${action == 'create'}">
+                            <label class="form-label">Select Image File *</label>
+                            <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                                <h4>Click to select or drag & drop image</h4>
+                                <p>Supported formats: JPG, PNG, GIF, WebP, BMP (max 10MB)</p>
+                            </div>
+                            <input type="file" 
+                                   id="fileInput" 
+                                   name="file" 
+                                   accept="image/*" 
+                                   required 
+                                   style="display: none;"
+                                   onchange="handleFileSelect(this)">
+                        </div>
+                        
+                        <!-- Basic Information -->
+                        <div class="form-group">
+                            <label class="form-label" for="title">Image Title *</label>
+                            <input type="text" 
+                                   id="title" 
+                                   name="title" 
+                                   class="form-control" 
+                                   th:value="${image?.title}" 
+                                   required>
+                            <div class="form-help">Enter a descriptive title for the image</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="description">Description</label>
+                            <textarea id="description" 
+                                      name="description" 
+                                      class="form-control" 
+                                      rows="3" 
+                                      th:text="${image?.description}"></textarea>
+                            <div class="form-help">Detailed description of the image content</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="altText">Alt Text</label>
+                            <input type="text" 
+                                   id="altText" 
+                                   name="altText" 
+                                   class="form-control" 
+                                   th:value="${image?.altText}">
+                            <div class="form-help">Alternative text for accessibility (SEO important)</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="category">Category</label>
+                            <input type="text" 
+                                   id="category" 
+                                   name="category" 
+                                   class="form-control" 
+                                   list="categoryList" 
+                                   th:value="${image?.category}">
+                            <datalist id="categoryList">
+                                <option th:each="cat : ${categories}" th:value="${cat}"></option>
+                            </datalist>
+                            <div class="form-help">Organize images by category</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="tags">Tags</label>
+                            <div class="tags-input" id="tagsInput">
+                                <input type="text" 
+                                       class="tag-input" 
+                                       placeholder="Type tags and press Enter..."
+                                       onkeydown="handleTagInput(event)">
+                            </div>
+                            <input type="hidden" name="tags" id="tagsHidden" th:value="${image?.tags}">
+                            <div class="form-help">Add tags separated by commas (pet, tracker, outdoor, etc.)</div>
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <a href="/admin/images" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-success">
+                                <i th:class="${action == 'create' ? 'fas fa-upload' : 'fas fa-save'}"></i>
+                                <span th:text="${action == 'create' ? 'Upload Image' : 'Update Image'}">Submit</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Preview Section -->
+                <div class="preview-section">
+                    <h3><i class="fas fa-eye"></i> Image Preview</h3>
+                    
+                    <!-- Preview Image -->
+                    <div class="image-preview-container" id="previewContainer" th:if="${image}">
+                        <img th:src="${image?.thumbnailPath != null ? '/' + image.thumbnailPath : (image?.filePath != null ? '/' + image.filePath : '')}" 
+                             class="image-preview" 
+                             id="previewImage"
+                             th:alt="${image?.altText}">
+                        
+                        <!-- Image Information -->
+                        <div class="image-info-grid" th:if="${image}">
+                            <div class="info-item">
+                                <div class="info-label">Dimensions</div>
+                                <div class="info-value" th:text="${image.dimensions}">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">File Size</div>
+                                <div class="info-value" th:text="${image.formattedFileSize}">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Upload Date</div>
+                                <div class="info-value" th:text="${#temporals.format(image.uploadDate, 'MMM dd, yyyy')}">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">File Type</div>
+                                <div class="info-value" th:text="${image.mimeType}">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Placeholder for new uploads -->
+                    <div id="uploadPlaceholder" th:unless="${image}">
+                        <i class="fas fa-images file-upload-icon"></i>
+                        <p>Image preview will appear here after selection</p>
+                    </div>
+                    
+
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let tagsArray = [];
+        
+        // Initialize tags if editing
+        document.addEventListener('DOMContentLoaded', function() {
+            const tagsValue = document.getElementById('tagsHidden').value;
+            if (tagsValue) {
+                tagsArray = tagsValue.split(',').map(tag => tag.trim()).filter(tag => tag);
+                displayTags();
+            }
+        });
+        
+        // File selection handler
+        function handleFileSelect(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewContainer = document.getElementById('previewContainer');
+                    const placeholder = document.getElementById('uploadPlaceholder');
+                    
+                    if (!previewContainer) {
+                        // Create preview container
+                        const container = document.createElement('div');
+                        container.id = 'previewContainer';
+                        container.className = 'image-preview-container';
+                        container.innerHTML = `
+                            <img src="${e.target.result}" class="image-preview" id="previewImage">
+                            <div class="image-info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">File Name</div>
+                                    <div class="info-value">${file.name}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">File Size</div>
+                                    <div class="info-value">${formatFileSize(file.size)}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">File Type</div>
+                                    <div class="info-value">${file.type}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Last Modified</div>
+                                    <div class="info-value">${new Date(file.lastModified).toLocaleDateString()}</div>
+                                </div>
+                            </div>
+                        `;
+                        placeholder.parentNode.replaceChild(container, placeholder);
+                    } else {
+                        document.getElementById('previewImage').src = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(file);
+                
+                // Auto-fill title if empty
+                const titleInput = document.getElementById('title');
+                if (!titleInput.value) {
+                    titleInput.value = file.name.replace(/\.[^/.]+$/, "");
+                }
+            }
+        }
+        
+        // Drag and drop functionality
+        const uploadArea = document.querySelector('.file-upload-area');
+        if (uploadArea) {
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    document.getElementById('fileInput').files = files;
+                    handleFileSelect(document.getElementById('fileInput'));
+                }
+            });
+        }
+        
+        // Tags management
+        function handleTagInput(event) {
+            if (event.key === 'Enter' || event.key === ',' || event.key === 'Tab') {
+                event.preventDefault();
+                const input = event.target;
+                const tag = input.value.trim();
+                
+                if (tag && !tagsArray.includes(tag)) {
+                    tagsArray.push(tag);
+                    input.value = '';
+                    displayTags();
+                    updateTagsHidden();
+                }
+            }
+        }
+        
+        function displayTags() {
+            const container = document.getElementById('tagsInput');
+            const input = container.querySelector('.tag-input');
+            
+            // Remove existing tags
+            const existingTags = container.querySelectorAll('.tag-item');
+            existingTags.forEach(tag => tag.remove());
+            
+            // Add tags
+            tagsArray.forEach((tag, index) => {
+                const tagElement = document.createElement('div');
+                tagElement.className = 'tag-item';
+                tagElement.innerHTML = `
+                    ${tag}
+                    <i class="fas fa-times tag-remove" onclick="removeTag(${index})"></i>
+                `;
+                container.insertBefore(tagElement, input);
+            });
+        }
+        
+        function removeTag(index) {
+            tagsArray.splice(index, 1);
+            displayTags();
+            updateTagsHidden();
+        }
+        
+        function updateTagsHidden() {
+            document.getElementById('tagsHidden').value = tagsArray.join(',');
+        }
+        
+
+        
+        // Utility functions
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+        
+        function exportContent() {
+            window.location.href = '/admin/export';
+        }
+    </script>
+</body>
+</html>

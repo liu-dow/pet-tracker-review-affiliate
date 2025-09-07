@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Pet Tracker Reviews</title>
+    <meta name="description" th:content="${metaDescription}">
+    <meta name="keywords" th:content="${keywords}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://pettrackerreview.com/">
+    <meta property="og:title" th:content="${pageTitle}">
+    <meta property="og:description" th:content="${metaDescription}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="http://pettrackerreview.com/">
+    <meta property="twitter:title" th:content="${pageTitle}">
+    <meta property="twitter:description" th:content="${metaDescription}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Analytics 4 (GA4) - Required -->
+    <script async th:src="@{'https://www.googletagmanager.com/gtag/js?id=' + ${@environment.getProperty('ga4.measurement.id')}}"></script>
+    <script th:inline="javascript">
+        // GA4 Configuration from application.properties
+        var GA4_ID = /*[[${@environment.getProperty('ga4.measurement.id')}]]*/ 'G-XXXXXXXXXX';
+        
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        
+        // Initial consent state - deny until user makes choice
+        gtag('consent', 'default', {
+            'analytics_storage': 'denied',
+            'ad_storage': 'denied',
+            'functionality_storage': 'granted',
+            'personalization_storage': 'denied',
+            'security_storage': 'granted'
+        });
+        
+        gtag('config', GA4_ID, {
+            cookie_flags: 'SameSite=None;Secure',
+            anonymize_ip: true
+        });
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <a th:href="@{/}" class="brand-link">
+                        <i class="fas fa-paw"></i>
+                        <span>Pet Tracker Review</span>
+                    </a>
+                </div>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a th:href="@{/}" class="nav-link">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/blog}" class="nav-link">Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/reviews}" class="nav-link">Reviews</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-search">
+                    <form th:action="@{/search}" method="get" class="search-form">
+                        <input type="text" name="q" placeholder="Search..." class="search-input">
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="nav-toggle" id="nav-toggle">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Smart Bark Style Banner (Final Version) -->
+    <section class="banner-style-6">
+        <div class="smart-banner-container">
+            <div class="smart-banner-content">
+                <div class="content-section">
+                    <div class="product-badge">
+                        <span class="badge-icon">⭐</span>
+                        <span class="badge-text">Expert Reviews & Comparisons</span>
+                    </div>
+                    
+                    <h1 class="smart-title">
+                        Find the <span class="smart-highlight">Perfect Pet Tracker</span>
+                        <br>With Our Expert Reviews
+                    </h1>
+                    
+                    <p class="smart-description">
+                        In-depth testing and honest reviews of GPS pet trackers, smart collars, and activity monitors. 
+                        We help you choose the best tracking solution for your furry friend.
+                    </p>
+                    
+                    <div class="smart-features">
+                        <div class="smart-feature">
+                            <div class="feature-number">50+</div>
+                            <div class="feature-label">Devices Tested</div>
+                        </div>
+                        <div class="smart-feature">
+                            <div class="feature-number">100+</div>
+                            <div class="feature-label">Hours of Testing</div>
+                        </div>
+                        <div class="smart-feature">
+                            <div class="feature-number">5⭐</div>
+                            <div class="feature-label">Expert Rating</div>
+                        </div>
+                    </div>
+                    
+                    <div class="smart-cta-section">
+                        <a th:href="@{/reviews}" class="btn-smart primary">
+                            <span>Browse Reviews</span>
+                            <div class="btn-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </a>
+                        <a th:href="@{/blog}" class="btn-smart secondary">
+                            <i class="fas fa-book-open"></i>
+                            <span>Read Guides</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="visual-section">
+                    <div class="review-showcase">
+                        <div class="showcase-header">
+                            <h3>What We Review</h3>
+                            <p>Complete evaluation of every device</p>
+                        </div>
+                        
+                        <div class="review-categories">
+                            <div class="category-card">
+                                <div class="category-icon">
+                                    <i class="fas fa-satellite-dish"></i>
+                                </div>
+                                <div class="category-info">
+                                    <h4>GPS Trackers</h4>
+                                    <p>Real-time location tracking</p>
+                                </div>
+                                <div class="category-rating">4.5★</div>
+                            </div>
+                            
+                            <div class="category-card">
+                                <div class="category-icon">
+                                    <i class="fas fa-microchip"></i>
+                                </div>
+                                <div class="category-info">
+                                    <h4>Smart Collars</h4>
+                                    <p>Activity & health monitoring</p>
+                                </div>
+                                <div class="category-rating">4.3★</div>
+                            </div>
+                            
+                            <div class="category-card">
+                                <div class="category-icon">
+                                    <i class="fas fa-heartbeat"></i>
+                                </div>
+                                <div class="category-info">
+                                    <h4>Fitness Monitors</h4>
+                                    <p>Exercise & wellness tracking</p>
+                                </div>
+                                <div class="category-rating">4.1★</div>
+                            </div>
+                        </div>
+                        
+                        <div class="evaluation-metrics">
+                            <div class="metrics-title">Our Testing Standards</div>
+                            <div class="metrics-grid">
+                                <div class="metric-item">
+                                    <span class="metric-label">Battery Life</span>
+                                    <div class="metric-bar"><div class="metric-fill" style="width: 90%;"></div></div>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">GPS Accuracy</span>
+                                    <div class="metric-bar"><div class="metric-fill" style="width: 95%;"></div></div>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Build Quality</span>
+                                    <div class="metric-bar"><div class="metric-fill" style="width: 85%;"></div></div>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-label">Value for Money</span>
+                                    <div class="metric-bar"><div class="metric-fill" style="width: 80%;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="testing-badge">
+                            <div class="badge-content">
+                                <span class="badge-number">30+ Days</span>
+                                <span class="badge-text">Real-World Testing</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="trust-section">
+                <div class="trust-item">
+                    <span class="trust-number">2024</span>
+                    <span class="trust-label">Latest Reviews</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-number">100%</span>
+                    <span class="trust-label">Unbiased</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-number">Real</span>
+                    <span class="trust-label">Pet Testing</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-number">Free</span>
+                    <span class="trust-label">Expert Advice</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Reviews Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Latest Reviews</h2>
+                <p>In-depth analysis of the newest pet tracking devices</p>
+            </div>
+            
+            <div class="reviews-grid" th:if="${latestReviews != null and !latestReviews.isEmpty()}">
+                <div class="review-card" th:each="review : ${latestReviews}">
+                    <div class="review-header">
+                        <h3>
+                            <a th:href="@{'/reviews/' + ${review.slug}}" th:text="${review.title}">Review Title</a>
+                        </h3>
+                    </div>
+                    
+                    <div class="review-rating">
+                        <span class="stars" th:text="${review.starRating}">★★★★☆</span>
+                        <span class="rating-text" th:text="${review.rating} + '/5'">4.5/5</span>
+                    </div>
+                    
+                    <div class="review-meta">
+                        <span class="product-brand" th:text="${review.productBrand}">Brand</span>
+                        <span class="review-date" th:text="${#temporals.format(review.date, 'MMM dd, yyyy')}">Date</span>
+                    </div>
+                    
+                    <div class="review-excerpt" th:utext="${#strings.abbreviate(review.conclusion, 150)}">
+                        Review excerpt...
+                    </div>
+                    
+                    <div class="review-tags" th:if="${review.tags != null and !review.tags.isEmpty()}">
+                        <span class="tag" th:each="tag : ${review.tags}" th:text="${tag}">tag</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-footer">
+                <a th:href="@{/reviews}" class="btn btn-outline">View All Reviews</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Blog Posts Section -->
+    <section class="section bg-light">
+        <div class="container">
+            <div class="section-header">
+                <h2>Latest Articles</h2>
+                <p>Expert guides and tips for pet safety</p>
+            </div>
+            
+            <div class="blog-grid" th:if="${latestBlogs != null and !latestBlogs.isEmpty()}">
+                <div class="blog-card" th:each="blog : ${latestBlogs}">
+                    <div class="blog-header">
+                        <h3>
+                            <a th:href="@{'/blog/' + ${blog.slug}}" th:text="${blog.title}">Blog Title</a>
+                        </h3>
+                    </div>
+                    
+                    <div class="blog-meta">
+                        <span class="blog-author" th:text="'By ' + ${blog.author}">By Author</span>
+                        <span class="blog-date" th:text="${#temporals.format(blog.date, 'MMM dd, yyyy')}">Date</span>
+                    </div>
+                    
+                    <div class="blog-excerpt" th:utext="${#strings.abbreviate(#strings.replace(blog.content, '<[^>]*>', ''), 150)}">
+                        Blog excerpt...
+                    </div>
+                    
+                    <div class="blog-tags" th:if="${blog.tags != null and !blog.tags.isEmpty()}">
+                        <span class="tag" th:each="tag : ${blog.tags}" th:text="${tag}">tag</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-footer">
+                <a th:href="@{/blog}" class="btn btn-outline">Read More Articles</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Tags Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Popular Topics</h2>
+                <p>Explore content by category</p>
+            </div>
+            
+            <div class="tags-cloud" th:if="${allTags != null and !allTags.isEmpty()}">
+                <a th:each="tag : ${allTags}" 
+                   th:href="@{/blog(tag=${tag})}" 
+                   th:text="${tag}" 
+                   class="tag-link">tag</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Pet Tracker Review</h3>
+                    <p>Your trusted source for pet tracker reviews, guides, and comparisons. Keeping your furry friends safe with the latest GPS technology.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a th:href="@{/}">Home</a></li>
+                        <li><a th:href="@{/blog}">Blog</a></li>
+                        <li><a th:href="@{/reviews}">Reviews</a></li>
+                        <li><a th:href="@{/search}">Search</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Categories</h4>
+                    <ul class="footer-links">
+                        <li><a th:href="@{/blog(tag='GPS')}">GPS Trackers</a></li>
+                        <li><a th:href="@{/blog(tag='dogs')}">Dog Trackers</a></li>
+                        <li><a th:href="@{/blog(tag='cats')}">Cat Trackers</a></li>
+                        <li><a th:href="@{/blog(tag='buying guide')}">Buying Guides</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a th:href="@{/affiliate-disclosure}">Affiliate Disclosure</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Pet Tracker Review. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="cookie-banner" style="display: none;">
+        <div class="cookie-banner-content">
+            <div class="cookie-banner-text">
+                <h4>Cookie Settings</h4>
+                <p>We use cookies to improve your browsing experience, provide personalized content, and analyze our traffic. You can choose to accept all cookies or customize your preferences.</p>
+            </div>
+            <div class="cookie-banner-actions">
+                <button id="accept-all-cookies" class="btn btn-primary">Accept All</button>
+                <button id="manage-cookies" class="btn btn-secondary">Manage Preferences</button>
+                <button id="reject-all-cookies" class="btn btn-outline">Reject All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Settings Modal -->
+    <div id="cookie-settings-modal" class="cookie-modal" style="display: none;">
+        <div class="cookie-modal-content">
+            <div class="cookie-modal-header">
+                <h3>Cookie Preference Settings</h3>
+                <button id="close-cookie-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="cookie-modal-body">
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <label class="cookie-switch">
+                            <input type="checkbox" id="necessary-cookies" checked disabled>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="cookie-category-info">
+                            <h4>Necessary Cookies</h4>
+                            <p>These cookies are essential for the basic functionality of the website and cannot be disabled.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <label class="cookie-switch">
+                            <input type="checkbox" id="analytics-cookies" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="cookie-category-info">
+                            <h4>Analytics Cookies (Required for GA4)</h4>
+                            <p>These cookies help us understand how visitors interact with our website using Google Analytics 4. This is required for our site analytics and cannot be disabled.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <label class="cookie-switch">
+                            <input type="checkbox" id="marketing-cookies">
+                            <span class="slider"></span>
+                        </label>
+                        <div class="cookie-category-info">
+                            <h4>Marketing Cookies</h4>
+                            <p>These cookies track visitors across websites to provide relevant advertising content and measure campaign effectiveness.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <label class="cookie-switch">
+                            <input type="checkbox" id="preferences-cookies">
+                            <span class="slider"></span>
+                        </label>
+                        <div class="cookie-category-info">
+                            <h4>Preference Cookies</h4>
+                            <p>These cookies allow the website to remember choices that change the way the website behaves or looks.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cookie-modal-footer">
+                <button id="save-cookie-preferences" class="btn btn-primary">Save Preferences</button>
+                <button id="accept-all-modal" class="btn btn-secondary">Accept All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Settings Link (Fixed Position) -->
+    <div id="cookie-settings-link" class="cookie-settings-floating">
+        <button id="open-cookie-settings" class="cookie-settings-btn" title="Cookie Settings">
+            <i class="fas fa-cookie-bite"></i>
+        </button>
+    </div>
+
+    <!-- JavaScript -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
