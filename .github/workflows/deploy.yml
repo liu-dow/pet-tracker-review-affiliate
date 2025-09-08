@@ -1,4 +1,4 @@
-name: CI/CD - Build and Deploy JAR
+name: CI/CD - Build and Deploy p JAR
 
 on:
   push:
