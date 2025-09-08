@@ -1,114 +1,106 @@
-name: Deploy to AWS EC2
+name: CI/CD - Build and Deploy JAR
 
 on:
   push:
-    branches: [ main, master ]
-  workflow_dispatch:
+    branches:
+      - main  # Listen for pushes to main branch
 
 jobs:
+  build:
+    name: Build JAR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pet-tracker-review-app
+          path: target/*.jar
+
   deploy:
     runs-on: ubuntu-latest
-    
+    needs: build
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Set up JDK 8
-      uses: actions/setup-java@v4
-      with:
-        java-version: '8'
-        distribution: 'adopt'
-    
-    - name: Build with Maven
-      run: mvn clean package -DskipTests
-    
-    - name: Verify JAR file
-      run: |
-        ls -la target/
-        echo "JAR file created:"
-        ls target/*.jar
-    
-    - name: Prepare EC2 Environment
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USERNAME }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          set +e  # Don't exit on errors, handle them manually
-          
-          # Create application directory
-          sudo mkdir -p /home/project/affiliate
-          sudo chown ubuntu:ubuntu /home/project/affiliate
-          sudo chmod 755 /home/project/affiliate
-          
-          cd /home/project/affiliate
-          
-          # Create necessary subdirectories
-          mkdir -p logs uploads/images uploads/metadata
-          
-          # Stop existing application
-          if pgrep -f "pet-tracker-review" > /dev/null; then
-            echo "Stopping existing application..."
-            pkill -f "pet-tracker-review" || true
-            sleep 5
-            echo "Previous application stopped"
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+
+      - name: Build JAR
+        run: mvn clean package -DskipTests
+
+      - name: Check JAR file before SCP
+        run: |
+          if [ -f target/*.jar ]; then
+            echo "JAR file found, proceeding with SCP."
+            ls -la target/*.jar
           else
-            echo "No existing application running"
-          fi
-          
-          echo "Environment prepared"
-    
-    - name: Upload JAR file
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USERNAME }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        source: "target/pet-tracker-review-*.jar"
-        target: "/home/project/affiliate/"
-        strip_components: 1
-    
-    - name: Start Application
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USERNAME }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          set +e  # Don't exit on errors initially
-          
-          cd /home/project/affiliate
-          
-          # Backup old version if exists
-          if [ -f pet-tracker-review.jar ]; then
-            mv pet-tracker-review.jar pet-tracker-review-backup.jar
-          fi
-          
-          # Rename new JAR
-          mv pet-tracker-review-*.jar pet-tracker-review.jar
-          
-          # Set permissions
-          chmod 644 pet-tracker-review.jar
-          
-          # Start application
-          echo "Starting Pet Tracker Review application..."
-          nohup java -jar pet-tracker-review.jar \
-            --spring.profiles.active=prod \
-            --server.port=8089 \
-            > logs/app.log 2>&1 &
-          
-          # Check if started
-          sleep 8
-          if pgrep -f "pet-tracker-review" > /dev/null; then
-            PID=$(pgrep -f "pet-tracker-review")
-            echo "✅ Application started successfully! PID: $PID"
-            echo "🌐 Application is running on port 8089"
-            echo "🚀 Deployment completed!"
-            exit 0
-          else
-            echo "❌ Application failed to start"
-            echo "Log output:"
-            tail -20 logs/app.log 2>/dev/null || echo "No log file found"
+            echo "JAR file not found! Build might have failed."
             exit 1
           fi
+
+      - name: Remove old JAR file on remote server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            if [ -f /home/project/affiliate/pet-tracker-review-1.0.0.jar ]; then
+              echo "Removing old JAR file..."
+              sudo rm /home/project/affiliate/pet-tracker-review-1.0.0.jar
+            fi
+            # Create directory if not exists
+            sudo mkdir -p /home/project/affiliate
+            sudo chown ${{ secrets.SERVER_USER }}:${{ secrets.SERVER_USER }} /home/project/affiliate
+
+      - name: Deploy to Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "target/*.jar"
+          target: "/home/project/affiliate"
+
+      - name: Restart Application
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /home/project/affiliate
+            echo "Stopping old application..."
+            # Stop existing Java process
+            pkill -f "pet-tracker-review" || true
+            sleep 5
+            
+            echo "Starting new application..."
+            nohup java -jar target/pet-tracker-review-1.0.0.jar --server.port=8089 --spring.profiles.active=prod > app.log 2>&1 &
+            
+            echo "Deployment finished!"
+            # Wait and check if application started
+            sleep 10
+            if pgrep -f "pet-tracker-review" > /dev/null; then
+              echo "Application started successfully!"
+            else
+              echo "Application failed to start, check app.log"
+              tail -20 app.log
+            fi
