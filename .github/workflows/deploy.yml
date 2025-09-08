@@ -35,6 +35,8 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
+          set +e  # Don't exit on errors, handle them manually
+          
           # Create application directory
           sudo mkdir -p /home/project/affiliate
           sudo chown ubuntu:ubuntu /home/project/affiliate
@@ -48,8 +50,11 @@ jobs:
           # Stop existing application
           if pgrep -f "pet-tracker-review" > /dev/null; then
             echo "Stopping existing application..."
-            pkill -f "pet-tracker-review"
+            pkill -f "pet-tracker-review" || true
             sleep 5
+            echo "Previous application stopped"
+          else
+            echo "No existing application running"
           fi
           
           echo "Environment prepared"
@@ -71,6 +76,8 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
+          set +e  # Don't exit on errors initially
+          
           cd /home/project/affiliate
           
           # Backup old version if exists
@@ -94,13 +101,14 @@ jobs:
           # Check if started
           sleep 8
           if pgrep -f "pet-tracker-review" > /dev/null; then
-            echo "✅ Application started successfully!"
+            PID=$(pgrep -f "pet-tracker-review")
+            echo "✅ Application started successfully! PID: $PID"
             echo "🌐 Application is running on port 8089"
+            echo "🚀 Deployment completed!"
+            exit 0
           else
             echo "❌ Application failed to start"
             echo "Log output:"
-            tail -20 logs/app.log
+            tail -20 logs/app.log 2>/dev/null || echo "No log file found"
             exit 1
           fi
-          
-          echo "🚀 Deployment completed!"
