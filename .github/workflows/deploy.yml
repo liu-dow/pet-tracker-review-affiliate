@@ -1,4 +1,4 @@
-name: Deploy to AWS  EC2　　
+name: Deploy to AWS EC2
 
 on:
   push:
@@ -19,166 +19,88 @@ jobs:
         java-version: '8'
         distribution: 'adopt'
     
-    - name: Cache Maven dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-    
     - name: Build with Maven
-      run: mvn clean package -DskipTests -Pprod
+      run: mvn clean package -DskipTests
     
     - name: Verify JAR file
       run: |
         ls -la target/
-        echo "JAR file size:"
-        du -h target/*.jar
+        echo "JAR file created:"
+        ls target/*.jar
     
-    - name: Deploy JAR to EC2
+    - name: Prepare EC2 Environment
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          # Ensure deployment directory exists and has correct permissions
+          # Create application directory
           sudo mkdir -p /home/project/affiliate
-          sudo chown -R ubuntu:ubuntu /home/project/affiliate
-          sudo chmod -R 755 /home/project/affiliate
+          sudo chown ubuntu:ubuntu /home/project/affiliate
+          sudo chmod 755 /home/project/affiliate
           
           cd /home/project/affiliate
           
-          # Create necessary directories if they don't exist
+          # Create necessary subdirectories
           mkdir -p logs uploads/images uploads/metadata
           
-          # Download JAR file directly from the runner
-          echo "Preparing to receive JAR file..."
-          
-    - name: Upload JAR using rsync
-      run: |
-        # Install rsync if not available
-        sudo apt-get update && sudo apt-get install -y rsync
-        
-        # Prepare SSH key
-        mkdir -p ~/.ssh
-        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/deploy_key
-        chmod 600 ~/.ssh/deploy_key
-        
-        # Find the JAR file
-        JAR_FILE=$(find target -name "*.jar" -type f | head -1)
-        echo "Found JAR file: $JAR_FILE"
-        
-        # Upload using rsync
-        rsync -avz -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
-          "$JAR_FILE" \
-          ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/tmp/
-        
-        # Clean up SSH key
-        rm ~/.ssh/deploy_key
-    
-    - name: Deploy on EC2
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USERNAME }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          # Ensure deployment directory exists and has correct permissions
-          sudo mkdir -p /home/project/affiliate
-          sudo chown -R ubuntu:ubuntu /home/project/affiliate
-          sudo chmod -R 755 /home/project/affiliate
-          
-          cd /home/project/affiliate
-          
-          # Create necessary directories if they don't exist
-          mkdir -p logs uploads/images uploads/metadata
-          
-          # Stop existing application gracefully
+          # Stop existing application
           if pgrep -f "pet-tracker-review" > /dev/null; then
             echo "Stopping existing application..."
-            pkill -TERM -f "pet-tracker-review"
-            
-            # Wait for graceful shutdown
-            sleep 10
-            
-            # Force kill if still running
-            if pgrep -f "pet-tracker-review" > /dev/null; then
-              echo "Force stopping application..."
-              pkill -KILL -f "pet-tracker-review"
-            fi
+            pkill -f "pet-tracker-review"
+            sleep 5
           fi
           
-          # Backup old JAR if exists
+          echo "Environment prepared"
+    
+    - name: Upload JAR file
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: "target/pet-tracker-review-*.jar"
+        target: "/home/project/affiliate/"
+        strip_components: 1
+    
+    - name: Start Application
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd /home/project/affiliate
+          
+          # Backup old version if exists
           if [ -f pet-tracker-review.jar ]; then
-            mv pet-tracker-review.jar pet-tracker-review-backup-$(date +%Y%m%d_%H%M%S).jar
-            echo "✅ Old JAR backed up"
+            mv pet-tracker-review.jar pet-tracker-review-backup.jar
           fi
           
-          # Move JAR from /tmp to working directory
-          JAR_NAME=$(ls /tmp/pet-tracker-review-*.jar 2>/dev/null | head -1)
-          if [ -n "$JAR_NAME" ]; then
-            sudo mv "$JAR_NAME" ./pet-tracker-review.jar
-            sudo chown ubuntu:ubuntu pet-tracker-review.jar
-            sudo chmod 644 pet-tracker-review.jar
-            echo "✅ JAR file moved: $(basename "$JAR_NAME") -> pet-tracker-review.jar"
-          else
-            echo "❌ No JAR file found in /tmp!"
-            echo "Files in /tmp:"
-            ls -la /tmp/pet-tracker-review-* 2>/dev/null || echo "No matching files"
-            ls -la /tmp/*.jar 2>/dev/null || echo "No JAR files in /tmp"
-            exit 1
-          fi
+          # Rename new JAR
+          mv pet-tracker-review-*.jar pet-tracker-review.jar
           
-          # Verify JAR file
-          if [ ! -f pet-tracker-review.jar ]; then
-            echo "❌ JAR file not found after move!"
-            exit 1
-          fi
+          # Set permissions
+          chmod 644 pet-tracker-review.jar
           
-          # Check Java version
-          echo "Java version:"
-          java -version
-          
-          # Start new application with proper configuration
-          echo "Starting new application on port 8089..."
+          # Start application
+          echo "Starting Pet Tracker Review application..."
           nohup java -jar pet-tracker-review.jar \
             --spring.profiles.active=prod \
             --server.port=8089 \
-            --logging.file.name=logs/application.log \
             > logs/app.log 2>&1 &
           
-          # Get process ID
-          sleep 3
-          PID=$(pgrep -f "pet-tracker-review")
-          
-          if [ -n "$PID" ]; then
-            echo "✅ Application started successfully with PID: $PID"
-            echo $PID > pet-tracker-review.pid
+          # Check if started
+          sleep 8
+          if pgrep -f "pet-tracker-review" > /dev/null; then
+            echo "✅ Application started successfully!"
+            echo "🌐 Application is running on port 8089"
           else
             echo "❌ Application failed to start"
-            echo "Last 20 lines of log:"
-            tail -20 logs/app.log 2>/dev/null || echo "No log file found"
+            echo "Log output:"
+            tail -20 logs/app.log
             exit 1
           fi
           
-          # Wait for application to fully start
-          echo "Waiting for application to start..."
-          sleep 10
-          
-          # Test application endpoint
-          if curl -f http://localhost:8089/actuator/health > /dev/null 2>&1; then
-            echo "✅ Health check passed"
-          elif curl -f http://localhost:8089/ > /dev/null 2>&1; then
-            echo "✅ Application responding on port 8089"
-          else
-            echo "⚠️  Health check failed, but process is running"
-            echo "Application logs:"
-            tail -10 logs/app.log 2>/dev/null || echo "No recent logs"
-          fi
-          
-          # Clean up old backup files (keep only last 3)
-          ls -t pet-tracker-review-backup-*.jar 2>/dev/null | tail -n +4 | xargs -r rm
-          
-          echo "🚀 Deployment completed successfully!"
-          echo "Application should be accessible on port 8089"
+          echo "🚀 Deployment completed!"
