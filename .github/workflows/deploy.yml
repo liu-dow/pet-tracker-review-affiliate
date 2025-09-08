@@ -61,14 +61,57 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          timeout: 60s
+          command_timeout: 120s
           script: |
-            if [ -f /home/project/affiliate/pet-tracker-review-1.0.0.jar ]; then
-              echo "Removing old JAR file..."
-              sudo rm /home/project/affiliate/pet-tracker-review-1.0.0.jar
-            fi
+            set +e  # Don't exit on errors
+            echo "🔍 Starting cleanup process..."
+            
+            # Check current directory
+            echo "📁 Current directory: $(pwd)"
+            
             # Create directory if not exists
+            echo "📂 Creating project directory..."
             sudo mkdir -p /home/project/affiliate
             sudo chown ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} /home/project/affiliate
+            
+            # Change to project directory
+            cd /home/project/affiliate
+            echo "📁 Working directory: $(pwd)"
+            
+            # Stop existing application gracefully
+            echo "🛑 Stopping existing application..."
+            if pgrep -f "pet-tracker-review" > /dev/null; then
+              echo "Found running application, stopping it..."
+              pkill -f "pet-tracker-review" || true
+              sleep 3
+              
+              # Force kill if still running
+              if pgrep -f "pet-tracker-review" > /dev/null; then
+                echo "Force killing remaining processes..."
+                pkill -9 -f "pet-tracker-review" || true
+                sleep 2
+              fi
+            else
+              echo "No existing application found"
+            fi
+            
+            # Remove old JAR file
+            if [ -f pet-tracker-review-1.0.0.jar ]; then
+              echo "🗑️ Removing old JAR file..."
+              rm -f pet-tracker-review-1.0.0.jar
+              echo "✅ Old JAR file removed"
+            else
+              echo "ℹ️ No old JAR file found"
+            fi
+            
+            # Clean up old target directory if exists
+            if [ -d target ]; then
+              echo "🧹 Cleaning old target directory..."
+              rm -rf target
+            fi
+            
+            echo "✅ Cleanup completed"
 
       - name: Deploy to Server
         uses: appleboy/scp-action@master
@@ -78,6 +121,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "target/*.jar"
           target: "/home/project/affiliate"
+          timeout: 120s
 
       - name: Restart Application
         uses: appleboy/ssh-action@master
@@ -85,22 +129,73 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          timeout: 60s
+          command_timeout: 120s
           script: |
+            set +e  # Don't exit on errors
+            
             cd /home/project/affiliate
-            echo "Stopping old application..."
-            # Stop existing Java process
-            pkill -f "pet-tracker-review" || true
-            sleep 5
+            echo "📁 Current directory: $(pwd)"
             
-            echo "Starting new application..."
-            nohup java -jar target/pet-tracker-review-1.0.0.jar --server.port=8089 --spring.profiles.active=prod > app.log 2>&1 &
+            # Verify JAR file was uploaded
+            echo "🔍 Checking uploaded files..."
+            ls -la
             
-            echo "Deployment finished!"
-            # Wait and check if application started
-            sleep 10
-            if pgrep -f "pet-tracker-review" > /dev/null; then
-              echo "Application started successfully!"
+            if [ -f target/pet-tracker-review-1.0.0.jar ]; then
+              echo "✅ JAR file found in target directory"
+              
+              # Move JAR to root directory for easier access
+              echo "📦 Moving JAR file..."
+              cp target/pet-tracker-review-1.0.0.jar ./pet-tracker-review.jar
+              chmod 644 pet-tracker-review.jar
+              
             else
-              echo "Application failed to start, check app.log"
-              tail -20 app.log
+              echo "❌ JAR file not found!"
+              echo "Files in current directory:"
+              ls -la
+              echo "Files in target directory:"
+              ls -la target/ || echo "Target directory not found"
+              exit 1
+            fi
+            
+            # Check Java installation
+            echo "☕ Checking Java installation..."
+            java -version || {
+              echo "❌ Java not found!"
+              exit 1
+            }
+            
+            # Start application
+            echo "🚀 Starting Pet Tracker Review application..."
+            nohup java -jar pet-tracker-review.jar \
+              --spring.profiles.active=prod \
+              --server.port=8089 \
+              > app.log 2>&1 &
+            
+            # Get the PID
+            APP_PID=$!
+            echo "Application started with PID: $APP_PID"
+            
+            # Wait for startup
+            echo "⏳ Waiting for application to start..."
+            sleep 15
+            
+            # Check if application is still running
+            if kill -0 "$APP_PID" 2>/dev/null; then
+              echo "✅ Application is running with PID: $APP_PID"
+              
+              # Check if port is listening
+              if netstat -tuln | grep :8089 > /dev/null 2>&1; then
+                echo "✅ Port 8089 is listening"
+                echo "🌐 Application is accessible on port 8089"
+              else
+                echo "⚠️ Port 8089 not yet listening, but process is running"
+              fi
+              
+              echo "🚀 Deployment completed successfully!"
+            else
+              echo "❌ Application failed to start or crashed"
+              echo "📄 Recent log output:"
+              tail -20 app.log 2>/dev/null || echo "No log file found"
+              exit 1
             fi
