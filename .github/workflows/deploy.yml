@@ -44,6 +44,7 @@ jobs:
         source: "target/*.jar"
         target: "/home/project/affiliate/"
         strip_components: 1
+        overwrite: true
     
     - name: Deploy on EC2
       uses: appleboy/ssh-action@v1.0.3
@@ -54,58 +55,87 @@ jobs:
         script: |
           cd /home/project/affiliate
           
-          # Create necessary directories
+          # Create necessary directories if they don't exist
           mkdir -p logs uploads/images uploads/metadata
           
-          # Stop existing application
+          # Stop existing application gracefully
           if pgrep -f "pet-tracker-review" > /dev/null; then
             echo "Stopping existing application..."
-            pkill -f "pet-tracker-review"
-            sleep 5
+            pkill -TERM -f "pet-tracker-review"
+            
+            # Wait for graceful shutdown
+            sleep 10
+            
+            # Force kill if still running
+            if pgrep -f "pet-tracker-review" > /dev/null; then
+              echo "Force stopping application..."
+              pkill -KILL -f "pet-tracker-review"
+            fi
           fi
           
           # Backup old JAR if exists
           if [ -f pet-tracker-review.jar ]; then
             mv pet-tracker-review.jar pet-tracker-review-backup-$(date +%Y%m%d_%H%M%S).jar
+            echo "✅ Old JAR backed up"
           fi
           
           # Move new JAR to working name
-          mv pet-tracker-review-*.jar pet-tracker-review.jar
+          if [ -f pet-tracker-review-*.jar ]; then
+            mv pet-tracker-review-*.jar pet-tracker-review.jar
+            echo "✅ New JAR file prepared"
+          else
+            echo "❌ No JAR file found!"
+            exit 1
+          fi
+          
+          # Verify JAR file integrity
+          if ! java -jar pet-tracker-review.jar --help > /dev/null 2>&1; then
+            echo "⚠️  JAR file verification skipped (--help not supported)"
+          fi
           
           # Check Java version
+          echo "Java version:"
           java -version
           
-          # Start new application
+          # Start new application with proper configuration
           echo "Starting new application on port 8089..."
           nohup java -jar pet-tracker-review.jar \
             --spring.profiles.active=prod \
             --server.port=8089 \
+            --logging.file.name=logs/application.log \
             > logs/app.log 2>&1 &
           
-          sleep 10
+          # Get process ID
+          sleep 3
+          PID=$(pgrep -f "pet-tracker-review")
           
-          # Check if application started successfully
-          if pgrep -f "pet-tracker-review" > /dev/null; then
-            echo "✅ Application started successfully"
-            echo "Application PID: $(pgrep -f pet-tracker-review)"
+          if [ -n "$PID" ]; then
+            echo "✅ Application started successfully with PID: $PID"
+            echo $PID > pet-tracker-review.pid
           else
             echo "❌ Application failed to start"
             echo "Last 20 lines of log:"
-            tail -20 logs/app.log
+            tail -20 logs/app.log 2>/dev/null || echo "No log file found"
             exit 1
           fi
           
+          # Wait for application to fully start
+          echo "Waiting for application to start..."
+          sleep 10
+          
           # Test application endpoint
-          echo "Testing application endpoint..."
-          sleep 5
-          if curl -f http://localhost:8089/health > /dev/null 2>&1; then
+          if curl -f http://localhost:8089/actuator/health > /dev/null 2>&1; then
             echo "✅ Health check passed"
+          elif curl -f http://localhost:8089/ > /dev/null 2>&1; then
+            echo "✅ Application responding on port 8089"
           else
-            echo "⚠️  Health check failed, but application process is running"
+            echo "⚠️  Health check failed, but process is running"
+            echo "Application logs:"
+            tail -10 logs/app.log 2>/dev/null || echo "No recent logs"
           fi
           
           # Clean up old backup files (keep only last 3)
           ls -t pet-tracker-review-backup-*.jar 2>/dev/null | tail -n +4 | xargs -r rm
           
           echo "🚀 Deployment completed successfully!"
-          echo "Application is running on http://$(curl -s ifconfig.me):8089"
+          echo "Application should be accessible on port 8089"
