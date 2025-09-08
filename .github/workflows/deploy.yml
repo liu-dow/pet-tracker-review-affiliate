@@ -35,16 +35,47 @@ jobs:
         echo "JAR file size:"
         du -h target/*.jar
     
-    - name: Upload JAR to EC2
-      uses: appleboy/scp-action@v0.1.7
+    - name: Deploy JAR to EC2
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        source: "target/*.jar"
-        target: "/home/project/affiliate/"
-        strip_components: 1
-        overwrite: true
+        script: |
+          # Ensure deployment directory exists and has correct permissions
+          sudo mkdir -p /home/project/affiliate
+          sudo chown -R ubuntu:ubuntu /home/project/affiliate
+          sudo chmod -R 755 /home/project/affiliate
+          
+          cd /home/project/affiliate
+          
+          # Create necessary directories if they don't exist
+          mkdir -p logs uploads/images uploads/metadata
+          
+          # Download JAR file directly from the runner
+          echo "Preparing to receive JAR file..."
+          
+    - name: Upload JAR using rsync
+      run: |
+        # Install rsync if not available
+        sudo apt-get update && sudo apt-get install -y rsync
+        
+        # Prepare SSH key
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/deploy_key
+        chmod 600 ~/.ssh/deploy_key
+        
+        # Find the JAR file
+        JAR_FILE=$(find target -name "*.jar" -type f | head -1)
+        echo "Found JAR file: $JAR_FILE"
+        
+        # Upload using rsync
+        rsync -avz -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+          "$JAR_FILE" \
+          ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/tmp/
+        
+        # Clean up SSH key
+        rm ~/.ssh/deploy_key
     
     - name: Deploy on EC2
       uses: appleboy/ssh-action@v1.0.3
@@ -53,6 +84,11 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
+          # Ensure deployment directory exists and has correct permissions
+          sudo mkdir -p /home/project/affiliate
+          sudo chown -R ubuntu:ubuntu /home/project/affiliate
+          sudo chmod -R 755 /home/project/affiliate
+          
           cd /home/project/affiliate
           
           # Create necessary directories if they don't exist
@@ -79,18 +115,25 @@ jobs:
             echo "✅ Old JAR backed up"
           fi
           
-          # Move new JAR to working name
-          if [ -f pet-tracker-review-*.jar ]; then
-            mv pet-tracker-review-*.jar pet-tracker-review.jar
-            echo "✅ New JAR file prepared"
+          # Move JAR from /tmp to working directory
+          JAR_NAME=$(ls /tmp/pet-tracker-review-*.jar 2>/dev/null | head -1)
+          if [ -n "$JAR_NAME" ]; then
+            sudo mv "$JAR_NAME" ./pet-tracker-review.jar
+            sudo chown ubuntu:ubuntu pet-tracker-review.jar
+            sudo chmod 644 pet-tracker-review.jar
+            echo "✅ JAR file moved: $(basename "$JAR_NAME") -> pet-tracker-review.jar"
           else
-            echo "❌ No JAR file found!"
+            echo "❌ No JAR file found in /tmp!"
+            echo "Files in /tmp:"
+            ls -la /tmp/pet-tracker-review-* 2>/dev/null || echo "No matching files"
+            ls -la /tmp/*.jar 2>/dev/null || echo "No JAR files in /tmp"
             exit 1
           fi
           
-          # Verify JAR file integrity
-          if ! java -jar pet-tracker-review.jar --help > /dev/null 2>&1; then
-            echo "⚠️  JAR file verification skipped (--help not supported)"
+          # Verify JAR file
+          if [ ! -f pet-tracker-review.jar ]; then
+            echo "❌ JAR file not found after move!"
+            exit 1
           fi
           
           # Check Java version
