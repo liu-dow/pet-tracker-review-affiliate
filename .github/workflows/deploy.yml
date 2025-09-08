@@ -1,0 +1,111 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up JDK 8
+      uses: actions/setup-java@v4
+      with:
+        java-version: '8'
+        distribution: 'adopt'
+    
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+    
+    - name: Build with Maven
+      run: mvn clean package -DskipTests -Pprod
+    
+    - name: Verify JAR file
+      run: |
+        ls -la target/
+        echo "JAR file size:"
+        du -h target/*.jar
+    
+    - name: Upload JAR to EC2
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: "target/*.jar"
+        target: "/home/project/affiliate/"
+        strip_components: 1
+    
+    - name: Deploy on EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd /home/project/affiliate
+          
+          # Create necessary directories
+          mkdir -p logs uploads/images uploads/metadata
+          
+          # Stop existing application
+          if pgrep -f "pet-tracker-review" > /dev/null; then
+            echo "Stopping existing application..."
+            pkill -f "pet-tracker-review"
+            sleep 5
+          fi
+          
+          # Backup old JAR if exists
+          if [ -f pet-tracker-review.jar ]; then
+            mv pet-tracker-review.jar pet-tracker-review-backup-$(date +%Y%m%d_%H%M%S).jar
+          fi
+          
+          # Move new JAR to working name
+          mv pet-tracker-review-*.jar pet-tracker-review.jar
+          
+          # Check Java version
+          java -version
+          
+          # Start new application
+          echo "Starting new application on port 8089..."
+          nohup java -jar pet-tracker-review.jar \
+            --spring.profiles.active=prod \
+            --server.port=8089 \
+            > logs/app.log 2>&1 &
+          
+          sleep 10
+          
+          # Check if application started successfully
+          if pgrep -f "pet-tracker-review" > /dev/null; then
+            echo "✅ Application started successfully"
+            echo "Application PID: $(pgrep -f pet-tracker-review)"
+          else
+            echo "❌ Application failed to start"
+            echo "Last 20 lines of log:"
+            tail -20 logs/app.log
+            exit 1
+          fi
+          
+          # Test application endpoint
+          echo "Testing application endpoint..."
+          sleep 5
+          if curl -f http://localhost:8089/health > /dev/null 2>&1; then
+            echo "✅ Health check passed"
+          else
+            echo "⚠️  Health check failed, but application process is running"
+          fi
+          
+          # Clean up old backup files (keep only last 3)
+          ls -t pet-tracker-review-backup-*.jar 2>/dev/null | tail -n +4 | xargs -r rm
+          
+          echo "🚀 Deployment completed successfully!"
+          echo "Application is running on http://$(curl -s ifconfig.me):8089"
