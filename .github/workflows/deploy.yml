@@ -1,9 +1,9 @@
-name: CI/CD - Build and Deploy p JAR
+name: CI/CD - Build and Deploy JAR
 
 on:
   push:
     branches:
-      - main  # Listen for pushes to main branch
+      - master  # Listen for pushes to master branch
 
 jobs:
   build:
