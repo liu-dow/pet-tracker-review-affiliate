@@ -79,17 +79,25 @@ jobs:
             echo "🛑 Stopping existing application..."
             if pgrep -f "pet-tracker-review" > /dev/null; then
               echo "Found running application, stopping it..."
-              pkill -f "pet-tracker-review" || true
-              sleep 3
               
-              # Force kill if still running
+              # Get PIDs before killing
+              PIDS=$(pgrep -f "pet-tracker-review")
+              echo "Found PIDs: $PIDS"
+              
+              # Kill processes gracefully
+              pkill -TERM -f "pet-tracker-review" || echo "No processes to terminate"
+              sleep 5
+              
+              # Check if any processes are still running
               if pgrep -f "pet-tracker-review" > /dev/null; then
-                echo "Force killing remaining processes..."
-                pkill -9 -f "pet-tracker-review" || true
+                echo "Some processes still running, force killing..."
+                pkill -9 -f "pet-tracker-review" || echo "No processes to force kill"
                 sleep 2
               fi
+              
+              echo "✅ Application stopped successfully"
             else
-              echo "No existing application found"
+              echo "ℹ️ No existing application found"
             fi
             
             # Remove old JAR files
@@ -156,6 +164,11 @@ jobs:
             
             # Start application
             echo "🚀 Starting Pet Tracker Review application..."
+            
+            # Clean up old log file
+            rm -f app.log || true
+            
+            # Start application in background
             nohup java -jar pet-tracker-review.jar \
               --spring.profiles.active=prod \
               --server.port=8089 \
@@ -165,23 +178,35 @@ jobs:
             APP_PID=$!
             echo "Application started with PID: $APP_PID"
             
+            # Save PID for future reference
+            echo $APP_PID > app.pid
+            
             # Wait for startup
             echo "⏳ Waiting for application to start..."
             sleep 15
             
             # Check if application is still running
-            if kill -0 "$APP_PID" 2>/dev/null; then
+            if ps -p "$APP_PID" > /dev/null 2>&1; then
               echo "✅ Application is running with PID: $APP_PID"
               
-              # Check if port is listening
-              if netstat -tuln | grep :8089 > /dev/null 2>&1; then
-                echo "✅ Port 8089 is listening"
-                echo "🌐 Application is accessible on port 8089"
-              else
-                echo "⚠️ Port 8089 not yet listening, but process is running"
-              fi
+              # Check if port is listening (with retry)
+              for i in {1..6}; do
+                if netstat -tuln | grep :8089 > /dev/null 2>&1; then
+                  echo "✅ Port 8089 is listening"
+                  echo "🌐 Application is accessible on port 8089"
+                  echo "🚀 Deployment completed successfully!"
+                  exit 0
+                else
+                  echo "⏳ Waiting for port 8089... (attempt $i/6)"
+                  sleep 5
+                fi
+              done
               
-              echo "🚀 Deployment completed successfully!"
+              echo "⚠️ Port 8089 not listening, but process is running"
+              echo "📄 Recent log output:"
+              tail -20 app.log 2>/dev/null || echo "No log file found"
+              echo "🚀 Deployment completed (process running, check logs for port status)"
+              
             else
               echo "❌ Application failed to start or crashed"
               echo "📄 Recent log output:"
