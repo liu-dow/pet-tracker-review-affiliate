@@ -3,7 +3,7 @@ name: CI/CD - Build and Deploy JAR
 on:
   push:
     branches:
-      - master  # Listen for pushes to master branch111
+      - master  # Listen for pushes to master branch
 
 jobs:
   build:
