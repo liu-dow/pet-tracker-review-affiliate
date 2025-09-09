@@ -51,7 +51,7 @@ jobs:
             exit 1
           fi
 
-      - name: Remove old JAR file on remote server
+      - name: Backup and Deploy JAR
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -61,13 +61,9 @@ jobs:
           command_timeout: 120s
           script: |
             set +e  # Don't exit on errors
-            echo "🔍 Starting cleanup process..."
-            
-            # Check current directory
-            echo "📁 Current directory: $(pwd)"
+            echo "🔍 Starting backup and cleanup process..."
             
             # Create directory if not exists
-            echo "📂 Creating project directory..."
             sudo mkdir -p /home/project/affiliate
             sudo chown ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} /home/project/affiliate
             
@@ -75,40 +71,18 @@ jobs:
             cd /home/project/affiliate
             echo "📁 Working directory: $(pwd)"
             
-            # Stop existing application gracefully
-            echo "🛑 Stopping existing application..."
-            if pgrep -f "pet-tracker-review" > /dev/null; then
-              echo "Found running application, stopping it..."
-              
-              # Get PIDs before killing
-              PIDS=$(pgrep -f "pet-tracker-review")
-              echo "Found PIDs: $PIDS"
-              
-              # Kill processes gracefully
-              pkill -TERM -f "pet-tracker-review" || echo "No processes to terminate"
-              sleep 5
-              
-              # Check if any processes are still running
-              if pgrep -f "pet-tracker-review" > /dev/null; then
-                echo "Some processes still running, force killing..."
-                pkill -9 -f "pet-tracker-review" || echo "No processes to force kill"
-                sleep 2
-              fi
-              
-              echo "✅ Application stopped successfully"
-            else
-              echo "ℹ️ No existing application found"
+            # Backup existing JAR files
+            if [ -f pet-tracker-review.jar ]; then
+              echo "💾 Backing up existing JAR file..."
+              cp pet-tracker-review.jar pet-tracker-review.jar.backup.$(date +%Y%m%d_%H%M%S)
+              echo "✅ Backup completed"
             fi
             
-            # Remove old JAR files
-            echo "🗑️ Removing old JAR files..."
-            rm -f *.jar || true
+            # Clean up target directory
             rm -rf target || true
-            echo "✅ Old JAR files removed"
-            
-            echo "✅ Cleanup completed"
+            echo "✅ Ready for new deployment"
 
-      - name: Deploy to Server
+      - name: Upload JAR to Server
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -118,98 +92,25 @@ jobs:
           target: "/home/project/affiliate"
           timeout: 120s
 
-      - name: Restart Application
+      - name: Setup JAR file
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          timeout: 60s
-          command_timeout: 120s
+          timeout: 30s
           script: |
-            set +e  # Don't exit on errors
-            
             cd /home/project/affiliate
-            echo "📁 Current directory: $(pwd)"
             
-            # Verify JAR file was uploaded
-            echo "🔍 Checking uploaded files..."
-            ls -la
-            ls -la target/ || echo "Target directory not found"
-            
-            # Find and rename the uploaded JAR file
+            # Find and setup the uploaded JAR file
             JAR_FILE=$(find target/ -name "*.jar" -type f | head -n 1)
             if [ -n "$JAR_FILE" ] && [ -f "$JAR_FILE" ]; then
-              echo "✅ JAR file found: $JAR_FILE"
-              
-              # Copy JAR to standard name for easier management
-              echo "📦 Setting up JAR file..."
+              echo "✅ JAR file uploaded: $JAR_FILE"
               cp "$JAR_FILE" ./pet-tracker-review.jar
               chmod 644 pet-tracker-review.jar
-              echo "✅ JAR file ready: pet-tracker-review.jar"
-              
+              echo "📦 JAR file ready: pet-tracker-review.jar"
+              echo "🚀 Upload completed successfully!"
             else
-              echo "❌ No JAR file found in target directory!"
-              echo "Files in target directory:"
-              ls -la target/ || echo "Target directory not found"
-              exit 1
-            fi
-            
-            # Check Java installation
-            echo "☕ Checking Java installation..."
-            java -version || {
-              echo "❌ Java not found!"
-              exit 1
-            }
-            
-            # Start application
-            echo "🚀 Starting Pet Tracker Review application..."
-            
-            # Clean up old log file
-            rm -f app.log || true
-            
-            # Start application in background
-            nohup java -jar pet-tracker-review.jar \
-              --spring.profiles.active=prod \
-              --server.port=8089 \
-              > app.log 2>&1 &
-            
-            # Get the PID
-            APP_PID=$!
-            echo "Application started with PID: $APP_PID"
-            
-            # Save PID for future reference
-            echo $APP_PID > app.pid
-            
-            # Wait for startup
-            echo "⏳ Waiting for application to start..."
-            sleep 15
-            
-            # Check if application is still running
-            if ps -p "$APP_PID" > /dev/null 2>&1; then
-              echo "✅ Application is running with PID: $APP_PID"
-              
-              # Check if port is listening (with retry)
-              for i in {1..6}; do
-                if netstat -tuln | grep :8089 > /dev/null 2>&1; then
-                  echo "✅ Port 8089 is listening"
-                  echo "🌐 Application is accessible on port 8089"
-                  echo "🚀 Deployment completed successfully!"
-                  exit 0
-                else
-                  echo "⏳ Waiting for port 8089... (attempt $i/6)"
-                  sleep 5
-                fi
-              done
-              
-              echo "⚠️ Port 8089 not listening, but process is running"
-              echo "📄 Recent log output:"
-              tail -20 app.log 2>/dev/null || echo "No log file found"
-              echo "🚀 Deployment completed (process running, check logs for port status)"
-              
-            else
-              echo "❌ Application failed to start or crashed"
-              echo "📄 Recent log output:"
-              tail -20 app.log 2>/dev/null || echo "No log file found"
+              echo "❌ JAR file upload failed!"
               exit 1
             fi
