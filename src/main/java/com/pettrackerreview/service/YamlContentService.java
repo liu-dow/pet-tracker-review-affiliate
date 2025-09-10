@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class YamlContentService {
@@ -33,6 +34,10 @@ public class YamlContentService {
     private final ObjectMapper yamlMapper;
     private final String BLOGS_DIR = "blogs";
     private final String REVIEWS_DIR = "reviews";
+    
+    // 从配置文件中获取内容目录路径
+    @Value("${app.content.dir:src/main/resources}")
+    private String contentDir;
     
     public YamlContentService() {
         this.yamlMapper = new ObjectMapper(new YAMLFactory());
@@ -52,24 +57,26 @@ public class YamlContentService {
     
     private void ensureDirectoryExists(String dir) throws IOException {
         try {
-            Resource resource = new ClassPathResource(dir);
-            if (!resource.exists()) {
-                // Create directory in classpath if it doesn't exist
-                File directory = new File("src/main/resources/" + dir);
-                if (!directory.exists()) {
-                    directory.mkdirs();
-                }
+            // 检查内容目录下的文件夹是否存在
+            File directory = new File(contentDir + "/" + dir);
+            if (!directory.exists()) {
+                directory.mkdirs();
             }
         } catch (Exception e) {
             // Directory creation will be handled by the file system
         }
     }
     
+    // 获取内容目录路径
+    private String getContentDir() {
+        return contentDir;
+    }
+    
     // Blog Post Methods
     public List<BlogPost> getAllBlogPosts() {
         try {
             List<BlogPost> blogPosts = new ArrayList<>();
-            File blogsDir = new File("src/main/resources/" + BLOGS_DIR);
+            File blogsDir = new File(getContentDir() + "/" + BLOGS_DIR);
             
             if (blogsDir.exists() && blogsDir.isDirectory()) {
                 File[] yamlFiles = blogsDir.listFiles((dir, name) -> name.endsWith(".yaml") || name.endsWith(".yml"));
@@ -111,12 +118,12 @@ public class YamlContentService {
             blogPost.setSlug(blogPost.generateSlug());
         }
         
-        File file = new File("src/main/resources/" + BLOGS_DIR + "/" + blogPost.getSlug() + ".yaml");
+        File file = new File(getContentDir() + "/" + BLOGS_DIR + "/" + blogPost.getSlug() + ".yaml");
         yamlMapper.writeValue(file, blogPost);
     }
     
     public void deleteBlogPost(String slug) throws IOException {
-        File file = new File("src/main/resources/" + BLOGS_DIR + "/" + slug + ".yaml");
+        File file = new File(getContentDir() + "/" + BLOGS_DIR + "/" + slug + ".yaml");
         if (file.exists()) {
             file.delete();
         }
@@ -126,7 +133,7 @@ public class YamlContentService {
     public List<Review> getAllReviews() {
         try {
             List<Review> reviews = new ArrayList<>();
-            File reviewsDir = new File("src/main/resources/" + REVIEWS_DIR);
+            File reviewsDir = new File(getContentDir() + "/" + REVIEWS_DIR);
             
             if (reviewsDir.exists() && reviewsDir.isDirectory()) {
                 File[] yamlFiles = reviewsDir.listFiles((dir, name) -> name.endsWith(".yaml") || name.endsWith(".yml"));
@@ -168,12 +175,12 @@ public class YamlContentService {
             review.setSlug(review.generateSlug());
         }
         
-        File file = new File("src/main/resources/" + REVIEWS_DIR + "/" + review.getSlug() + ".yaml");
+        File file = new File(getContentDir() + "/" + REVIEWS_DIR + "/" + review.getSlug() + ".yaml");
         yamlMapper.writeValue(file, review);
     }
     
     public void deleteReview(String slug) throws IOException {
-        File file = new File("src/main/resources/" + REVIEWS_DIR + "/" + slug + ".yaml");
+        File file = new File(getContentDir() + "/" + REVIEWS_DIR + "/" + slug + ".yaml");
         if (file.exists()) {
             file.delete();
         }
@@ -233,10 +240,10 @@ public class YamlContentService {
         
         try {
             // Export blog files
-            exportDirectoryToZip(zos, "src/main/resources/" + BLOGS_DIR, "blogs/");
+            exportDirectoryToZip(zos, getContentDir() + "/" + BLOGS_DIR, "blogs/");
             
             // Export review files
-            exportDirectoryToZip(zos, "src/main/resources/" + REVIEWS_DIR, "reviews/");
+            exportDirectoryToZip(zos, getContentDir() + "/" + REVIEWS_DIR, "reviews/");
             
         } finally {
             zos.close();
@@ -288,7 +295,7 @@ public class YamlContentService {
         Map<String, Integer> stats = new HashMap<>();
         
         // Count blog files
-        File blogsDir = new File("src/main/resources/" + BLOGS_DIR);
+        File blogsDir = new File(getContentDir() + "/" + BLOGS_DIR);
         int blogCount = 0;
         if (blogsDir.exists() && blogsDir.isDirectory()) {
             File[] blogFiles = blogsDir.listFiles((dir, name) -> 
@@ -297,7 +304,7 @@ public class YamlContentService {
         }
         
         // Count review files
-        File reviewsDir = new File("src/main/resources/" + REVIEWS_DIR);
+        File reviewsDir = new File(getContentDir() + "/" + REVIEWS_DIR);
         int reviewCount = 0;
         if (reviewsDir.exists() && reviewsDir.isDirectory()) {
             File[] reviewFiles = reviewsDir.listFiles((dir, name) -> 
