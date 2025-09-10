@@ -62,22 +62,22 @@ jobs:
           script: |
             set +e  # Don't exit on errors
             echo "🔍 Starting backup and cleanup process..."
-            
+
             # Create directory if not exists
             sudo mkdir -p /home/project/affiliate
             sudo chown ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} /home/project/affiliate
-            
+
             # Change to project directory
             cd /home/project/affiliate
             echo "📁 Working directory: $(pwd)"
-            
+
             # Backup existing JAR files
             if [ -f pet-tracker-review.jar ]; then
               echo "💾 Backing up existing JAR file..."
               cp pet-tracker-review.jar pet-tracker-review.jar.backup.$(date +%Y%m%d_%H%M%S)
               echo "✅ Backup completed"
             fi
-            
+
             # Clean up target directory
             rm -rf target || true
             echo "✅ Ready for new deployment"
@@ -101,7 +101,7 @@ jobs:
           timeout: 30s
           script: |
             cd /home/project/affiliate
-            
+
             # Find and setup the uploaded JAR file
             JAR_FILE=$(find target/ -name "*.jar" -type f | head -n 1)
             if [ -n "$JAR_FILE" ] && [ -f "$JAR_FILE" ]; then
