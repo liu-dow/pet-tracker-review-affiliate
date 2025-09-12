@@ -9,6 +9,9 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -73,6 +76,7 @@ public class YamlContentService {
     }
     
     // Blog Post Methods
+    @Cacheable(value = "blogPosts", key = "'allBlogPosts'")
     public List<BlogPost> getAllBlogPosts() {
         try {
             List<BlogPost> blogPosts = new ArrayList<>();
@@ -106,6 +110,7 @@ public class YamlContentService {
         }
     }
     
+    @Cacheable(value = "blogPosts", key = "#slug")
     public BlogPost getBlogPostBySlug(String slug) {
         return getAllBlogPosts().stream()
                 .filter(post -> slug.equals(post.getSlug()) || slug.equals(post.generateSlug()))
@@ -113,6 +118,11 @@ public class YamlContentService {
                 .orElse(null);
     }
     
+    @Caching(evict = {
+        @CacheEvict(value = "blogPosts", key = "'allBlogPosts'"),
+        @CacheEvict(value = "blogPosts", key = "#blogPost.slug", condition = "#blogPost.slug != null"),
+        @CacheEvict(value = "tags", allEntries = true)
+    })
     public void saveBlogPost(BlogPost blogPost) throws IOException {
         if (blogPost.getSlug() == null || blogPost.getSlug().trim().isEmpty()) {
             blogPost.setSlug(blogPost.generateSlug());
@@ -122,6 +132,11 @@ public class YamlContentService {
         yamlMapper.writeValue(file, blogPost);
     }
     
+    @Caching(evict = {
+        @CacheEvict(value = "blogPosts", key = "'allBlogPosts'"),
+        @CacheEvict(value = "blogPosts", key = "#slug"),
+        @CacheEvict(value = "tags", allEntries = true)
+    })
     public void deleteBlogPost(String slug) throws IOException {
         File file = new File(getContentDir() + "/" + BLOGS_DIR + "/" + slug + ".yaml");
         if (file.exists()) {
@@ -130,6 +145,7 @@ public class YamlContentService {
     }
     
     // Review Methods
+    @Cacheable(value = "reviews", key = "'allReviews'")
     public List<Review> getAllReviews() {
         try {
             List<Review> reviews = new ArrayList<>();
@@ -163,6 +179,7 @@ public class YamlContentService {
         }
     }
     
+    @Cacheable(value = "reviews", key = "#slug")
     public Review getReviewBySlug(String slug) {
         return getAllReviews().stream()
                 .filter(review -> slug.equals(review.getSlug()) || slug.equals(review.generateSlug()))
@@ -170,6 +187,11 @@ public class YamlContentService {
                 .orElse(null);
     }
     
+    @Caching(evict = {
+        @CacheEvict(value = "reviews", key = "'allReviews'"),
+        @CacheEvict(value = "reviews", key = "#review.slug", condition = "#review.slug != null"),
+        @CacheEvict(value = "tags", allEntries = true)
+    })
     public void saveReview(Review review) throws IOException {
         if (review.getSlug() == null || review.getSlug().trim().isEmpty()) {
             review.setSlug(review.generateSlug());
@@ -179,6 +201,11 @@ public class YamlContentService {
         yamlMapper.writeValue(file, review);
     }
     
+    @Caching(evict = {
+        @CacheEvict(value = "reviews", key = "'allReviews'"),
+        @CacheEvict(value = "reviews", key = "#slug"),
+        @CacheEvict(value = "tags", allEntries = true)
+    })
     public void deleteReview(String slug) throws IOException {
         File file = new File(getContentDir() + "/" + REVIEWS_DIR + "/" + slug + ".yaml");
         if (file.exists()) {
@@ -187,18 +214,21 @@ public class YamlContentService {
     }
     
     // Utility Methods
+    @Cacheable(value = "blogPosts", key = "'latestBlogPosts-' + #limit")
     public List<BlogPost> getLatestBlogPosts(int limit) {
         return getAllBlogPosts().stream()
                 .limit(limit)
                 .collect(Collectors.toList());
     }
     
+    @Cacheable(value = "reviews", key = "'latestReviews-' + #limit")
     public List<Review> getLatestReviews(int limit) {
         return getAllReviews().stream()
                 .limit(limit)
                 .collect(Collectors.toList());
     }
     
+    @Cacheable(value = "tags", key = "'allTags'")
     public Set<String> getAllTags() {
         Set<String> allTags = new HashSet<>();
         
@@ -217,12 +247,14 @@ public class YamlContentService {
         return allTags;
     }
     
+    @Cacheable(value = "blogPosts", key = "'blogPostsByTag-' + #tag")
     public List<BlogPost> getBlogPostsByTag(String tag) {
         return getAllBlogPosts().stream()
                 .filter(post -> post.getTags() != null && post.getTags().contains(tag))
                 .collect(Collectors.toList());
     }
     
+    @Cacheable(value = "reviews", key = "'reviewsByTag-' + #tag")
     public List<Review> getReviewsByTag(String tag) {
         return getAllReviews().stream()
                 .filter(review -> review.getTags() != null && review.getTags().contains(tag))
@@ -326,6 +358,11 @@ public class YamlContentService {
      * @return Import result information
      * @throws IOException If IO error occurs during import
      */
+    @Caching(evict = {
+        @CacheEvict(value = "blogPosts", key = "'allBlogPosts'", condition = "#contentType == 'blogs'"),
+        @CacheEvict(value = "reviews", key = "'allReviews'", condition = "#contentType == 'reviews'"),
+        @CacheEvict(value = "tags", allEntries = true)
+    })
     public ImportResult importYamlFile(MultipartFile file, String contentType) throws IOException {
         ImportResult result = new ImportResult();
         

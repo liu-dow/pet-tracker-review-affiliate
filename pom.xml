@@ -44,6 +44,12 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+        <!-- Spring Boot Cache -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
         <!-- YAML Processing -->
         <dependency>
             <groupId>org.yaml</groupId>
@@ -69,7 +75,7 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
-
+        
         <!-- Apache Commons IO -->
         <dependency>
             <groupId>commons-io</groupId>
