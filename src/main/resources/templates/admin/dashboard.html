@@ -135,6 +135,30 @@
         .btn-primary:hover {
             background-color: #2c5aa0;
         }
+        .btn-warning {
+            background-color: #dd6b20;
+        }
+        .btn-warning:hover {
+            background-color: #c05621;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+        }
+        .notification.success {
+            background-color: #38a169;
+        }
+        .notification.error {
+            background-color: #e53e3e;
+        }
     </style>
 </head>
 <body>
@@ -157,6 +181,9 @@
                 </ul>
             </nav>
         </aside>
+        
+        <!-- Notification -->
+        <div id="notification" class="notification"></div>
         
         <!-- Main Content -->
         <main class="admin-content">
@@ -196,6 +223,14 @@
                         </button>
                     </div>
                     <div class="stat-label" style="margin-top: 0.5rem;">Data Management</div>
+                </div>
+                <div class="stat-card">
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="reloadCache()" class="btn btn-warning" style="flex: 1; font-size: 0.9rem;">
+                            <i class="fas fa-sync-alt"></i> Reload Cache
+                        </button>
+                    </div>
+                    <div class="stat-label" style="margin-top: 0.5rem;">Cache Management</div>
                 </div>
             </div>
             
@@ -309,6 +344,43 @@
             if (e.target === this) {
                 closeExportModal();
             }
+        });
+        
+        // Reload cache function
+        function reloadCache() {
+            if (confirm('Are you sure you want to reload all caches? This will clear all cached data and reload it from the source.')) {
+                showNotification('Reloading cache...', 'info');
+                
+                fetch('/api/cache/clear', {
+                    method: 'POST'
+                })
+                .then(response => response.text())
+                .then(data => {
+                    showNotification('Cache reloaded successfully!', 'success');
+                })
+                .catch(error => {
+                    console.error('Error reloading cache:', error);
+                    showNotification('Error reloading cache: ' + error.message, 'error');
+                });
+            }
+        }
+        
+        // Show notification function
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification ' + type;
+            notification.style.display = 'block';
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Close notification when clicking on it
+        document.getElementById('notification').addEventListener('click', function() {
+            this.style.display = 'none';
         });
     </script>
 </body>

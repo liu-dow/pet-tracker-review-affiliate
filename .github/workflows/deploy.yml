@@ -71,12 +71,6 @@ jobs:
             cd /home/project/affiliate
             echo "📁 Working directory: $(pwd)"
 
-            # Backup existing JAR files
-            if [ -f pet-tracker-review.jar ]; then
-              echo "💾 Backing up existing JAR file..."
-              cp pet-tracker-review.jar pet-tracker-review.jar.backup.$(date +%Y%m%d_%H%M%S)
-              echo "✅ Backup completed"
-            fi
 
             # Clean up target directory
             rm -rf target || true

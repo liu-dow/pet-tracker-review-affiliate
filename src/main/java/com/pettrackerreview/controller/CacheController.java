@@ -56,4 +56,23 @@ public class CacheController {
             return "Tags cache not available";
         }
     }
+    
+    /**
+     * Reload all caches by clearing them (they will be repopulated on next access)
+     */
+    @PostMapping("/reload")
+    public String reloadAllCaches() {
+        try {
+            if (cacheManager != null) {
+                cacheManager.getCacheNames().forEach(name -> {
+                    Objects.requireNonNull(cacheManager.getCache(name)).clear();
+                });
+                return "All caches reloaded successfully";
+            } else {
+                return "Cache manager not available";
+            }
+        } catch (Exception e) {
+            return "Error reloading caches: " + e.getMessage();
+        }
+    }
 }
