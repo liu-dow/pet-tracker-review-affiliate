@@ -3,6 +3,12 @@ package com.pettrackerreview.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.pettrackerreview.model.Image;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.FileUtils;
@@ -17,11 +23,11 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,39 +62,65 @@ public class ImageService {
         "jpg", "jpeg", "png", "gif", "webp", "bmp"
     ));
     
+    // Store absolute paths
+    private String absoluteUploadDir;
+    private String absoluteMetadataDir;
+    
     public ImageService() {
         this.yamlMapper = new ObjectMapper(new YAMLFactory());
-        this.yamlMapper.registerModule(new JavaTimeModule());
-        this.yamlMapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        
+        // Properly configure the ObjectMapper for Java 8 time handling
+        JavaTimeModule javaTimeModule = new JavaTimeModule();
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        
+        this.yamlMapper.registerModule(javaTimeModule);
+        this.yamlMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        this.yamlMapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
     
     @PostConstruct
     public void initDirectories() {
         try {
-            // Get working directory and create absolute paths
-            String workingDir = System.getProperty("user.dir");
+            // Handle both relative and absolute paths
+            if (uploadDir.startsWith("/")) {
+                // Absolute path
+                absoluteUploadDir = uploadDir;
+            } else {
+                // Relative path - make it absolute
+                String workingDir = System.getProperty("user.dir");
+                absoluteUploadDir = Paths.get(workingDir, uploadDir).toString();
+            }
+            
+            if (metadataDir.startsWith("/")) {
+                // Absolute path
+                absoluteMetadataDir = metadataDir;
+            } else {
+                // Relative path - make it absolute
+                String workingDir = System.getProperty("user.dir");
+                absoluteMetadataDir = Paths.get(workingDir, metadataDir).toString();
+            }
             
             // Create upload directory
-            Path uploadPath = Paths.get(workingDir, uploadDir);
+            Path uploadPath = Paths.get(absoluteUploadDir);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
             
             // Create thumbnails directory
-            Path thumbnailPath = Paths.get(workingDir, uploadDir, "thumbnails");
+            Path thumbnailPath = Paths.get(absoluteUploadDir, "thumbnails");
             if (!Files.exists(thumbnailPath)) {
                 Files.createDirectories(thumbnailPath);
             }
             
             // Create metadata directory
-            Path metadataPath = Paths.get(workingDir, metadataDir);
+            Path metadataPath = Paths.get(absoluteMetadataDir);
             if (!Files.exists(metadataPath)) {
                 Files.createDirectories(metadataPath);
             }
             
-            // Update paths to absolute paths
-            this.uploadDir = uploadPath.toString();
-            this.metadataDir = metadataPath.toString();
+            System.out.println("Image upload directory: " + absoluteUploadDir);
+            System.out.println("Image metadata directory: " + absoluteMetadataDir);
             
         } catch (IOException e) {
             throw new RuntimeException("Failed to initialize image directories", e);
@@ -122,9 +154,18 @@ public class ImageService {
         image.setId(image.generateId());
         
         // Save original file
-        Path originalPath = Paths.get(uploadDir, baseFilename);
+        Path originalPath = Paths.get(absoluteUploadDir, baseFilename);
         file.transferTo(originalPath.toFile());
-        image.setFilePath("uploads/images/" + baseFilename);
+        
+        // Set file path relative to web root for web access
+        if (uploadDir.startsWith("/")) {
+            // For absolute paths, we need to construct the web-accessible path
+            // Assuming the web server maps /uploads/ to /home/project/affiliate/uploads/
+            image.setFilePath("uploads/images/" + baseFilename);
+        } else {
+            // For relative paths, keep the existing logic
+            image.setFilePath("uploads/images/" + baseFilename);
+        }
         
         // Get image dimensions
         BufferedImage bufferedImage = ImageIO.read(originalPath.toFile());
@@ -154,7 +195,7 @@ public class ImageService {
             String compressedFilename = FilenameUtils.getBaseName(image.getFilename()) + 
                                       "_compressed." + extension;
             
-            Path compressedPath = Paths.get(uploadDir, compressedFilename);
+            Path compressedPath = Paths.get(absoluteUploadDir, compressedFilename);
             
             Thumbnails.of(originalFile)
                     .scale(1.0)
@@ -180,14 +221,21 @@ public class ImageService {
         String thumbnailFilename = FilenameUtils.getBaseName(image.getFilename()) + 
                                  "_thumb." + extension;
         
-        Path thumbnailPath = Paths.get(uploadDir, "thumbnails", thumbnailFilename);
+        Path thumbnailPath = Paths.get(absoluteUploadDir, "thumbnails", thumbnailFilename);
         
         Thumbnails.of(originalFile)
                 .size(thumbnailSize, thumbnailSize)
                 .outputQuality(0.8)
                 .toFile(thumbnailPath.toFile());
         
-        image.setThumbnailPath("uploads/images/thumbnails/" + thumbnailFilename);
+        // Set thumbnail path relative to web root for web access
+        if (uploadDir.startsWith("/")) {
+            // For absolute paths, we need to construct the web-accessible path
+            image.setThumbnailPath("uploads/images/thumbnails/" + thumbnailFilename);
+        } else {
+            // For relative paths, keep the existing logic
+            image.setThumbnailPath("uploads/images/thumbnails/" + thumbnailFilename);
+        }
     }
     
 
@@ -214,7 +262,7 @@ public class ImageService {
         List<Image> images = new ArrayList<>();
         
         try {
-            Path metadataPath = Paths.get(metadataDir);
+            Path metadataPath = Paths.get(absoluteMetadataDir);
             System.out.println("Checking metadata directory: " + metadataPath.toAbsolutePath());
             if (Files.exists(metadataPath)) {
                 System.out.println("Metadata directory exists, scanning for YAML files...");
@@ -237,6 +285,7 @@ public class ImageService {
                                 }
                             } catch (IOException e) {
                                 System.err.println("Error reading image metadata: " + path + ", Error: " + e.getMessage());
+                                e.printStackTrace();
                             }
                         });
                 System.out.println("Total images loaded: " + images.size());
@@ -280,7 +329,7 @@ public class ImageService {
         
         // Delete image files - use the full file path properly
         if (StringUtils.isNotBlank(image.getFilename())) {
-            Path imagePath = Paths.get(uploadDir, image.getFilename());
+            Path imagePath = Paths.get(absoluteUploadDir, image.getFilename());
             if (Files.exists(imagePath)) {
                 Files.delete(imagePath);
                 System.out.println("Deleted main image file: " + imagePath);
@@ -293,7 +342,7 @@ public class ImageService {
         if (StringUtils.isNotBlank(image.getThumbnailPath())) {
             // Extract filename from thumbnail path like "uploads/images/thumbnails/filename_thumb.png"
             String thumbnailFileName = Paths.get(image.getThumbnailPath()).getFileName().toString();
-            Path thumbnailPath = Paths.get(uploadDir, "thumbnails", thumbnailFileName);
+            Path thumbnailPath = Paths.get(absoluteUploadDir, "thumbnails", thumbnailFileName);
             if (Files.exists(thumbnailPath)) {
                 Files.delete(thumbnailPath);
                 System.out.println("Deleted thumbnail file: " + thumbnailPath);
@@ -303,7 +352,7 @@ public class ImageService {
         }
         
         // Delete metadata file - construct proper metadata file path
-        Path metadataPath = Paths.get(metadataDir, id + ".yaml");
+        Path metadataPath = Paths.get(absoluteMetadataDir, id + ".yaml");
         if (Files.exists(metadataPath)) {
             Files.delete(metadataPath);
             System.out.println("Deleted metadata file: " + metadataPath);
@@ -390,7 +439,7 @@ public class ImageService {
     }
     
     private void saveImageMetadata(Image image) throws IOException {
-        Path metadataPath = Paths.get(metadataDir, image.getId() + ".yaml");
+        Path metadataPath = Paths.get(absoluteMetadataDir, image.getId() + ".yaml");
         yamlMapper.writeValue(metadataPath.toFile(), image);
     }
 }

@@ -19,10 +19,20 @@ public class WebConfig implements WebMvcConfigurer {
     
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Get absolute path for uploads directory
-        String workingDir = System.getProperty("user.dir");
-        Path uploadsBasePath = Paths.get(workingDir, "uploads");
-        String uploadsBaseUri = uploadsBasePath.toUri().toString();
+        // Handle both relative and absolute paths
+        String uploadsBaseUri;
+        
+        if (uploadDir.startsWith("/")) {
+            // Absolute path - map /uploads/** to the absolute directory
+            // We assume that /home/project/affiliate/uploads should be accessible via /uploads/
+            Path uploadsBasePath = Paths.get("/home/project/affiliate/uploads");
+            uploadsBaseUri = uploadsBasePath.toUri().toString();
+        } else {
+            // Relative path - make it absolute based on working directory
+            String workingDir = System.getProperty("user.dir");
+            Path uploadsBasePath = Paths.get(workingDir, "uploads");
+            uploadsBaseUri = uploadsBasePath.toUri().toString();
+        }
         
         System.out.println("Mapping /uploads/** to: " + uploadsBaseUri);
         
