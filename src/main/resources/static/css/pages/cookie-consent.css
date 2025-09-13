@@ -54,6 +54,18 @@
     white-space: nowrap;
 }
 
+/* 特别设置 Reject All 按钮的样式 */
+#reject-all-cookies {
+    background-color: white;
+    color: #2d3748;
+    border: 1px solid #cbd5e0;
+}
+
+#reject-all-cookies:hover {
+    background-color: #f7fafc;
+    border-color: #a0aec0;
+}
+
 /* Cookie Settings Modal */
 .cookie-modal {
     position: fixed;

@@ -247,6 +247,83 @@ public class YamlContentService {
         return allTags;
     }
     
+    /**
+     * 获取博客标签集合
+     * @return 博客标签集合
+     */
+    @Cacheable(value = "tags", key = "'blogTags'")
+    public Set<String> getBlogTags() {
+        Set<String> blogTags = new HashSet<>();
+        
+        getAllBlogPosts().forEach(post -> {
+            if (post.getTags() != null) {
+                blogTags.addAll(post.getTags());
+            }
+        });
+        
+        // 过滤出有实际博客文章的标签
+        Set<String> validBlogTags = new HashSet<>();
+        for (String tag : blogTags) {
+            List<BlogPost> blogPostsWithTag = getBlogPostsByTag(tag);
+            if (!blogPostsWithTag.isEmpty()) {
+                validBlogTags.add(tag);
+            }
+        }
+        
+        return validBlogTags;
+    }
+    
+    /**
+     * 获取评测标签集合
+     * @return 评测标签集合
+     */
+    @Cacheable(value = "tags", key = "'reviewTags'")
+    public Set<String> getReviewTags() {
+        Set<String> reviewTags = new HashSet<>();
+        
+        getAllReviews().forEach(review -> {
+            if (review.getTags() != null) {
+                reviewTags.addAll(review.getTags());
+            }
+        });
+        
+        // 过滤出有实际评测的标签
+        Set<String> validReviewTags = new HashSet<>();
+        for (String tag : reviewTags) {
+            List<Review> reviewsWithTag = getReviewsByTag(tag);
+            if (!reviewsWithTag.isEmpty()) {
+                validReviewTags.add(tag);
+            }
+        }
+        
+        return validReviewTags;
+    }
+    
+    /**
+     * 获取有效的标签集合（在搜索中有匹配内容的标签）
+     * @return 有效标签集合
+     */
+    @Cacheable(value = "tags", key = "'validTags'")
+    public Set<String> getValidTags() {
+        Set<String> validTags = new HashSet<>();
+        Set<String> allTags = getAllTags();
+        
+        // 对每个标签进行过滤测试，只保留有实际过滤效果的标签
+        for (String tag : allTags) {
+            // 检查是否有博客文章匹配此标签
+            List<BlogPost> blogPostsWithTag = getBlogPostsByTag(tag);
+            // 检查是否有评测匹配此标签
+            List<Review> reviewsWithTag = getReviewsByTag(tag);
+            
+            // 如果有匹配的内容，则认为是有效标签
+            if (!blogPostsWithTag.isEmpty() || !reviewsWithTag.isEmpty()) {
+                validTags.add(tag);
+            }
+        }
+        
+        return validTags;
+    }
+    
     @Cacheable(value = "blogPosts", key = "'blogPostsByTag-' + #tag")
     public List<BlogPost> getBlogPostsByTag(String tag) {
         return getAllBlogPosts().stream()
