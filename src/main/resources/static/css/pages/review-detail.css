@@ -336,16 +336,50 @@
 .product-summary {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1rem;
+    padding: 1rem 0;
 }
 
 .summary-item {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
 }
 
 .summary-item strong {
     color: #2d3748;
+    font-weight: 600;
+    flex: 0 0 30%;
+    min-width: 80px;
+}
+
+.summary-item span {
+    flex: 1;
+    text-align: left;
+    color: #4a5568;
+    padding-left: 1rem;
+}
+
+.rating-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-start;
+}
+
+.rating-display .stars {
+    color: #f6ad55;
+    font-size: 1.1rem;
+}
+
+.rating-display .rating-text {
+    color: #2d3748;
+    font-weight: 600;
 }
 
 /* Related Reviews */
