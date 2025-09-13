@@ -152,26 +152,6 @@
                 
                 <!-- Sidebar -->
                 <aside class="review-sidebar">
-                    <!-- Product Summary -->
-                    <div class="sidebar-section">
-                        <h3>Product Summary</h3>
-                        <div class="product-summary">
-                            <div class="summary-item">
-                                <strong>Brand:</strong> <span th:text="${review.productBrand}">Brand</span>
-                            </div>
-                            <div class="summary-item">
-                                <strong>Product:</strong> <span th:text="${review.productName}">Product</span>
-                            </div>
-                            <div class="summary-item">
-                                <strong>Rating:</strong> 
-                                <span class="rating-display">
-                                    <span th:text="${review.starRating}">★★★★☆</span>
-                                    <span th:text="${review.rating} + '/5'">4.5/5</span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    
                     <!-- Related Reviews -->
                     <div class="sidebar-section" th:if="${relatedReviews != null and !relatedReviews.isEmpty()}">
                         <h3>Related Reviews</h3>
@@ -189,13 +169,33 @@
                     </div>
                     
                     <!-- Newsletter Signup -->
-                    <div class="sidebar-section">
+                    <div class="sidebar-section mobile-move-to-bottom">
                         <h3>Stay Updated</h3>
                         <p>Get the latest pet tracker reviews delivered to your inbox.</p>
                         <form class="newsletter-form">
                             <input type="email" placeholder="Your email address" class="form-input">
                             <button type="submit" class="btn btn-primary">Subscribe</button>
                         </form>
+                    </div>
+                    
+                    <!-- Product Summary - Hidden on mobile -->
+                    <div class="sidebar-section hide-on-mobile">
+                        <h3>Product Summary</h3>
+                        <div class="product-summary">
+                            <div class="summary-item">
+                                <strong>Brand:</strong> <span th:text="${review.productBrand}">Brand</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Product:</strong> <span th:text="${review.productName}">Product</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Rating:</strong> 
+                                <span class="rating-display">
+                                    <span th:text="${review.starRating}">★★★★☆</span>
+                                    <span th:text="${review.rating} + '/5'">4.5/5</span>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </aside>
             </div>

@@ -328,7 +328,7 @@
 .sidebar-section {
     background: white;
     border-radius: 12px;
-    padding: 2rem;
+    padding: 1rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
@@ -343,7 +343,6 @@
 .summary-item {
     display: flex;
     justify-content: flex-start;
-    padding: 0.75rem 0;
     border-bottom: 1px solid #edf2f7;
 }
 
@@ -362,7 +361,6 @@
     flex: 1;
     text-align: left;
     color: #4a5568;
-    padding-left: 1rem;
 }
 
 .rating-display {
@@ -446,6 +444,15 @@
     border-color: #3182ce;
 }
 
+/* Hide on mobile utility class */
+.hide-on-mobile {
+    display: block;
+}
+
+.mobile-move-to-bottom {
+    order: 0;
+}
+
 /* Article Navigation */
 .article-nav {
     padding: 2rem 0;
@@ -487,7 +494,7 @@
     }
     
     .sidebar-section {
-        padding: 1.5rem;
+        padding: 1rem;
     }
     
     .review-conclusion {
@@ -497,6 +504,24 @@
     .container {
         padding: 0 12px;
         max-width: 100%;
+    }
+    
+    /* Hide Product Summary on mobile */
+    .hide-on-mobile {
+        display: none;
+    }
+    
+    /* Move Stay Updated to bottom on mobile */
+    .mobile-move-to-bottom {
+        order: 2;
+    }
+    
+    .review-sidebar {
+        order: 1;
+    }
+    
+    .review-content {
+        order: 0;
     }
 }
 
@@ -514,7 +539,7 @@
     }
     
     .sidebar-section {
-        padding: 1.2rem;
+        padding: 1rem;
     }
     
     .review-conclusion {

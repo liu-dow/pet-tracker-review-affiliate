@@ -394,4 +394,10 @@ public class AdminController {
         }
         return debugInfo;
     }
+    
+    @GetMapping("/ai-content-generator")
+    public String aiContentGenerator(Model model) {
+        // Add any necessary model attributes here
+        return "admin/ai-content-generator";
+    }
 }
