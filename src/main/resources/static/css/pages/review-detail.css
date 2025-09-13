@@ -18,7 +18,7 @@
 
 /* Review Detail Specific Styles - Based on Blog Detail Design */
 .review-article {
-    padding: 3rem 0;
+    padding: 1rem 0;
 }
 
 .review-wrapper {
@@ -475,7 +475,7 @@
 
 @media (max-width: 768px) {
     .review-article {
-        padding: 2rem 0;
+        padding: 1rem 0;
     }
     
     .review-content {
@@ -502,7 +502,7 @@
 
 @media (max-width: 480px) {
     .review-article {
-        padding: 1.5rem 0;
+        padding: 1rem 0;
     }
     
     .review-content {
