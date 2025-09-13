@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                 .antMatchers("/uploads/**").permitAll() // Allow uploaded files access
-                .antMatchers("/", "/blogs/**", "/reviews/**", "/search", "/affiliate-disclosure", "/sitemap*.xml", "/robots.txt").permitAll()
+                .antMatchers("/", "/blogs/**", "/reviews/**", "/search", "/affiliate-disclosure", "/sitemap*.xml", "/robots.txt", "/llmx.txt").permitAll()
                 .anyRequest().authenticated()
             .and()
             .formLogin()
