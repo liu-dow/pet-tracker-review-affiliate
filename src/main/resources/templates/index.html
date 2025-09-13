@@ -78,7 +78,7 @@
                             <a th:href="@{/}" class="nav-link">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/blog}" class="nav-link">Blog</a>
+                            <a th:href="@{/blogs}" class="nav-link">Blog</a>
                         </li>
                         <li class="nav-item">
                             <a th:href="@{/reviews}" class="nav-link">Reviews</a>
@@ -146,7 +146,7 @@
                                 <i class="fas fa-search"></i>
                             </div>
                         </a>
-                        <a th:href="@{/blog}" class="btn-smart secondary">
+                        <a th:href="@{/blogs}" class="btn-smart secondary">
                             <i class="fas fa-book-open"></i>
                             <span>Read Guides</span>
                         </a>
@@ -302,7 +302,7 @@
                 <div class="blog-card" th:each="blog : ${latestBlogs}">
                     <div class="blog-header">
                         <h3>
-                            <a th:href="@{'/blog/' + ${blog.slug}}" th:text="${blog.title}">Blog Title</a>
+                            <a th:href="@{'/blogs/' + ${blog.slug}}" th:text="${blog.title}">Blog Title</a>
                         </h3>
                     </div>
                     
@@ -322,7 +322,7 @@
             </div>
             
             <div class="section-footer">
-                <a th:href="@{/blog}" class="btn btn-outline">Read More Articles</a>
+                <a th:href="@{/blogs}" class="btn btn-outline">Read More Articles</a>
             </div>
         </div>
     </section>
@@ -337,7 +337,7 @@
             
             <div class="tags-cloud" th:if="${allTags != null and !allTags.isEmpty()}">
                 <a th:each="tag : ${allTags}" 
-                   th:href="@{/blog(tag=${tag})}" 
+                   th:href="@{/blogs(tag=${tag})}" 
                    th:text="${tag}" 
                    class="tag-link">tag</a>
             </div>
@@ -357,7 +357,7 @@
                     <h4>Quick Links</h4>
                     <ul class="footer-links">
                         <li><a th:href="@{/}">Home</a></li>
-                        <li><a th:href="@{/blog}">Blog</a></li>
+                        <li><a th:href="@{/blogs}">Blog</a></li>
                         <li><a th:href="@{/reviews}">Reviews</a></li>
                         <li><a th:href="@{/search}">Search</a></li>
                     </ul>
@@ -366,10 +366,10 @@
                 <div class="footer-section">
                     <h4>Categories</h4>
                     <ul class="footer-links">
-                        <li><a th:href="@{/blog(tag='GPS')}">GPS Trackers</a></li>
-                        <li><a th:href="@{/blog(tag='dogs')}">Dog Trackers</a></li>
-                        <li><a th:href="@{/blog(tag='cats')}">Cat Trackers</a></li>
-                        <li><a th:href="@{/blog(tag='buying guide')}">Buying Guides</a></li>
+                        <li><a th:href="@{/blogs(tag='GPS')}">GPS Trackers</a></li>
+                        <li><a th:href="@{/blogs(tag='dogs')}">Dog Trackers</a></li>
+                        <li><a th:href="@{/blogs(tag='cats')}">Cat Trackers</a></li>
+                        <li><a th:href="@{/blogs(tag='buying guide')}">Buying Guides</a></li>
                     </ul>
                 </div>
                 

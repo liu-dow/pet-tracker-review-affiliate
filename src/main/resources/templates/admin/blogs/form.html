@@ -184,7 +184,7 @@
                         </button>
                         <a href="/admin/blogs" class="btn btn-outline">Cancel</a>
                         <div th:if="${action == 'edit'}" style="margin-left: auto;">
-                            <a th:href="@{'/blog/' + ${blog.slug}}" class="btn btn-secondary" target="_blank">
+                            <a th:href="@{'/blogs/' + ${blog.slug}}" class="btn btn-secondary" target="_blank">
                                 <i class="fas fa-eye"></i> Preview
                             </a>
                         </div>

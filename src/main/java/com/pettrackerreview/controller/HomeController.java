@@ -49,7 +49,7 @@ public class HomeController {
         return "index";
     }
     
-    @GetMapping("/blog")
+    @GetMapping("/blogs")
     public String blogList(Model model, @RequestParam(required = false) String tag) {
         List<BlogPost> blogPosts;
         String pageTitle;
@@ -83,12 +83,12 @@ public class HomeController {
         return "blog/list";
     }
     
-    @GetMapping("/blog/{slug}")
+    @GetMapping("/blogs/{slug}")
     public String blogDetail(@PathVariable String slug, Model model) {
         BlogPost blogPost = contentService.getBlogPostBySlug(slug);
         
         if (blogPost == null) {
-            return "redirect:/blog";
+            return "redirect:/blogs";
         }
         
         // Get related posts by tags

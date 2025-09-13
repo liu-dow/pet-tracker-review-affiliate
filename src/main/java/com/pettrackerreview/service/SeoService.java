@@ -177,7 +177,7 @@ public class SeoService {
         addUrl(sitemap, baseUrl + "/", "daily", "1.0", null);
         
         // Blog list page
-        addUrl(sitemap, baseUrl + "/blog", "daily", "0.8", null);
+        addUrl(sitemap, baseUrl + "/blogs", "daily", "0.8", null);
         
         // Reviews list page
         addUrl(sitemap, baseUrl + "/reviews", "daily", "0.8", null);
@@ -189,7 +189,7 @@ public class SeoService {
     private void addBlogUrls(StringBuilder sitemap) {
         List<BlogPost> blogPosts = contentService.getAllBlogPosts();
         for (BlogPost post : blogPosts) {
-            String url = baseUrl + "/blog/" + post.getSlug();
+            String url = baseUrl + "/blogs/" + post.getSlug();
             String lastMod = post.getDate() != null ? 
                 post.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE) : null;
             addUrl(sitemap, url, "weekly", "0.6", lastMod);
