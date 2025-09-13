@@ -511,7 +511,7 @@ public class YamlContentService {
     /**
      * Validate and parse blog post YAML content
      */
-    private BlogPost validateAndParseBlogPost(String yamlContent) {
+    public BlogPost validateAndParseBlogPost(String yamlContent) {
         try {
             BlogPost blogPost = yamlMapper.readValue(yamlContent, BlogPost.class);
             
@@ -561,7 +561,7 @@ public class YamlContentService {
     /**
      * Validate and parse review YAML content
      */
-    private Review validateAndParseReview(String yamlContent) {
+    public Review validateAndParseReview(String yamlContent) {
         try {
             Review review = yamlMapper.readValue(yamlContent, Review.class);
             
@@ -611,6 +611,161 @@ public class YamlContentService {
                 errorMsg += e.getMessage();
             }
             throw new RuntimeException(errorMsg);
+        }
+    }
+    
+    /**
+     * Preview YAML file content without saving
+     * @param file Uploaded file
+     * @param contentType Content type ("blogs" or "reviews")
+     * @return Preview result with parsed content
+     * @throws IOException If IO error occurs during preview
+     */
+    public PreviewResult previewYamlFile(MultipartFile file, String contentType) throws IOException {
+        PreviewResult result = new PreviewResult();
+        
+        // Validate content type
+        if (!"blogs".equals(contentType) && !"reviews".equals(contentType)) {
+            result.setSuccess(false);
+            result.setMessage("Unsupported content type: " + contentType);
+            return result;
+        }
+        
+        // Validate file name
+        String originalFileName = file.getOriginalFilename();
+        if (originalFileName == null || (!originalFileName.endsWith(".yaml") && !originalFileName.endsWith(".yml"))) {
+            result.setSuccess(false);
+            result.setMessage("File must be in YAML format (.yaml or .yml)");
+            return result;
+        }
+        
+        try {
+            // Read file content
+            String content = new String(file.getBytes(), StandardCharsets.UTF_8);
+            
+            // Validate YAML syntax first
+            if (content.trim().isEmpty()) {
+                result.setSuccess(false);
+                result.setMessage("File is empty or contains no content");
+                return result;
+            }
+            
+            result.setContentType(contentType);
+            result.setFileName(originalFileName);
+            result.setRawContent(content);
+            
+            // Parse and validate YAML content
+            if ("blogs".equals(contentType)) {
+                try {
+                    BlogPost blogPost = validateAndParseBlogPost(content);
+                    result.setBlogPost(blogPost);
+                    result.setSuccess(true);
+                    result.setMessage("Blog post preview generated successfully");
+                } catch (IllegalArgumentException e) {
+                    result.setSuccess(false);
+                    result.setMessage(e.getMessage());
+                } catch (RuntimeException e) {
+                    result.setSuccess(false);
+                    result.setMessage(e.getMessage());
+                }
+            } else {
+                try {
+                    Review review = validateAndParseReview(content);
+                    result.setReview(review);
+                    result.setSuccess(true);
+                    result.setMessage("Review preview generated successfully");
+                } catch (IllegalArgumentException e) {
+                    result.setSuccess(false);
+                    result.setMessage(e.getMessage());
+                } catch (RuntimeException e) {
+                    result.setSuccess(false);
+                    result.setMessage(e.getMessage());
+                }
+            }
+            
+        } catch (Exception e) {
+            result.setSuccess(false);
+            result.setMessage("Preview failed: " + e.getMessage());
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Preview result class
+     */
+    public static class PreviewResult {
+        private boolean success;
+        private String message;
+        private String fileName;
+        private String contentType;
+        private String rawContent;
+        private BlogPost blogPost;
+        private Review review;
+        
+        // Constructors
+        public PreviewResult() {}
+        
+        public PreviewResult(boolean success, String message) {
+            this.success = success;
+            this.message = message;
+        }
+        
+        // Getters and Setters
+        public boolean isSuccess() {
+            return success;
+        }
+        
+        public void setSuccess(boolean success) {
+            this.success = success;
+        }
+        
+        public String getMessage() {
+            return message;
+        }
+        
+        public void setMessage(String message) {
+            this.message = message;
+        }
+        
+        public String getFileName() {
+            return fileName;
+        }
+        
+        public void setFileName(String fileName) {
+            this.fileName = fileName;
+        }
+        
+        public String getContentType() {
+            return contentType;
+        }
+        
+        public void setContentType(String contentType) {
+            this.contentType = contentType;
+        }
+        
+        public String getRawContent() {
+            return rawContent;
+        }
+        
+        public void setRawContent(String rawContent) {
+            this.rawContent = rawContent;
+        }
+        
+        public BlogPost getBlogPost() {
+            return blogPost;
+        }
+        
+        public void setBlogPost(BlogPost blogPost) {
+            this.blogPost = blogPost;
+        }
+        
+        public Review getReview() {
+            return review;
+        }
+        
+        public void setReview(Review review) {
+            this.review = review;
         }
     }
     

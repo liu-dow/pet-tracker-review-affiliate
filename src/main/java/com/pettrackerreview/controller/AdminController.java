@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 import com.pettrackerreview.service.YamlContentService.ImportResult;
+import com.pettrackerreview.service.YamlContentService.PreviewResult;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -264,6 +265,91 @@ public class AdminController {
             
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Import failed: " + e.getMessage());
+            return "redirect:/admin/import";
+        }
+    }
+    
+    // Preview functionality
+    @PostMapping("/preview")
+    public String previewContent(@RequestParam("file") MultipartFile file,
+                               @RequestParam("contentType") String contentType,
+                               @RequestParam(required = false, defaultValue = "en") String lang,
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
+        
+        // Validate if file is empty
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "en".equals(lang) ? "Please select a file to preview" : "请选择要预览的文件");
+            return "redirect:/admin/import";
+        }
+        
+        try {
+            PreviewResult result = contentService.previewYamlFile(file, contentType);
+            
+            model.addAttribute("previewResult", result);
+            model.addAttribute("contentType", contentType);
+            model.addAttribute("lang", lang);
+            
+            if (result.isSuccess()) {
+                if ("blogs".equals(contentType)) {
+                    model.addAttribute("blogPost", result.getBlogPost());
+                } else {
+                    model.addAttribute("review", result.getReview());
+                }
+                return "admin/preview";
+            } else {
+                model.addAttribute("errorMessage", result.getMessage());
+                return "admin/preview";
+            }
+            
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", 
+                "en".equals(lang) ? ("Preview failed: " + e.getMessage()) : ("预览失败：" + e.getMessage()));
+            model.addAttribute("previewResult", new PreviewResult(false, e.getMessage()));
+            model.addAttribute("contentType", contentType);
+            model.addAttribute("lang", lang);
+            return "admin/preview";
+        }
+    }
+    
+    // Import from preview
+    @PostMapping("/import-from-preview")
+    public String importFromPreview(@RequestParam("previewData") String yamlContent,
+                                  @RequestParam("contentType") String contentType,
+                                  @RequestParam(required = false, defaultValue = "en") String lang,
+                                  RedirectAttributes redirectAttributes) {
+        
+        try {
+            // Create a temporary file-like object from the YAML content
+            ImportResult result;
+            
+            if ("blogs".equals(contentType)) {
+                BlogPost blogPost = contentService.validateAndParseBlogPost(yamlContent);
+                contentService.saveBlogPost(blogPost);
+                result = new ImportResult(true, 
+                    "en".equals(lang) ? ("Blog post imported successfully: " + blogPost.getTitle()) : 
+                    ("博客文章导入成功：" + blogPost.getTitle()));
+            } else {
+                Review review = contentService.validateAndParseReview(yamlContent);
+                contentService.saveReview(review);
+                result = new ImportResult(true, 
+                    "en".equals(lang) ? ("Review imported successfully: " + review.getTitle()) : 
+                    ("评测文章导入成功：" + review.getTitle()));
+            }
+            
+            redirectAttributes.addFlashAttribute("successMessage", result.getMessage());
+            
+            // Redirect to appropriate management page based on type
+            if ("blogs".equals(contentType)) {
+                return "redirect:/admin/blogs";
+            } else {
+                return "redirect:/admin/reviews";
+            }
+            
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "en".equals(lang) ? ("Import failed: " + e.getMessage()) : ("导入失败：" + e.getMessage()));
             return "redirect:/admin/import";
         }
     }
