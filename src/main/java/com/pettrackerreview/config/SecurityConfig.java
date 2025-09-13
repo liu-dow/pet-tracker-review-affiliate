@@ -48,6 +48,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/admin/dashboard", true)
                 .permitAll()
             .and()
+            .exceptionHandling()
+                .authenticationEntryPoint((request, response, authException) -> {
+                    String requestURI = request.getRequestURI();
+                    if (requestURI.startsWith("/admin/login")) {
+                        response.sendRedirect("/admin/login");
+                    } else {
+                        response.sendRedirect("/");
+                    }
+                })
+            .and()
             .logout()
                 .logoutUrl("/admin/logout")
                 .logoutSuccessUrl("/")
