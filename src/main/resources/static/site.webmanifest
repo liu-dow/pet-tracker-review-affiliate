@@ -1,7 +1,7 @@
 {
   "name": "Pet Tracker Review",
   "short_name": "PetTracker",
-  "description": "宠物追踪器评测与选购指南",
+  "description": "Pet tracker reviews and buying guide",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -9,29 +9,33 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/favicon-16x16.svg",
+      "src": "/favicon-16x16.ico",
       "sizes": "16x16",
-      "type": "image/svg+xml"
+      "type": "image/x-icon"
     },
     {
-      "src": "/favicon.svg",
+      "src": "/favicon-32x32.ico",
       "sizes": "32x32",
-      "type": "image/svg+xml"
+      "type": "image/x-icon"
     },
     {
-      "src": "/favicon-48x48.svg", 
+      "src": "/favicon-48x48.ico", 
       "sizes": "48x48",
-      "type": "image/svg+xml"
+      "type": "image/x-icon"
     },
     {
-      "src": "/favicon-48x48.svg",
-      "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/favicon-64x64.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon-128x128.ico",
+      "sizes": "128x128",
+      "type": "image/x-icon"
     }
   ],
   "categories": ["shopping", "lifestyle", "pets"],
-  "lang": "zh-CN",
+  "lang": "en",
   "scope": "/",
   "related_applications": [],
   "prefer_related_applications": false
