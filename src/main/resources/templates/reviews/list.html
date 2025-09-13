@@ -12,7 +12,10 @@
     <meta property="og:description" th:content="${metaDescription}">
     
     <!-- CSS -->
-    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/base.css(v=${cssVersion})}">
+    <link rel="stylesheet" th:href="@{/css/pages/header.css(v=${cssVersion})}">
+    <link rel="stylesheet" th:href="@{/css/pages/footer.css(v=${cssVersion})}">
+    <link rel="stylesheet" th:href="@{/css/pages/review-list.css(v=${cssVersion})}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -123,13 +126,13 @@
                                 <div class="pros-cons">
                                     <div class="pros" th:if="${review.pros != null and !review.pros.isEmpty()}">
                                         <h4><i class="fas fa-check text-green"></i> Pros</h4>
-                                        <div class="highlight-text" th:utext="${#strings.abbreviate(review.pros, 100)}">
+                                        <div class="highlight-text" th:utext="${review.pros}">
                                             Pros content...
                                         </div>
                                     </div>
                                     <div class="cons" th:if="${review.cons != null and !review.cons.isEmpty()}">
                                         <h4><i class="fas fa-times text-red"></i> Cons</h4>
-                                        <div class="highlight-text" th:utext="${#strings.abbreviate(review.cons, 100)}">
+                                        <div class="highlight-text" th:utext="${review.cons}">
                                             Cons content...
                                         </div>
                                     </div>

@@ -1,0 +1,118 @@
+/* Affiliate Disclosure Page */
+.disclosure-content {
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
+
+.disclosure-content .last-updated {
+    color: #718096;
+    font-style: italic;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f7fafc;
+    border-left: 4px solid #3182ce;
+    border-radius: 0 6px 6px 0;
+}
+
+.disclosure-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.disclosure-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.disclosure-section h2 {
+    color: #2d3748;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3182ce;
+    display: inline-block;
+}
+
+.disclosure-section p {
+    color: #4a5568;
+    margin-bottom: 1rem;
+}
+
+.disclosure-section ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.disclosure-section li {
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.disclosure-section a {
+    color: #3182ce;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.disclosure-section a:hover {
+    color: #2c5aa0;
+    text-decoration: none;
+}
+
+/* Mobile optimization for disclosure page */
+@media (max-width: 768px) {
+    .disclosure-content {
+        padding: 0 1rem;
+    }
+    
+    .disclosure-content .last-updated {
+        padding: 0.8rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .disclosure-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+    }
+    
+    .disclosure-section h2 {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .disclosure-content {
+        padding: 0 0.5rem;
+    }
+    
+    .disclosure-content .last-updated {
+        padding: 0.6rem;
+        margin-bottom: 1.2rem;
+        font-size: 0.9rem;
+    }
+    
+    .disclosure-section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .disclosure-section h2 {
+        font-size: 1.2rem;
+    }
+    
+    .disclosure-section p {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .disclosure-section h2 {
+        font-size: 1.1rem;
+    }
+    
+    .disclosure-section p {
+        font-size: 0.9rem;
+    }
+}

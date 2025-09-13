@@ -1,0 +1,300 @@
+/* Breadcrumb */
+.breadcrumb {
+    background-color: #f7fafc;
+    padding: 1rem 0;
+}
+
+.breadcrumb-list {
+    display: flex;
+    list-style: none;
+    gap: 0.5rem;
+}
+
+.breadcrumb-list li:not(:last-child)::after {
+    content: "/";
+    margin-left: 0.5rem;
+    color: #cbd5e0;
+}
+
+/* Article Styles */
+.article,
+.review-article {
+    padding: 3rem 0;
+}
+
+.article-wrapper,
+.review-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 3rem;
+    align-items: start;
+}
+
+.article-content,
+.review-content {
+    background: white;
+    border-radius: 12px;
+    padding: 3rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.article-header,
+.review-header {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.article-body,
+.review-body {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #4a5568;
+}
+
+.article-body h2,
+.article-body h3,
+.article-body h4,
+.review-body h2,
+.review-body h3,
+.review-body h4 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #2d3748;
+}
+
+.article-body ul,
+.article-body ol,
+.review-body ul,
+.review-body ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.article-body li,
+.review-body li {
+    margin-bottom: 0.5rem;
+}
+
+.article-meta,
+.review-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #718096;
+}
+
+.article-author,
+.review-author,
+.article-date,
+.review-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.article-tags,
+.review-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+/* Sidebar */
+.article-sidebar,
+.review-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.sidebar-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.related-posts,
+.related-reviews {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.related-post,
+.related-review {
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.related-post:hover,
+.related-review:hover {
+    border-color: #3182ce;
+}
+
+.related-post h4,
+.related-review h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.related-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: #718096;
+}
+
+/* Newsletter Form */
+.newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-input {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus {
+    border-color: #3182ce;
+}
+
+/* Share Buttons */
+.share-buttons {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.share-buttons h4 {
+    margin-bottom: 1rem;
+}
+
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.share-btn.facebook {
+    background-color: #1877f2;
+    color: white;
+}
+
+.share-btn.twitter {
+    background-color: #1da1f2;
+    color: white;
+}
+
+.share-btn.linkedin {
+    background-color: #0077b5;
+    color: white;
+}
+
+.share-btn:hover {
+    opacity: 0.9;
+    color: white;
+}
+
+/* Navigation */
+.article-nav {
+    padding: 2rem 0;
+}
+
+.nav-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .article-wrapper,
+    .review-wrapper {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .article-sidebar,
+    .review-sidebar {
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .article-content,
+    .review-content {
+        padding: 1.5rem;
+    }
+    
+    .sidebar {
+        order: 2;
+        position: static;
+        margin-bottom: 1.5rem;
+    }
+    
+    .main-content {
+        order: 1;
+        margin-bottom: 0;
+    }
+    
+    .nav-brand .brand-link {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .article,
+    .review-article {
+        padding: 2rem 0;
+    }
+    
+    .article-content,
+    .review-content {
+        padding: 1.2rem;
+    }
+    
+    .sidebar-section {
+        padding: 1.2rem;
+    }
+    
+    .nav-brand .brand-link {
+        font-size: 1.2rem;
+    }
+    
+    .nav-brand .brand-link span {
+        display: none;
+    }
+    
+    .nav-brand .brand-link::after {
+        content: "PTR";
+        font-weight: 700;
+    }
+}
+
+@media (max-width: 360px) {
+    .article-content,
+    .review-content {
+        padding: 1rem;
+    }
+    
+    .sidebar-section {
+        padding: 1rem;
+    }
+}

@@ -3,6 +3,7 @@ package com.pettrackerreview.controller;
 import com.pettrackerreview.model.BlogPost;
 import com.pettrackerreview.model.Review;
 import com.pettrackerreview.service.YamlContentService;
+import com.pettrackerreview.util.CssVersionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class HomeController {
     @Autowired
     private YamlContentService contentService;
     
+    @Autowired
+    private CssVersionUtil cssVersionUtil;
+    
     @GetMapping("/")
     public String home(Model model) {
         // Get latest content for homepage
@@ -40,6 +44,7 @@ public class HomeController {
         model.addAttribute("allTags", allTags);
         model.addAttribute("pageTitle", "Pet Tracker Reviews - Best GPS Trackers for Dogs & Cats");
         model.addAttribute("metaDescription", "Find the best pet trackers and GPS collars for your dogs and cats. In-depth reviews, comparisons, and buying guides to keep your pets safe.");
+        model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());
         
         return "index";
     }
@@ -67,6 +72,7 @@ public class HomeController {
         model.addAttribute("selectedTag", tag);
         model.addAttribute("pageTitle", pageTitle);
         model.addAttribute("metaDescription", metaDescription);
+        model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());
         
         return "blog/list";
     }
@@ -93,6 +99,7 @@ public class HomeController {
         model.addAttribute("pageTitle", blogPost.getTitle());
         model.addAttribute("metaDescription", blogPost.getMetaDescription());
         model.addAttribute("keywords", String.join(", ", blogPost.getTags() != null ? blogPost.getTags() : java.util.Collections.emptyList()));
+        model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());
         
         return "blog/detail";
     }
@@ -120,6 +127,7 @@ public class HomeController {
         model.addAttribute("selectedTag", tag);
         model.addAttribute("pageTitle", pageTitle);
         model.addAttribute("metaDescription", metaDescription);
+        model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());
         
         return "reviews/list";
     }
@@ -147,6 +155,7 @@ public class HomeController {
         model.addAttribute("pageTitle", review.getTitle());
         model.addAttribute("metaDescription", review.getMetaDescription());
         model.addAttribute("keywords", String.join(", ", review.getTags() != null ? review.getTags() : java.util.Collections.emptyList()));
+        model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());
         
         return "reviews/detail";
     }
@@ -160,6 +169,7 @@ public class HomeController {
             model.addAttribute("reviewResults", java.util.Collections.emptyList());
             model.addAttribute("pageTitle", "Search - Pet Tracker Review");
             model.addAttribute("metaDescription", "Search our pet tracker reviews and guides to find the perfect GPS tracker for your pet.");
+            model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());
             return "search";
         }
         
@@ -189,6 +199,7 @@ public class HomeController {
         model.addAttribute("reviewResults", reviewResults);
         model.addAttribute("pageTitle", "Search Results for: " + q);
         model.addAttribute("metaDescription", "Search results for " + q + " on Pet Tracker Review.");
+        model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());
         
         return "search";
     }
@@ -197,6 +208,7 @@ public class HomeController {
     public String affiliateDisclosure(Model model) {
         model.addAttribute("pageTitle", "Affiliate Disclosure - Pet Tracker Review");
         model.addAttribute("metaDescription", "Learn about our affiliate partnerships and how we maintain editorial independence while providing valuable pet tracker reviews.");
+        model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());
         
         return "affiliate-disclosure";
     }

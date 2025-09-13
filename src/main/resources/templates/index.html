@@ -23,7 +23,11 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
     <!-- CSS -->
-    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/base.css(v=${cssVersion})}">
+    <link rel="stylesheet" th:href="@{/css/pages/header.css(v=${cssVersion})}">
+    <link rel="stylesheet" th:href="@{/css/pages/home.css(v=${cssVersion})}">
+    <link rel="stylesheet" th:href="@{/css/pages/footer.css(v=${cssVersion})}">
+    <link rel="stylesheet" th:href="@{/css/pages/cookie-consent.css(v=${cssVersion})}">
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
