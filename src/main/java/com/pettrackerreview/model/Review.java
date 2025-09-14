@@ -19,6 +19,9 @@ public class Review {
     @JsonProperty("metaDescription")
     private String metaDescription;
     
+    @JsonProperty("metaTitle")
+    private String metaTitle;
+    
     private String content;
     private String slug;
     
@@ -34,7 +37,7 @@ public class Review {
     public Review() {}
     
     public Review(String title, String author, LocalDateTime date, 
-                 List<String> tags, String metaDescription, String content, 
+                 List<String> tags, String metaDescription, String metaTitle, String content, 
                  String slug, String productName, String productBrand, 
                  double rating, String pros, String cons, String conclusion) {
         this.title = title;
@@ -42,6 +45,7 @@ public class Review {
         this.date = date;
         this.tags = tags;
         this.metaDescription = metaDescription;
+        this.metaTitle = metaTitle;
         this.content = content;
         this.slug = slug;
         this.productName = productName;
@@ -91,6 +95,14 @@ public class Review {
     
     public void setMetaDescription(String metaDescription) {
         this.metaDescription = metaDescription;
+    }
+    
+    public String getMetaTitle() {
+        return metaTitle;
+    }
+    
+    public void setMetaTitle(String metaTitle) {
+        this.metaTitle = metaTitle;
     }
     
     public String getContent() {
@@ -201,6 +213,7 @@ public class Review {
                 ", productName='" + productName + '\'' +
                 ", productBrand='" + productBrand + '\'' +
                 ", rating=" + rating +
+                ", metaTitle='" + metaTitle + '\'' +
                 ", slug='" + slug + '\'' +
                 '}';
     }

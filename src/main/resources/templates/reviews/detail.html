@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle}">Review - Pet Tracker Reviews</title>
+    <title th:text="${review.metaTitle ?: review.title}">Review - Pet Tracker Reviews</title>
     <meta name="description" th:content="${metaDescription}">
     <meta name="keywords" th:content="${keywords}">
+    <meta name="title" th:content="${review.metaTitle ?: review.title}">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
-    <meta property="og:title" th:content="${review.title}">
+    <meta property="og:title" th:content="${review.metaTitle ?: review.title}">
     <meta property="og:description" th:content="${review.metaDescription}">
     <meta property="article:author" th:content="${review.author}">
     <meta property="article:published_time" th:content="${review.date}">

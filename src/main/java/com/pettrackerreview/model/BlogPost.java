@@ -18,6 +18,9 @@ public class BlogPost {
     @JsonProperty("metaDescription")
     private String metaDescription;
     
+    @JsonProperty("metaTitle")
+    private String metaTitle;
+    
     private String content;
     private String slug;
     
@@ -25,12 +28,13 @@ public class BlogPost {
     public BlogPost() {}
     
     public BlogPost(String title, String author, LocalDateTime date, 
-                   List<String> tags, String metaDescription, String content, String slug) {
+                   List<String> tags, String metaDescription, String metaTitle, String content, String slug) {
         this.title = title;
         this.author = author;
         this.date = date;
         this.tags = tags;
         this.metaDescription = metaDescription;
+        this.metaTitle = metaTitle;
         this.content = content;
         this.slug = slug;
     }
@@ -76,6 +80,14 @@ public class BlogPost {
         this.metaDescription = metaDescription;
     }
     
+    public String getMetaTitle() {
+        return metaTitle;
+    }
+    
+    public void setMetaTitle(String metaTitle) {
+        this.metaTitle = metaTitle;
+    }
+    
     public String getContent() {
         return content;
     }
@@ -115,6 +127,7 @@ public class BlogPost {
                 ", date=" + date +
                 ", tags=" + tags +
                 ", metaDescription='" + metaDescription + '\'' +
+                ", metaTitle='" + metaTitle + '\'' +
                 ", slug='" + slug + '\'' +
                 '}';
     }

@@ -102,7 +102,7 @@ public class HomeController {
         
         model.addAttribute("blogPost", blogPost);
         model.addAttribute("relatedPosts", relatedPosts);
-        model.addAttribute("pageTitle", blogPost.getTitle());
+        model.addAttribute("pageTitle", blogPost.getMetaTitle() != null && !blogPost.getMetaTitle().isEmpty() ? blogPost.getMetaTitle() : blogPost.getTitle());
         model.addAttribute("metaDescription", blogPost.getMetaDescription());
         model.addAttribute("keywords", String.join(", ", blogPost.getTags() != null ? blogPost.getTags() : java.util.Collections.emptyList()));
         model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());
@@ -158,7 +158,7 @@ public class HomeController {
         
         model.addAttribute("review", review);
         model.addAttribute("relatedReviews", relatedReviews);
-        model.addAttribute("pageTitle", review.getTitle());
+        model.addAttribute("pageTitle", review.getMetaTitle() != null && !review.getMetaTitle().isEmpty() ? review.getMetaTitle() : review.getTitle());
         model.addAttribute("metaDescription", review.getMetaDescription());
         model.addAttribute("keywords", String.join(", ", review.getTags() != null ? review.getTags() : java.util.Collections.emptyList()));
         model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());

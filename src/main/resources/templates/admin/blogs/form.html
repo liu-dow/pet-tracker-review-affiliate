@@ -165,6 +165,13 @@
                     </div>
                     
                     <div class="form-group">
+                        <label for="metaTitle" class="form-label">Meta Title</label>
+                        <input type="text" id="metaTitle" name="metaTitle" class="form-control" 
+                               th:field="*{metaTitle}">
+                        <div class="help-text">SEO title for search engines (60 characters recommended)</div>
+                    </div>
+                    
+                    <div class="form-group">
                         <label for="tags" class="form-label">Tags</label>
                         <input type="text" id="tags" name="tags" class="form-control" 
                                th:value="${blog.tags != null ? #strings.listJoin(blog.tags, ', ') : ''}">
