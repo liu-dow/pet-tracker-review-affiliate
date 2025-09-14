@@ -25,8 +25,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public UserDetailsService userDetailsService() {
         UserDetails admin = User.builder()
-                .username("ldwldw")
-                .password(passwordEncoder().encode("ldwldw"))
+                .username("ldw")
+                .password(passwordEncoder().encode("ldw"))
                 .roles("ADMIN")
                 .build();
         
