@@ -104,13 +104,6 @@
             <version>3.9.4</version>
         </dependency>
         
-        <!-- 添加AVIF格式支持 -->
-        <dependency>
-            <groupId>com.twelvemonkeys.imageio</groupId>
-            <artifactId>imageio-avif</artifactId>
-            <version>3.9.4</version>
-        </dependency>
-        
         <!-- Image Scaling and Processing -->
         <dependency>
             <groupId>net.coobird</groupId>

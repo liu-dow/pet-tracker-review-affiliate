@@ -32,9 +32,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-// 添加WebP支持的导入
-import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
-
 /**
  * Service class for managing images - upload, compress, crop, and metadata operations
  */
@@ -59,11 +56,11 @@ public class ImageService {
     private double compressionQuality;
     
     private static final Set<String> ALLOWED_TYPES = new HashSet<>(Arrays.asList(
-        "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp", "image/bmp", "image/avif"
+        "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp", "image/bmp"
     ));
     
     private static final Set<String> ALLOWED_EXTENSIONS = new HashSet<>(Arrays.asList(
-        "jpg", "jpeg", "png", "gif", "webp", "bmp", "avif"
+        "jpg", "jpeg", "png", "gif", "webp", "bmp"
     ));
     
     // Store absolute paths
@@ -88,7 +85,7 @@ public class ImageService {
         try {
             // Register WebP ImageReader
             IIORegistry registry = IIORegistry.getDefaultInstance();
-            registry.registerServiceProvider(new WebPImageReaderSpi());
+            registry.registerServiceProvider(new com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi());
             
             // Handle both relative and absolute paths
             if (uploadDir.startsWith("/")) {
@@ -205,9 +202,9 @@ public class ImageService {
             
             Path compressedPath = Paths.get(absoluteUploadDir, compressedFilename);
             
-            // 对于WebP和AVIF格式，使用ImageIO进行转换处理
-            if ("webp".equals(extension) || "avif".equals(extension)) {
-                // 读取WebP或AVIF图片
+            // 对于WebP格式，使用ImageIO进行转换处理
+            if ("webp".equals(extension)) {
+                // 读取WebP图片
                 BufferedImage bufferedImage = ImageIO.read(originalFile);
                 if (bufferedImage != null) {
                     // 转换为JPEG格式进行压缩
@@ -240,7 +237,7 @@ public class ImageService {
                     }
                 } else {
                     // 如果无法读取，跳过压缩
-                    System.out.println("无法读取" + extension.toUpperCase() + "图片进行压缩: " + originalFile.getName());
+                    System.out.println("无法读取WebP图片进行压缩: " + originalFile.getName());
                 }
             } else {
                 // 其他格式使用原有处理方式
@@ -271,9 +268,9 @@ public class ImageService {
         
         Path thumbnailPath = Paths.get(absoluteUploadDir, "thumbnails", thumbnailFilename);
         
-        // 对于WebP和AVIF格式，使用ImageIO进行转换
-        if ("webp".equals(extension) || "avif".equals(extension)) {
-            // 读取WebP或AVIF图片
+        // 对于WebP格式，使用ImageIO进行转换
+        if ("webp".equals(extension)) {
+            // 读取WebP图片
             BufferedImage bufferedImage = ImageIO.read(originalFile);
             if (bufferedImage != null) {
                 // 转换为PNG格式保存缩略图
