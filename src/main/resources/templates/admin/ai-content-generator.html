@@ -47,21 +47,26 @@
             margin-right: 0.5rem;
             width: 16px;
         }
-        .content-section {
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .form-container {
             background: white;
-            padding: 1.5rem;
+            padding: 2rem;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
         }
         .form-group {
             margin-bottom: 1.5rem;
         }
-        .form-group label {
+        .form-label {
             display: block;
-            font-weight: 500;
             margin-bottom: 0.5rem;
-            color: #4a5568;
+            font-weight: 500;
+            color: #2d3748;
         }
         .form-control {
             width: 100%;
@@ -74,33 +79,30 @@
         .form-control:focus {
             outline: none;
             border-color: #3182ce;
-            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
         }
-        textarea.form-control {
+        .form-control.large {
             min-height: 150px;
             resize: vertical;
         }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
         .btn {
             display: inline-block;
-            padding: 0.75rem 1.5rem;
+            padding: 0.5rem 1rem;
             background-color: #3182ce;
             color: white;
             text-decoration: none;
             border-radius: 6px;
             border: none;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
+            font-size: 0.9rem;
             transition: background-color 0.2s;
         }
         .btn:hover {
             background-color: #2c5aa0;
-        }
-        .btn-success {
-            background-color: #38a169;
-        }
-        .btn-success:hover {
-            background-color: #2f855a;
         }
         .btn-outline {
             background-color: transparent;
@@ -111,22 +113,49 @@
             background-color: #3182ce;
             color: white;
         }
-        .prompt-section {
-            background: #f7fafc;
-            border-left: 4px solid #3182ce;
-            padding: 1.5rem;
-            border-radius: 0 8px 8px 0;
-            margin: 1.5rem 0;
+        .btn-success {
+            background-color: #38a169;
         }
-        .prompt-section h3 {
-            margin-top: 0;
+        .btn-success:hover {
+            background-color: #2f855a;
+        }
+        .template-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .template-card:hover {
+            border-color: #3182ce;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .template-card.active {
+            border-color: #3182ce;
+            background-color: #ebf8ff;
+        }
+        .template-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
             color: #2d3748;
         }
-        .prompt-section ul {
-            padding-left: 1.5rem;
+        .template-desc {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
         }
-        .prompt-section li {
-            margin-bottom: 0.5rem;
+        .result-container {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        .help-text {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 0.25rem;
         }
         .notification {
             position: fixed;
@@ -145,61 +174,6 @@
         }
         .notification.error {
             background-color: #e53e3e;
-        }
-        .copy-btn {
-            background-color: #edf2f7;
-            color: #4a5568;
-            border: 1px solid #e2e8f0;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-left: 0.5rem;
-        }
-        .copy-btn:hover {
-            background-color: #e2e8f0;
-        }
-        .code-block {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 1rem;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            overflow-x: auto;
-            position: relative;
-        }
-        .tag-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-        .tag {
-            background: #ebf8ff;
-            color: #3182ce;
-            padding: 0.25rem 0.5rem;
-            border-radius: 9999px;
-            font-size: 0.8rem;
-        }
-        .lang-btn {
-            background: transparent;
-            border: none;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #718096;
-            transition: all 0.2s;
-        }
-        .lang-btn:hover {
-            background: #f7fafc;
-            color: #4a5568;
-        }
-        .lang-btn.active {
-            background: #3182ce;
-            color: white;
         }
     </style>
 </head>
@@ -230,600 +204,276 @@
         
         <!-- Main Content -->
         <main class="admin-content">
-            <!-- Language Switcher -->
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-                <div style="background: white; border-radius: 6px; padding: 0.25rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <button id="langEn" class="lang-btn active" onclick="switchLanguage('en')">EN</button>
-                    <button id="langZh" class="lang-btn" onclick="switchLanguage('zh')">中文</button>
+            <div class="content-header">
+                <h1>AI Content Generator</h1>
+                <div>
+                    <button id="copyBtn" class="btn btn-success" style="display: none;">
+                        <i class="fas fa-copy"></i> Copy to Clipboard
+                    </button>
                 </div>
             </div>
             
-            <h1><i class="fas fa-robot"></i> AI Content Generator</h1>
-            <p style="color: #718096; margin-bottom: 2rem;">Use these prompts to generate content with AI for blogs and reviews.</p>
-            
-            <!-- Blog Content Generator -->
-            <div class="content-section">
-                <h2><i class="fas fa-blog"></i> Blog Content Generator</h2>
-                <p style="color: #718096; margin-bottom: 1.5rem;">Generate prompts for creating blog posts about pet trackers.</p>
-                
+            <div class="form-container">
                 <div class="form-group">
-                    <label for="blogTopic">Blog Topic</label>
-                    <input type="text" id="blogTopic" class="form-control" placeholder="e.g., Best GPS Pet Trackers for Cats in 2025">
-                </div>
-                
-                <div class="form-group">
-                    <label for="blogFocus">Focus Areas (comma separated)</label>
-                    <input type="text" id="blogFocus" class="form-control" placeholder="e.g., battery life, accuracy, durability">
-                </div>
-                
-                <button class="btn btn-success" onclick="generateBlogPrompt()">
-                    <i class="fas fa-magic"></i> Generate Blog Prompt
-                </button>
-                
-                <div id="blogPromptResult" style="margin-top: 1.5rem; display: none;">
-                    <label>Generated Prompt:</label>
-                    <div class="code-block">
-                        <button class="copy-btn" onclick="copyToClipboard('blogPromptText')">Copy</button>
-                        <pre id="blogPromptText"></pre>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Review Content Generator -->
-            <div class="content-section">
-                <h2><i class="fas fa-star"></i> Product Review Generator</h2>
-                <p style="color: #718096; margin-bottom: 1.5rem;">Generate prompts for creating product reviews.</p>
-                
-                <div class="form-group">
-                    <label for="productName">Product Name</label>
-                    <input type="text" id="productName" class="form-control" placeholder="e.g., Fi Series 3 Smart Dog Collar">
-                </div>
-                
-                <div class="form-group">
-                    <label for="productBrand">Brand</label>
-                    <input type="text" id="productBrand" class="form-control" placeholder="e.g., Fi">
-                </div>
-                
-                <div class="form-group">
-                    <label for="reviewAspects">Aspects to Cover (comma separated)</label>
-                    <input type="text" id="reviewAspects" class="form-control" placeholder="e.g., design, battery life, GPS accuracy, app features">
-                </div>
-                
-                <button class="btn btn-success" onclick="generateReviewPrompt()">
-                    <i class="fas fa-magic"></i> Generate Review Prompt
-                </button>
-                
-                <div id="reviewPromptResult" style="margin-top: 1.5rem; display: none;">
-                    <label>Generated Prompt:</label>
-                    <div class="code-block">
-                        <button class="copy-btn" onclick="copyToClipboard('reviewPromptText')">Copy</button>
-                        <pre id="reviewPromptText"></pre>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Prompt Guidelines -->
-            <div class="content-section">
-                <h2><i class="fas fa-info-circle"></i> AI Content Generation Guidelines</h2>
-                
-                <div class="prompt-section">
-                    <h3>Blog Post Structure</h3>
-                    <p>When generating blog content, ensure it follows this YAML structure:</p>
-                    <div class="code-block">
-                        <button class="copy-btn" onclick="copyToClipboard('blogStructure')">Copy</button>
-                        <pre id="blogStructure">---
-title: "Your Blog Title Here"
-author: "Author Name"
-date: "YYYY-MM-DD HH:MM:SS"
-tags:
-  - "tag1"
-  - "tag2"
-  - "tag3"
-content: |
-  &lt;h2&gt;Main Heading&lt;/h2&gt;
-  &lt;p&gt;Your content here...&lt;/p&gt;
-  
-  &lt;h3&gt;Subheading&lt;/h3&gt;
-  &lt;p&gt;More content...&lt;/p&gt;
-  
-  &lt;ul&gt;
-    &lt;li&gt;Bullet point 1&lt;/li&gt;
-    &lt;li&gt;Bullet point 2&lt;/li&gt;
-  &lt;/ul&gt;
-slug: "url-friendly-slug"
-metaDescription: "SEO meta description (150-160 characters)"
-</pre>
+                    <label class="form-label">Content Type</label>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <button id="blogTypeBtn" class="btn btn-outline active" onclick="selectContentType('blog')">
+                            <i class="fas fa-blog"></i> Blog Post
+                        </button>
+                        <button id="reviewTypeBtn" class="btn btn-outline" onclick="selectContentType('review')">
+                            <i class="fas fa-star"></i> Product Review
+                        </button>
                     </div>
                 </div>
                 
-                <div class="prompt-section">
-                    <h3>Review Structure</h3>
-                    <p>When generating review content, ensure it follows this YAML structure:</p>
-                    <div class="code-block">
-                        <button class="copy-btn" onclick="copyToClipboard('reviewStructure')">Copy</button>
-                        <pre id="reviewStructure">---
-title: "Product Name Review: Key Feature Highlighted"
-author: "Reviewer Name"
-date: "YYYY-MM-DD HH:MM:SS"
-tags:
-  - "brand"
-  - "product type"
-  - "feature"
-metaDescription: "SEO meta description (150-160 characters)"
-slug: "product-name-review"
-productName: "Product Name"
-productBrand: "Brand Name"
-rating: 4.5
-pros: |
-  &lt;ul&gt;
-    &lt;li&gt;Pro 1&lt;/li&gt;
-    &lt;li&gt;Pro 2&lt;/li&gt;
-    &lt;li&gt;Pro 3&lt;/li&gt;
-  &lt;/ul&gt;
-cons: |
-  &lt;ul&gt;
-    &lt;li&gt;Con 1&lt;/li&gt;
-    &lt;li&gt;Con 2&lt;/li&gt;
-    &lt;li&gt;Con 3&lt;/li&gt;
-  &lt;/ul&gt;
-conclusion: |
-  Brief conclusion summary (2-3 sentences)
-content: |
-  &lt;h2&gt;Review Title&lt;/h2&gt;
-  &lt;p&gt;Introduction paragraph...&lt;/p&gt;
-  
-  &lt;h3&gt;Feature Analysis&lt;/h3&gt;
-  &lt;p&gt;Detailed feature analysis...&lt;/p&gt;
-  
-  &lt;h3&gt;Final Verdict&lt;/h3&gt;
-  &lt;p&gt;Final recommendation...&lt;/p&gt;
-</pre>
+                <div id="blogParams" class="params-section">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="blogTopic" class="form-label">Blog Topic *</label>
+                            <input type="text" id="blogTopic" class="form-control" placeholder="e.g., Best GPS Pet Trackers for Dogs 2024">
+                        </div>
+                        <div class="form-group">
+                            <label for="targetKeywords" class="form-label">Target Keywords</label>
+                            <input type="text" id="targetKeywords" class="form-control" placeholder="e.g., GPS tracker, pet safety, dogs">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="blogOutline" class="form-label">Content Outline</label>
+                        <textarea id="blogOutline" class="form-control" placeholder="Provide a brief outline of sections you want in the blog post..."></textarea>
                     </div>
                 </div>
                 
-                <div class="prompt-section">
-                    <h3>Writing Guidelines</h3>
-                    <ul>
-                        <li><strong>SEO Optimization:</strong> Include relevant keywords naturally throughout the content</li>
-                        <li><strong>Readability:</strong> Use clear headings, bullet points, and short paragraphs</li>
-                        <li><strong>Objectivity:</strong> Provide balanced pros and cons for reviews</li>
-                        <li><strong>Technical Accuracy:</strong> Ensure all technical specifications are accurate</li>
-                        <li><strong>Engagement:</strong> Write in a conversational tone that connects with pet owners</li>
-                        <li><strong>Length:</strong> Blog posts should be 800-1200 words, reviews 600-1000 words</li>
-                        <li><strong>Special Note:</strong> Review pros and cons must use &lt;ul&gt;&lt;li&gt; format as shown in the example above</li>
-                    </ul>
+                <div id="reviewParams" class="params-section" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productName" class="form-label">Product Name *</label>
+                            <input type="text" id="productName" class="form-control" placeholder="e.g., Fi Series 3 Smart Collar">
+                        </div>
+                        <div class="form-group">
+                            <label for="productBrand" class="form-label">Brand</label>
+                            <input type="text" id="productBrand" class="form-control" placeholder="e.g., Fi">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reviewFocus" class="form-label">Review Focus</label>
+                        <input type="text" id="reviewFocus" class="form-control" placeholder="e.g., Battery life, GPS accuracy, durability">
+                    </div>
                 </div>
                 
-                <div class="prompt-section">
-                    <h3>Recommended AI Prompts</h3>
-                    <p>Use these prompts as templates for generating content:</p>
-                    
-                    <h4>Blog Prompts:</h4>
-                    <ul>
-                        <li>"Write a comprehensive blog post about [TOPIC] for pet owners. Include sections on key features, comparison of top products, and buying guide. Use a friendly, informative tone."</li>
-                        <li>"Create an SEO-optimized blog post about [PET_TRACKER_TYPE] for [PET_TYPE]. Focus on [KEY_FEATURES] and include practical advice for pet owners."</li>
-                    </ul>
-                    
-                    <h4>Review Prompts:</h4>
-                    <ul>
-                        <li>"Write a detailed, unbiased review of the [PRODUCT_NAME] by [BRAND]. Include pros, cons, performance analysis, and a final recommendation. Use a conversational tone for pet owners."</li>
-                        <li>"Create a comprehensive review of [PRODUCT_NAME]. Analyze [ASPECTS_TO_COVER] and provide a balanced assessment with a rating out of 5 stars."</li>
-                    </ul>
+                <div class="form-group">
+                    <label class="form-label">Prompt Templates</label>
+                    <div class="template-card active" onclick="selectTemplate('comprehensive')">
+                        <div class="template-title">Comprehensive Content</div>
+                        <div class="template-desc">Generate a detailed, well-structured piece of content with introduction, body sections, and conclusion.</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate('seoOptimized')">
+                        <div class="template-title">SEO Optimized</div>
+                        <div class="template-desc">Create content specifically optimized for search engines with targeted keywords and meta descriptions.</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate('comparison')">
+                        <div class="template-title">Comparison Article</div>
+                        <div class="template-desc">Generate a comparison between multiple products or options in the pet tracking space.</div>
+                    </div>
                 </div>
                 
-                <div class="prompt-section">
-                    <h3>Important Format Requirements</h3>
-                    <p>Please pay special attention to the following format requirements:</p>
-                    <ul>
-                        <li><strong>Pros/Cons Format:</strong> The pros and cons fields in reviews MUST use &lt;ul&gt;&lt;li&gt; HTML format</li>
-                        <li><strong>Date Format:</strong> Use "YYYY-MM-DD HH:MM:SS" format</li>
-                        <li><strong>Tag Format:</strong> Format tags as a YAML array with each tag on a separate line starting with a dash</li>
-                        <li><strong>Content Format:</strong> Use appropriate HTML tags including headings, paragraphs, and lists</li>
-                    </ul>
+                <div class="form-group">
+                    <button class="btn btn-primary" onclick="generatePrompt()">
+                        <i class="fas fa-bolt"></i> Generate AI Prompt
+                    </button>
+                </div>
+                
+                <div id="resultSection" class="result-container" style="display: none;">
+                    <h3>Generated Prompt</h3>
+                    <div class="form-group">
+                        <textarea id="generatedPrompt" class="form-control large" readonly></textarea>
+                        <div class="help-text">Copy this prompt and use it with your preferred AI tool to generate content.</div>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
     
     <script>
-        // Language data
-        const langData = {
-            en: {
-                title: 'AI Content Generator',
-                subtitle: 'Use these prompts to generate content with AI for blogs and reviews.',
-                blogGenerator: 'Blog Content Generator',
-                blogGeneratorDesc: 'Generate prompts for creating blog posts about pet trackers.',
-                blogTopic: 'Blog Topic',
-                blogTopicPlaceholder: 'e.g., Best GPS Pet Trackers for Cats in 2025',
-                focusAreas: 'Focus Areas (comma separated)',
-                focusAreasPlaceholder: 'e.g., battery life, accuracy, durability',
-                generateBlogPrompt: 'Generate Blog Prompt',
-                reviewGenerator: 'Product Review Generator',
-                reviewGeneratorDesc: 'Generate prompts for creating product reviews.',
-                productName: 'Product Name',
-                productNamePlaceholder: 'e.g., Fi Series 3 Smart Dog Collar',
-                brand: 'Brand',
-                brandPlaceholder: 'e.g., Fi',
-                aspectsToCover: 'Aspects to Cover (comma separated)',
-                aspectsPlaceholder: 'e.g., design, battery life, GPS accuracy, app features',
-                generateReviewPrompt: 'Generate Review Prompt',
-                guidelines: 'AI Content Generation Guidelines',
-                blogStructure: 'Blog Post Structure',
-                blogStructureDesc: 'When generating blog content, ensure it follows this YAML structure:',
-                reviewStructure: 'Review Structure',
-                reviewStructureDesc: 'When generating review content, ensure it follows this YAML structure:',
-                writingGuidelines: 'Writing Guidelines',
-                seoOptimization: 'SEO Optimization: Include relevant keywords naturally throughout the content',
-                readability: 'Readability: Use clear headings, bullet points, and short paragraphs',
-                objectivity: 'Objectivity: Provide balanced pros and cons for reviews',
-                technicalAccuracy: 'Technical Accuracy: Ensure all technical specifications are accurate',
-                engagement: 'Engagement: Write in a conversational tone that connects with pet owners',
-                length: 'Length: Blog posts should be 800-1200 words, reviews 600-1000 words',
-                specialNote: 'Special Note: Review pros and cons must use <ul><li> format as shown in the example above',
-                recommendedPrompts: 'Recommended AI Prompts',
-                blogPrompts: 'Blog Prompts:',
-                reviewPrompts: 'Review Prompts:',
-                formatRequirements: 'Important Format Requirements',
-                formatRequirementsDesc: 'Please pay special attention to the following format requirements:',
-                prosConsFormat: 'Pros/Cons Format: The pros and cons fields in reviews MUST use <ul><li> HTML format',
-                dateFormat: 'Date Format: Use "YYYY-MM-DD HH:MM:SS" format',
-                tagFormat: 'Tag Format: Format tags as a YAML array with each tag on a separate line starting with a dash',
-                contentFormat: 'Content Format: Use appropriate HTML tags including headings, paragraphs, and lists',
-                generatedPrompt: 'Generated Prompt:',
-                copy: 'Copy'
-            },
-            zh: {
-                title: 'AI内容生成器',
-                subtitle: '使用这些提示词来为博客和评测生成AI内容。',
-                blogGenerator: '博客内容生成器',
-                blogGeneratorDesc: '生成用于创建宠物追踪器博客文章的提示词。',
-                blogTopic: '博客主题',
-                blogTopicPlaceholder: '例如：2025年最佳猫用GPS宠物追踪器',
-                focusAreas: '关注领域（逗号分隔）',
-                focusAreasPlaceholder: '例如：电池续航，精确度，耐用性',
-                generateBlogPrompt: '生成博客提示词',
-                reviewGenerator: '产品评测生成器',
-                reviewGeneratorDesc: '生成用于创建产品评测的提示词。',
-                productName: '产品名称',
-                productNamePlaceholder: '例如：Fi Series 3智能狗项圈',
-                brand: '品牌',
-                brandPlaceholder: '例如：Fi',
-                aspectsToCover: '要涵盖的方面（逗号分隔）',
-                aspectsPlaceholder: '例如：设计，电池续航，GPS精度，应用功能',
-                generateReviewPrompt: '生成评测提示词',
-                guidelines: 'AI内容生成指南',
-                blogStructure: '博客文章结构',
-                blogStructureDesc: '生成博客内容时，请确保遵循此YAML结构：',
-                reviewStructure: '评测结构',
-                reviewStructureDesc: '生成评测内容时，请确保遵循此YAML结构：',
-                writingGuidelines: '写作指南',
-                seoOptimization: 'SEO优化：在内容中自然地包含相关关键词',
-                readability: '可读性：使用清晰的标题、项目符号和短段落',
-                objectivity: '客观性：为评测提供平衡的优缺点',
-                technicalAccuracy: '技术准确性：确保所有技术规格准确无误',
-                engagement: '参与度：使用能与宠物主人产生共鸣的对话式语调',
-                length: '长度：博客文章应为800-1200字，评测为600-1000字',
-                specialNote: '特别说明：评测中的优缺点必须使用<ul><li>格式，如上面的示例所示',
-                recommendedPrompts: '推荐的AI提示词',
-                blogPrompts: '博客提示词：',
-                reviewPrompts: '评测提示词：',
-                formatRequirements: '重要格式要求',
-                formatRequirementsDesc: '请特别注意以下格式要求：',
-                prosConsFormat: '优缺点格式：评测中的pros和cons字段必须使用<ul><li>HTML格式',
-                dateFormat: '日期格式：使用"YYYY-MM-DD HH:MM:SS"格式',
-                tagFormat: '标签格式：将标签格式化为YAML数组，每个标签单独一行并以连字符开头',
-                contentFormat: '内容格式：使用适当的HTML标签，包括标题、段落和列表',
-                generatedPrompt: '生成的提示词：',
-                copy: '复制',
-                blogPromptTemplate1: '写一篇关于[主题]的综合性博客文章给宠物主人。包括关键特性、顶级产品比较和购买指南的部分。使用友好、信息丰富的语调。',
-                blogPromptTemplate2: '为[宠物类型]创建一篇关于[宠物追踪器类型]的SEO优化博客文章。专注于[关键特性]并包含给宠物主人的实用建议。',
-                reviewPromptTemplate1: '写一篇关于[品牌]的[产品名称]的详细、公正的评测。包括优缺点、性能分析和最终推荐。为宠物主人使用对话式语调。',
-                reviewPromptTemplate2: '创建一篇关于[产品名称]的综合评测。分析[要涵盖的方面]并提供平衡的评估，评分为5分制。'
-            }
-        };
+        let selectedContentType = 'blog';
+        let selectedTemplate = 'comprehensive';
         
-        let currentLang = 'en';
-        
-        function switchLanguage(lang) {
-            currentLang = lang;
-            updatePageContent();
+        function selectContentType(type) {
+            selectedContentType = type;
             
             // Update button states
-            document.getElementById('langEn').classList.toggle('active', lang === 'en');
-            document.getElementById('langZh').classList.toggle('active', lang === 'zh');
+            document.getElementById('blogTypeBtn').className = type === 'blog' ? 'btn btn-outline active' : 'btn btn-outline';
+            document.getElementById('reviewTypeBtn').className = type === 'review' ? 'btn btn-outline active' : 'btn btn-outline';
+            
+            // Show/hide parameter sections
+            document.getElementById('blogParams').style.display = type === 'blog' ? 'block' : 'none';
+            document.getElementById('reviewParams').style.display = type === 'review' ? 'block' : 'none';
         }
         
-        function updatePageContent() {
-            const lang = langData[currentLang];
+        function selectTemplate(template) {
+            selectedTemplate = template;
             
-            // Update main content
-            document.querySelector('h1').innerHTML = `<i class="fas fa-robot"></i> ${lang.title}`;
-            document.querySelector('h1 + p').textContent = lang.subtitle;
-            
-            // Update blog section
-            document.querySelector('.content-section:nth-of-type(1) h2').innerHTML = `<i class="fas fa-blog"></i> ${lang.blogGenerator}`;
-            document.querySelector('.content-section:nth-of-type(1) p').textContent = lang.blogGeneratorDesc;
-            document.querySelector('label[for="blogTopic"]').textContent = lang.blogTopic;
-            document.getElementById('blogTopic').placeholder = lang.blogTopicPlaceholder;
-            document.querySelector('label[for="blogFocus"]').textContent = lang.focusAreas;
-            document.getElementById('blogFocus').placeholder = lang.focusAreasPlaceholder;
-            document.querySelector('.content-section:nth-of-type(1) .btn').innerHTML = `<i class="fas fa-magic"></i> ${lang.generateBlogPrompt}`;
-            
-            // Update review section
-            document.querySelector('.content-section:nth-of-type(2) h2').innerHTML = `<i class="fas fa-star"></i> ${lang.reviewGenerator}`;
-            document.querySelector('.content-section:nth-of-type(2) p').textContent = lang.reviewGeneratorDesc;
-            document.querySelector('label[for="productName"]').textContent = lang.productName;
-            document.getElementById('productName').placeholder = lang.productNamePlaceholder;
-            document.querySelector('label[for="productBrand"]').textContent = lang.brand;
-            document.getElementById('productBrand').placeholder = lang.brandPlaceholder;
-            document.querySelector('label[for="reviewAspects"]').textContent = lang.aspectsToCover;
-            document.getElementById('reviewAspects').placeholder = lang.aspectsPlaceholder;
-            document.querySelector('.content-section:nth-of-type(2) .btn').innerHTML = `<i class="fas fa-magic"></i> ${lang.generateReviewPrompt}`;
-            
-            // Update guidelines section
-            document.querySelector('.content-section:nth-of-type(3) h2').innerHTML = `<i class="fas fa-info-circle"></i> ${lang.guidelines}`;
-            
-            // Update prompt sections
-            document.querySelector('.prompt-section:nth-of-type(1) h3').textContent = lang.blogStructure;
-            document.querySelector('.prompt-section:nth-of-type(1) p').textContent = lang.blogStructureDesc;
-            document.querySelector('.prompt-section:nth-of-type(2) h3').textContent = lang.reviewStructure;
-            document.querySelector('.prompt-section:nth-of-type(2) p').textContent = lang.reviewStructureDesc;
-            
-            // Update writing guidelines
-            document.querySelector('.prompt-section:nth-of-type(3) h3').textContent = lang.writingGuidelines;
-            const guidelinesList = document.querySelector('.prompt-section:nth-of-type(3) ul');
-            guidelinesList.innerHTML = `
-                <li><strong>${lang.seoOptimization.split(':')[0]}:</strong> ${lang.seoOptimization.split(':')[1]}</li>
-                <li><strong>${lang.readability.split(':')[0]}:</strong> ${lang.readability.split(':')[1]}</li>
-                <li><strong>${lang.objectivity.split(':')[0]}:</strong> ${lang.objectivity.split(':')[1]}</li>
-                <li><strong>${lang.technicalAccuracy.split(':')[0]}:</strong> ${lang.technicalAccuracy.split(':')[1]}</li>
-                <li><strong>${lang.engagement.split(':')[0]}:</strong> ${lang.engagement.split(':')[1]}</li>
-                <li><strong>${lang.length.split(':')[0]}:</strong> ${lang.length.split(':')[1]}</li>
-                <li><strong>${lang.specialNote.split(':')[0]}:</strong> ${lang.specialNote.split(':')[1]}</li>
-            `;
-            
-            // Update recommended prompts section
-            if (currentLang === 'zh') {
-                document.querySelector('.prompt-section:nth-of-type(4) h3').textContent = lang.recommendedPrompts;
-                document.querySelector('.prompt-section:nth-of-type(4) p').textContent = '使用这些提示词作为生成内容的模板：';
-                
-                // Update blog prompts
-                document.querySelector('.prompt-section:nth-of-type(4) h4:nth-of-type(1)').textContent = lang.blogPrompts;
-                const blogPromptsList = document.querySelector('.prompt-section:nth-of-type(4) ul:nth-of-type(1)');
-                blogPromptsList.innerHTML = `
-                    <li>"${lang.blogPromptTemplate1}"</li>
-                    <li>"${lang.blogPromptTemplate2}"</li>
-                `;
-                
-                // Update review prompts
-                document.querySelector('.prompt-section:nth-of-type(4) h4:nth-of-type(2)').textContent = lang.reviewPrompts;
-                const reviewPromptsList = document.querySelector('.prompt-section:nth-of-type(4) ul:nth-of-type(2)');
-                reviewPromptsList.innerHTML = `
-                    <li>"${lang.reviewPromptTemplate1}"</li>
-                    <li>"${lang.reviewPromptTemplate2}"</li>
-                `;
-            } else {
-                document.querySelector('.prompt-section:nth-of-type(4) h3').textContent = lang.recommendedPrompts;
-                document.querySelector('.prompt-section:nth-of-type(4) p').textContent = 'Use these prompts as templates for generating content:';
-                
-                // Update blog prompts
-                document.querySelector('.prompt-section:nth-of-type(4) h4:nth-of-type(1)').textContent = lang.blogPrompts;
-                const blogPromptsList = document.querySelector('.prompt-section:nth-of-type(4) ul:nth-of-type(1)');
-                blogPromptsList.innerHTML = `
-                    <li>"Write a comprehensive blog post about [TOPIC] for pet owners. Include sections on key features, comparison of top products, and buying guide. Use a friendly, informative tone."</li>
-                    <li>"Create an SEO-optimized blog post about [PET_TRACKER_TYPE] for [PET_TYPE]. Focus on [KEY_FEATURES] and include practical advice for pet owners."</li>
-                `;
-                
-                // Update review prompts
-                document.querySelector('.prompt-section:nth-of-type(4) h4:nth-of-type(2)').textContent = lang.reviewPrompts;
-                const reviewPromptsList = document.querySelector('.prompt-section:nth-of-type(4) ul:nth-of-type(2)');
-                reviewPromptsList.innerHTML = `
-                    <li>"Write a detailed, unbiased review of the [PRODUCT_NAME] by [BRAND]. Include pros, cons, performance analysis, and a final recommendation. Use a conversational tone for pet owners."</li>
-                    <li>"Create a comprehensive review of [PRODUCT_NAME]. Analyze [ASPECTS_TO_COVER] and provide a balanced assessment with a rating out of 5 stars."</li>
-                `;
-            }
-            
-            // Update format requirements section
-            document.querySelector('.prompt-section:nth-of-type(5) h3').textContent = lang.formatRequirements;
-            document.querySelector('.prompt-section:nth-of-type(5) p').textContent = lang.formatRequirementsDesc;
-            const formatList = document.querySelector('.prompt-section:nth-of-type(5) ul');
-            formatList.innerHTML = `
-                <li><strong>${lang.prosConsFormat.split(':')[0]}:</strong> ${lang.prosConsFormat.split(':')[1]}</li>
-                <li><strong>${lang.dateFormat.split(':')[0]}:</strong> ${lang.dateFormat.split(':')[1]}</li>
-                <li><strong>${lang.tagFormat.split(':')[0]}:</strong> ${lang.tagFormat.split(':')[1]}</li>
-                <li><strong>${lang.contentFormat.split(':')[0]}:</strong> ${lang.contentFormat.split(':')[1]}</li>
-            `;
-            
-            // Update copy buttons
-            document.querySelectorAll('.copy-btn').forEach(btn => {
-                btn.textContent = lang.copy;
+            // Update template card states
+            const cards = document.querySelectorAll('.template-card');
+            cards.forEach(card => {
+                card.classList.remove('active');
             });
             
-            // Update result labels if visible
-            const blogResult = document.getElementById('blogPromptResult');
-            const reviewResult = document.getElementById('reviewPromptResult');
-            if (blogResult.style.display !== 'none') {
-                blogResult.querySelector('label').textContent = lang.generatedPrompt;
-            }
-            if (reviewResult.style.display !== 'none') {
-                reviewResult.querySelector('label').textContent = lang.generatedPrompt;
-            }
+            event.currentTarget.classList.add('active');
         }
         
-        function generateBlogPrompt() {
-            const topic = document.getElementById('blogTopic').value || 'pet tracker';
-            const focus = document.getElementById('blogFocus').value || 'features, benefits, and comparison';
+        function generatePrompt() {
+            let prompt = '';
             
-            let prompt;
-            if (currentLang === 'zh') {
-                const chineseTopic = topic === 'pet tracker' ? '宠物追踪器' : topic;
-                const chineseFocus = focus === 'features, benefits, and comparison' ? '特性、优点和比较' : focus;
+            if (selectedContentType === 'blog') {
+                const topic = document.getElementById('blogTopic').value;
+                const keywords = document.getElementById('targetKeywords').value;
+                const outline = document.getElementById('blogOutline').value;
                 
-                prompt = `为宠物主人写一篇关于“${chineseTopic}”的综合性博客文章。按照YAML格式结构化内容，需满足以下要求：
-
-1. 标题：关于${chineseTopic}的SEO优化标题
-2. 作者："AI助手"
-3. 日期：今天的日期，格式为"YYYY-MM-DD HH:MM:SS"
-4. 标签：5个相关标签，包括"${chineseTopic.split(' ')[0]}"、"宠物安全"等
-5. 内容：
-   - 引言，解释为什么这个话题对宠物主人很重要
-   - 关于${chineseFocus}的主要内容部分
-   - 包括至少3个产品示例及简要描述
-   - 实用提示和建议
-   - 总结关键要点的结论
-6. 别名：标题的URL友好版本
-7. 元描述：150-160字符的SEO描述
-
-内容部分使用HTML标签格式：
-- 使用<h2>作为主要部分标题
-- 使用<h3>作为子部分标题
-- 使用<p>作为段落
-- 使用<ul><li>作为项目符号列表
-- 使用<ol><li>作为编号列表
-
-确保语调友好、信息丰富，对宠物主人有吸引力。为SEO目的自然地包含相关关键词。`;
-            } else {
-                prompt = `Write a comprehensive blog post about "${topic}" for pet owners. Structure the content in YAML format with the following requirements:
-
-1. Title: SEO-optimized title about ${topic}
-2. Author: "AI Assistant"
-3. Date: Today's date in format "YYYY-MM-DD HH:MM:SS"
-4. Tags: 5 relevant tags including "${topic.split(' ')[0].toLowerCase()}", "pet safety", etc.
-5. Content:
-   - Introduction explaining why this topic is important for pet owners
-   - Main content sections about ${focus}
-   - Include at least 3 product examples with brief descriptions
-   - Practical tips and recommendations
-   - Conclusion summarizing key points
-6. Slug: URL-friendly version of the title
-7. MetaDescription: 150-160 character SEO description
-
-Format the content section with HTML tags:
-- Use <h2> for main section headings
-- Use <h3> for subsection headings
-- Use <p> for paragraphs
-- Use <ul><li> for bullet point lists
-- Use <ol><li> for numbered lists
-
-Ensure the tone is friendly, informative, and engaging for pet owners. Include relevant keywords naturally for SEO.`;
-            }
-            
-            document.getElementById('blogPromptText').textContent = prompt;
-            document.getElementById('blogPromptResult').style.display = 'block';
-            document.querySelector('#blogPromptResult label').textContent = langData[currentLang].generatedPrompt;
-        }
-        
-        function generateReviewPrompt() {
-            const productName = document.getElementById('productName').value || 'pet tracker';
-            const productBrand = document.getElementById('productBrand').value || 'brand';
-            const aspects = document.getElementById('reviewAspects').value || 'design, features, performance';
-            
-            let prompt;
-            if (currentLang === 'zh') {
-                const chineseProductName = productName === 'pet tracker' ? '宠物追踪器' : productName;
-                const chineseProductBrand = productBrand === 'brand' ? '品牌' : productBrand;
-                const chineseAspects = aspects === 'design, features, performance' ? '设计、功能、性能' : aspects;
+                if (!topic) {
+                    showNotification('Please enter a blog topic', 'error');
+                    return;
+                }
                 
-                prompt = `写一篇关于${chineseProductBrand}的“${chineseProductName}”的详细产品评测，按YAML格式结构，具体要求如下：
-
-1. 标题：“产品名称评测：突出关键特性”
-2. 作者：“AI助手”
-3. 日期：今天的日期，格式为“YYYY-MM-DD HH:MM:SS”
-4. 标签：5个相关标签，包括“${chineseProductBrand}”、“${chineseProductName.split(' ')[0]}”等
-5. 元描述：150-160字符的SEO描述
-6. 别名：标题的URL友好版本
-7. 产品名称：“${chineseProductName}”
-8. 产品品牌：“${chineseProductBrand}”
-9. 评分：提供3.5-5.0之间的现实评分
-10. 优点：5-7个主要优点，使用项目符号列表
-11. 缺点：3-5个潜在缺点，使用项目符号列表
-12. 结论：2-3句话总结整体评估
-13. 内容：
-   - 关于产品的引人入胜的介绍
-   - ${chineseAspects}的详细分析
-   - 与类似产品的比较（如相关）
-   - 针对哪种类型的宠物主人最有益的最终建议
-   - 简要说明哪些人应考虑替代方案
-
-内容部分使用HTML标签格式：
-- 使用<h2>作为主要部分标题
-- 使用<h3>作为子部分标题
-- 使用<p>作为段落
-- 使用<ul><li>作为项目符号列表
-- 使用<ol><li>作为编号列表
-
-重要格式要求：
-- “pros”和“cons”字段必须使用<ul><li>HTML格式作为项目符号
-- 使用今天的日期，格式为“YYYY-MM-DD HH:MM:SS”
-- 将标签格式化为YAML数组，每个标签单独一行并以连字符开头
-- 确保语调客观平衡
-- 对功能和性能进行具体说明
-- 包含宠物主人会发现有价值的实用见解
-- 不要在内容中包含任何markdown格式，只使用HTML标签`;
+                switch (selectedTemplate) {
+                    case 'comprehensive':
+                        prompt = `Write a comprehensive blog post about "${topic}".\n\n`;
+                        prompt += "Structure the article with:\n";
+                        prompt += "1. An engaging introduction that hooks the reader\n";
+                        prompt += "2. Well-researched body sections with relevant information\n";
+                        prompt += "3. A compelling conclusion that summarizes key points\n\n";
+                        if (keywords) {
+                            prompt += `Incorporate these keywords naturally throughout the content: ${keywords}\n\n`;
+                        }
+                        if (outline) {
+                            prompt += `Follow this outline structure:\n${outline}\n\n`;
+                        }
+                        prompt += "Use a friendly, informative tone suitable for pet owners researching GPS pet trackers.\n";
+                        prompt += "Include relevant subheadings to organize the content.\n";
+                        prompt += "The target audience is pet owners considering purchasing a GPS pet tracker.";
+                        break;
+                    case 'seoOptimized':
+                        prompt = `Create an SEO-optimized blog post about "${topic}".\n\n`;
+                        if (keywords) {
+                            prompt += `Primary keywords to target: ${keywords}\n\n`;
+                        }
+                        prompt += "Structure the article with:\n";
+                        prompt += "1. An attention-grabbing title (60 characters max)\n";
+                        prompt += "2. A meta description (150-160 characters)\n";
+                        prompt += "3. Introduction with keyword inclusion\n";
+                        prompt += "4. 3-4 body sections with subheadings\n";
+                        prompt += "5. Conclusion with call-to-action\n\n";
+                        prompt += "Optimize for search engines by:\n";
+                        prompt += "- Using keywords naturally throughout\n";
+                        prompt += "- Including related semantic keywords\n";
+                        prompt += "- Creating descriptive subheadings\n";
+                        prompt += "- Maintaining good keyword density without stuffing\n\n";
+                        prompt += "Use a professional yet approachable tone for pet owners seeking information about pet trackers.";
+                        break;
+                    case 'comparison':
+                        prompt = `Write a comparison article about "${topic}".\n\n`;
+                        if (keywords) {
+                            prompt += `Keywords to include: ${keywords}\n\n`;
+                        }
+                        prompt += "Structure the comparison with:\n";
+                        prompt += "1. Introduction explaining what is being compared\n";
+                        prompt += "2. Methodology - how the comparison was conducted\n";
+                        prompt += "3. Feature-by-feature comparison in a table format\n";
+                        prompt += "4. Pros and cons of each option\n";
+                        prompt += "5. Final recommendation based on different use cases\n\n";
+                        if (outline) {
+                            prompt += `Comparison points to cover:\n${outline}\n\n`;
+                        }
+                        prompt += "Use a neutral, analytical tone.\n";
+                        prompt += "Focus on helping readers make informed decisions.\n";
+                        prompt += "Include a clear recommendation section at the end.";
+                        break;
+                }
             } else {
-                prompt = `Write a detailed product review of the "${productName}" by ${productBrand} in YAML format with these specifications:
-
-1. Title: "ProductName Review: Key Feature Highlighted"
-2. Author: "AI Assistant"
-3. Date: Today's date in format "YYYY-MM-DD HH:MM:SS"
-4. Tags: 5 relevant tags including "${productBrand.toLowerCase()}", "${productName.toLowerCase().split(' ')[0]}", etc.
-5. MetaDescription: 150-160 character SEO description
-6. Slug: URL-friendly version of the title
-7. ProductName: "${productName}"
-8. ProductBrand: "${productBrand}"
-9. Rating: Provide a realistic rating between 3.5-5.0
-10. Pros: 5-7 key advantages as bullet points
-11. Cons: 3-5 potential drawbacks as bullet points
-12. Conclusion: 2-3 sentences summarizing the overall assessment
-13. Content:
-   - Engaging introduction about the product
-   - Detailed analysis of ${aspects}
-   - Comparison with similar products (if relevant)
-   - Final recommendation for which type of pet owner would benefit most
-   - Brief section on who should consider alternatives
-
-Format the content section with HTML tags:
-- Use <h2> for main section headings
-- Use <h3> for subsection headings
-- Use <p> for paragraphs
-- Use <ul><li> for bullet point lists
-- Use <ol><li> for numbered lists
-
-IMPORTANT FORMAT REQUIREMENTS:
-- The "pros" and "cons" fields MUST use <ul><li> HTML format as bullet points
-- Use today's date in "YYYY-MM-DD HH:MM:SS" format
-- Format tags as a YAML array with each tag on a separate line starting with a dash
-- Ensure the tone is objective and balanced
-- Be specific about features and performance
-- Include practical insights that pet owners would find valuable
-- Do not include any markdown formatting in the content, only HTML tags`;
+                // Review content type
+                const productName = document.getElementById('productName').value;
+                const brand = document.getElementById('productBrand').value;
+                const focus = document.getElementById('reviewFocus').value;
+                
+                if (!productName) {
+                    showNotification('Please enter a product name', 'error');
+                    return;
+                }
+                
+                switch (selectedTemplate) {
+                    case 'comprehensive':
+                        prompt = `Write a comprehensive product review for "${productName}"${brand ? ` by ${brand}` : ''}.\n\n`;
+                        prompt += "Structure the review with:\n";
+                        prompt += "1. Introduction with product overview\n";
+                        prompt += "2. Design and build quality assessment\n";
+                        prompt += "3. Feature analysis and performance evaluation\n";
+                        prompt += "4. Pros and cons section\n";
+                        prompt += "5. Final verdict and recommendation\n\n";
+                        if (focus) {
+                            prompt += `Pay special attention to: ${focus}\n\n`;
+                        }
+                        prompt += "Use a balanced tone that is both informative and honest.\n";
+                        prompt += "Include specific details about the product's performance.\n";
+                        prompt += "Target audience: Pet owners considering this product purchase.";
+                        break;
+                    case 'seoOptimized':
+                        prompt = `Create an SEO-optimized product review for "${productName}"${brand ? ` by ${brand}` : ''}.\n\n`;
+                        prompt += "Include:\n";
+                        prompt += "- A compelling title (60 characters max)\n";
+                        prompt += "- Meta description (150-160 characters)\n";
+                        prompt += "- Introduction with product context\n";
+                        prompt += "- Detailed feature analysis\n";
+                        prompt += "- Performance evaluation with ratings\n";
+                        prompt += "- Pros, cons, and final recommendation\n\n";
+                        if (focus) {
+                            prompt += `Key aspects to evaluate: ${focus}\n\n`;
+                        }
+                        prompt += "Optimize for search engines by naturally incorporating relevant keywords.\n";
+                        prompt += "Use descriptive subheadings for better structure.\n";
+                        prompt += "Include a clear star rating (1-5 scale) in the conclusion.";
+                        break;
+                    case 'comparison':
+                        prompt = `Write a comparison review between "${productName}"${brand ? ` by ${brand}` : ''} and its main competitors.\n\n`;
+                        prompt += "Structure the comparison with:\n";
+                        prompt += "1. Introduction explaining the comparison purpose\n";
+                        prompt += "2. Methodology - how the comparison was conducted\n";
+                        prompt += "3. Feature-by-feature comparison table\n";
+                        prompt += "4. Performance evaluation of each product\n";
+                        prompt += "5. Pros and cons of each option\n";
+                        prompt += "6. Final recommendation based on different needs\n\n";
+                        if (focus) {
+                            prompt += `Focus areas for comparison: ${focus}\n\n`;
+                        }
+                        prompt += "Use a neutral, analytical tone.\n";
+                        prompt += "Provide specific data and examples where possible.\n";
+                        prompt += "Help readers choose the best option for their specific needs.";
+                        break;
+                }
             }
             
-            document.getElementById('reviewPromptText').textContent = prompt;
-            document.getElementById('reviewPromptResult').style.display = 'block';
-            document.querySelector('#reviewPromptResult label').textContent = langData[currentLang].generatedPrompt;
+            // Display the generated prompt
+            document.getElementById('generatedPrompt').value = prompt;
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('copyBtn').style.display = 'inline-block';
+            
+            // Scroll to results
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
         }
         
-        // Initialize page with English language on load
-        document.addEventListener('DOMContentLoaded', function() {
-            switchLanguage('en');
-        });
-        
-        function copyToClipboard(elementId) {
-            const text = document.getElementById(elementId).textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                showNotification('Copied to clipboard!', 'success');
-            }).catch(err => {
-                showNotification('Failed to copy: ' + err, 'error');
-            });
+        function copyToClipboard() {
+            const textarea = document.getElementById('generatedPrompt');
+            textarea.select();
+            document.execCommand('copy');
+            showNotification('Prompt copied to clipboard!', 'success');
         }
         
+        // Show notification function
         function showNotification(message, type) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
             notification.className = 'notification ' + type;
             notification.style.display = 'block';
             
+            // Hide after 3 seconds
             setTimeout(() => {
                 notification.style.display = 'none';
             }, 3000);
@@ -833,6 +483,20 @@ IMPORTANT FORMAT REQUIREMENTS:
         document.getElementById('notification').addEventListener('click', function() {
             this.style.display = 'none';
         });
+        
+        // Copy button event
+        document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
+        
+        // Export function (copied from dashboard)
+        function exportContent() {
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = '/admin/export';
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     </script>
 </body>
 </html>
