@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
+import javax.imageio.spi.IIORegistry;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -82,6 +83,10 @@ public class ImageService {
     @PostConstruct
     public void initDirectories() {
         try {
+            // Register WebP ImageReader
+            IIORegistry registry = IIORegistry.getDefaultInstance();
+            registry.registerServiceProvider(new com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi());
+            
             // Handle both relative and absolute paths
             if (uploadDir.startsWith("/")) {
                 // Absolute path
@@ -191,24 +196,64 @@ public class ImageService {
      */
     private void compressImageIfNeeded(File originalFile, Image image) throws IOException {
         if (image.getFileSize() > maxFileSize / 2) { // Compress if over 5MB
-            String extension = FilenameUtils.getExtension(image.getFilename());
+            String extension = FilenameUtils.getExtension(image.getFilename()).toLowerCase();
             String compressedFilename = FilenameUtils.getBaseName(image.getFilename()) + 
                                       "_compressed." + extension;
             
             Path compressedPath = Paths.get(absoluteUploadDir, compressedFilename);
             
-            Thumbnails.of(originalFile)
-                    .scale(1.0)
-                    .outputQuality(compressionQuality)
-                    .toFile(compressedPath.toFile());
-            
-            // Replace original with compressed if smaller
-            if (Files.size(compressedPath) < Files.size(originalFile.toPath())) {
-                Files.delete(originalFile.toPath());
-                Files.move(compressedPath, originalFile.toPath());
-                image.setFileSize(Files.size(originalFile.toPath()));
+            // 对于WebP格式，使用ImageIO进行转换处理
+            if ("webp".equals(extension)) {
+                // 读取WebP图片
+                BufferedImage bufferedImage = ImageIO.read(originalFile);
+                if (bufferedImage != null) {
+                    // 转换为JPEG格式进行压缩
+                    String jpegCompressedFilename = FilenameUtils.getBaseName(image.getFilename()) + 
+                                                  "_compressed.jpg";
+                    Path jpegCompressedPath = Paths.get(absoluteUploadDir, jpegCompressedFilename);
+                    
+                    Thumbnails.of(bufferedImage)
+                            .scale(1.0)
+                            .outputQuality(compressionQuality)
+                            .outputFormat("JPEG")
+                            .toFile(jpegCompressedPath.toFile());
+                    
+                    // 替换原文件如果压缩后的文件更小
+                    if (Files.size(jpegCompressedPath) < Files.size(originalFile.toPath())) {
+                        Files.delete(originalFile.toPath());
+                        Files.move(jpegCompressedPath, originalFile.toPath());
+                        image.setFileSize(Files.size(originalFile.toPath()));
+                        image.setFilename(FilenameUtils.getBaseName(image.getFilename()) + ".jpg");
+                        image.setMimeType("image/jpeg");
+                        
+                        // 更新文件路径
+                        if (uploadDir.startsWith("/")) {
+                            image.setFilePath("uploads/images/" + FilenameUtils.getBaseName(image.getFilename()) + ".jpg");
+                        } else {
+                            image.setFilePath("uploads/images/" + FilenameUtils.getBaseName(image.getFilename()) + ".jpg");
+                        }
+                    } else {
+                        Files.deleteIfExists(jpegCompressedPath);
+                    }
+                } else {
+                    // 如果无法读取，跳过压缩
+                    System.out.println("无法读取WebP图片进行压缩: " + originalFile.getName());
+                }
             } else {
-                Files.deleteIfExists(compressedPath);
+                // 其他格式使用原有处理方式
+                Thumbnails.of(originalFile)
+                        .scale(1.0)
+                        .outputQuality(compressionQuality)
+                        .toFile(compressedPath.toFile());
+                
+                // Replace original with compressed if smaller
+                if (Files.size(compressedPath) < Files.size(originalFile.toPath())) {
+                    Files.delete(originalFile.toPath());
+                    Files.move(compressedPath, originalFile.toPath());
+                    image.setFileSize(Files.size(originalFile.toPath()));
+                } else {
+                    Files.deleteIfExists(compressedPath);
+                }
             }
         }
     }
@@ -217,24 +262,61 @@ public class ImageService {
      * Create thumbnail for image
      */
     private void createThumbnail(File originalFile, Image image) throws IOException {
-        String extension = FilenameUtils.getExtension(image.getFilename());
+        String extension = FilenameUtils.getExtension(image.getFilename()).toLowerCase();
         String thumbnailFilename = FilenameUtils.getBaseName(image.getFilename()) + 
                                  "_thumb." + extension;
         
         Path thumbnailPath = Paths.get(absoluteUploadDir, "thumbnails", thumbnailFilename);
         
-        Thumbnails.of(originalFile)
-                .size(thumbnailSize, thumbnailSize)
-                .outputQuality(0.8)
-                .toFile(thumbnailPath.toFile());
-        
-        // Set thumbnail path relative to web root for web access
-        if (uploadDir.startsWith("/")) {
-            // For absolute paths, we need to construct the web-accessible path
-            image.setThumbnailPath("uploads/images/thumbnails/" + thumbnailFilename);
+        // 对于WebP格式，使用ImageIO进行转换
+        if ("webp".equals(extension)) {
+            // 读取WebP图片
+            BufferedImage bufferedImage = ImageIO.read(originalFile);
+            if (bufferedImage != null) {
+                // 转换为PNG格式保存缩略图
+                String pngThumbnailFilename = FilenameUtils.getBaseName(image.getFilename()) + 
+                                            "_thumb.png";
+                Path pngThumbnailPath = Paths.get(absoluteUploadDir, "thumbnails", pngThumbnailFilename);
+                
+                Thumbnails.of(bufferedImage)
+                        .size(thumbnailSize, thumbnailSize)
+                        .outputQuality(0.8)
+                        .outputFormat("PNG")
+                        .toFile(pngThumbnailPath.toFile());
+                
+                // 设置缩略图路径
+                if (uploadDir.startsWith("/")) {
+                    image.setThumbnailPath("uploads/images/thumbnails/" + pngThumbnailFilename);
+                } else {
+                    image.setThumbnailPath("uploads/images/thumbnails/" + pngThumbnailFilename);
+                }
+            } else {
+                // 如果无法读取，使用默认处理方式
+                Thumbnails.of(originalFile)
+                        .size(thumbnailSize, thumbnailSize)
+                        .outputQuality(0.8)
+                        .toFile(thumbnailPath.toFile());
+                
+                // Set thumbnail path relative to web root for web access
+                if (uploadDir.startsWith("/")) {
+                    image.setThumbnailPath("uploads/images/thumbnails/" + thumbnailFilename);
+                } else {
+                    image.setThumbnailPath("uploads/images/thumbnails/" + thumbnailFilename);
+                }
+            }
         } else {
-            // For relative paths, keep the existing logic
-            image.setThumbnailPath("uploads/images/thumbnails/" + thumbnailFilename);
+            // 其他格式使用原有处理方式
+            Thumbnails.of(originalFile)
+                    .size(thumbnailSize, thumbnailSize)
+                    .outputQuality(0.8)
+                    .toFile(thumbnailPath.toFile());
+            
+            // Set thumbnail path relative to web root for web access
+            if (uploadDir.startsWith("/")) {
+                image.setThumbnailPath("uploads/images/thumbnails/" + thumbnailFilename);
+            } else {
+                image.setThumbnailPath("uploads/images/thumbnails/" + thumbnailFilename);
+            }
         }
     }
     
