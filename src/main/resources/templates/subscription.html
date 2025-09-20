@@ -687,7 +687,9 @@
     <template id="cardTpl">
         <article class="card" itemscope itemtype="https://schema.org/Product">
             <div class="meta">
-                <div class="logo" data-logo itemprop="brand"></div>
+                <div class="logo" data-logo itemprop="brand">
+                    <img data-logo-img style="width: 100%; height: 100%; object-fit: contain;" />
+                </div>
                 <div>
                     <h3 data-name itemprop="name"></h3>
                     <p data-tagline class="muted" itemprop="description"></p>
@@ -867,7 +869,7 @@
         {
             id:'tractive',
             name:'Tractive',
-            logo:'T',
+            logo:'https://cdn.brandfetch.io/id8zKTgIuv/w/2000/h/2000/theme/dark/icon.jpeg',
             region:'🇪🇺',
             short:'GPS tracker, global coverage',
             monthly:5,
@@ -886,7 +888,7 @@
         {
             id:'fi',
             name:'Fi',
-            logo:'F',
+            logo:'https://tryfi.com/favicon.ico',
             region:'🇺🇸',
             short:'Battery-smart GPS for dogs',
             monthly:3.20,
@@ -903,7 +905,7 @@
         {
             id:'pawfit',
             name:'Pawfit',
-            logo:'P',
+            logo:'https://www.pawfit.com/favicon.ico',
             region:'🇬🇧',
             short:'Pet tracker with audio and fitness',
             monthly:4.75,
@@ -924,7 +926,7 @@
         {
             id:'pitpat',
             name:'PitPat',
-            logo:'PP',
+            logo:'https://www.pitpat.com/wp-content/uploads/2020/04/pitpat-logo.svg',
             region:'🇬🇧',
             short:'Dog activity monitor with no monthly fee',
             monthly:0,
@@ -940,7 +942,7 @@
         {
             id:'weenect',
             name:'Weenect',
-            logo:'W',
+            logo:'https://static.snoweb.io/svg/weenect-logo-2.svg',
             region:'🇪🇺',
             short:'Compact GPS tracker for cats and dogs',
             monthly:4.16,
@@ -956,7 +958,7 @@
         {
             id:'kippy',
             name:'Kippy',
-            logo:'K',
+            logo:'https://www.kippy.eu/res/img/favicon-32x32.png',
             region:'🇪🇺',
             short:'Italian GPS pet tracker with activity monitoring',
             monthly:3.33,
@@ -973,7 +975,7 @@
         {
             id:'airtag',
             name:'Apple AirTag',
-            logo:'A',
+            logo:'https://www.apple.com/favicon.ico',
             region:'🇺🇸',
             short:'Item-finder style, no subscription',
             monthly:0,
@@ -987,7 +989,7 @@
         {
             id:'petcube',
             name:'Petcube Tracker',
-            logo:'P',
+            logo:'https://petcube.com/favicon.ico',
             region:'🇺🇸',
             short:'GPS tracker with live location, escape alerts, and activity monitoring',
             monthly:5,
@@ -1144,7 +1146,11 @@
             node.querySelector('[data-name]').textContent = b.name;
             node.querySelector('[data-tagline]').textContent = b.short;
             node.querySelector('[data-region]').textContent = b.region;
-            node.querySelector('[data-logo]').textContent = b.logo;
+            
+            // Set logo image
+            const logoImg = node.querySelector('[data-logo-img]');
+            logoImg.src = b.logo;
+            logoImg.alt = b.name + ' logo';
 
             // Set structured data attributes
             const card = node.querySelector('article');
