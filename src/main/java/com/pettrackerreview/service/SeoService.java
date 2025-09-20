@@ -184,6 +184,9 @@ public class SeoService {
 
         // Search page
         addUrl(sitemap, baseUrl + "/search", "weekly", "0.5", null);
+        
+        // Subscription page
+        addUrl(sitemap, baseUrl + "/subscription", "weekly", "0.7", null);
     }
 
     private void addBlogUrls(StringBuilder sitemap) {

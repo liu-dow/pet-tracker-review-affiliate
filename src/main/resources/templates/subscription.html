@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Compare Pet Tracker Subscription Plans & Pricing - Pet Tracker Review</title>
+    <meta name="description" th:content="${metaDescription}" content="Compare pet tracker subscription plans and pricing from top brands like Tractive, Fi, Pawfit, PitPat, Weenect, Kippy. Find the best GPS pet tracker with affordable monthly fees.">
+    
+    <!-- Canonical URL to prevent duplicate content issues -->
+    <link rel="canonical" th:href="${canonicalUrl}" href="http://pettrackerreview.com/subscription" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" th:content="${canonicalUrl}" content="http://pettrackerreview.com/subscription">
+    <meta property="og:description" th:content="${metaDescription}" content="Compare pet tracker subscription plans and pricing from top brands like Tractive, Fi, Pawfit, PitPat, Weenect, Kippy. Find the best GPS pet tracker with affordable monthly fees.">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" th:content="${canonicalUrl}" content="http://pettrackerreview.com/subscription">
+    <meta property="twitter:description" th:content="${metaDescription}" content="Compare pet tracker subscription plans and pricing from top brands like Tractive, Fi, Pawfit, PitPat, Weenect, Kippy. Find the best GPS pet tracker with affordable monthly fees.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/css/pages/base.css(v=${cssVersion})}">
+    <link rel="stylesheet" th:href="@{/css/pages/header.css(v=${cssVersion})}">
+    <link rel="stylesheet" th:href="@{/css/pages/footer.css(v=${cssVersion})}">
+    <link rel="stylesheet" th:href="@{/css/pages/search.css(v=${cssVersion})}">
+    <link rel="stylesheet" th:href="@{/css/pages/subscription.css(v=${cssVersion})}" th:if="${cssVersion != null}">
+    <link rel="stylesheet" th:href="@{/css/main.css(v=${cssVersion})}">
+    <link rel="stylesheet" th:href="@{/css/pages/disclosure.css(v=${cssVersion})}">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "Compare Pet Tracker Subscription Plans & Pricing",
+            "description": "Search & compare subscription plans from popular GPS pet tracker brands including Tractive, Fi, Pawfit, PitPat, Weenect, Kippy & more. Filter by features like live tracking, geofencing, and health monitoring. To find the best pet tracker subscription for your needs.",
+            "mainEntity": {
+                "@type": "ItemList",
+                "name": "Pet Tracker Brands",
+                "itemListElement": [
+                    {
+                        "@type": "Product",
+                        "name": "Tractive GPS Pet Tracker",
+                        "description": "GPS tracker with global coverage and live tracking",
+                        "brand": "Tractive",
+                        "offers": {
+                            "@type": "Offer",
+                            "priceCurrency": "EUR",
+                            "price": "5.00",
+                            "priceSpecification": [
+                                {"price": "5.00", "priceCurrency": "EUR", "billingPeriod": "Month", "subscriptionTerm": "P2Y"},
+                                {"price": "7.00", "priceCurrency": "EUR", "billingPeriod": "Month", "subscriptionTerm": "P1Y"},
+                                {"price": "13.00", "priceCurrency": "EUR", "billingPeriod": "Month", "subscriptionTerm": "P1M"}
+                            ]
+                        }
+                    },
+                    {
+                        "@type": "Product",
+                        "name": "Fi GPS Pet Tracker",
+                        "description": "Battery-smart GPS for dogs with long battery life",
+                        "brand": "Fi",
+                        "offers": {
+                            "@type": "Offer",
+                            "priceCurrency": "USD",
+                            "price": "3.20",
+                            "priceSpecification": [
+                                {"price": "3.20", "priceCurrency": "USD", "billingPeriod": "Week", "subscriptionTerm": "P2Y"},
+                                {"price": "3.60", "priceCurrency": "USD", "billingPeriod": "Week", "subscriptionTerm": "P1Y"},
+                                {"price": "3.80", "priceCurrency": "USD", "billingPeriod": "Week", "subscriptionTerm": "P6M"},
+                                {"price": "4.40", "priceCurrency": "USD", "billingPeriod": "Week", "subscriptionTerm": "P1M"}
+                            ]
+                        }
+                    },
+                    {
+                        "@type": "Product",
+                        "name": "Pawfit Pet Tracker",
+                        "description": "Pet tracker with audio and fitness monitoring",
+                        "brand": "Pawfit",
+                        "offers": {
+                            "@type": "Offer",
+                            "priceCurrency": "USD",
+                            "price": "4.75",
+                            "priceSpecification": [
+                                {"price": "4.75", "priceCurrency": "USD", "billingPeriod": "Month", "subscriptionTerm": "P2Y"},
+                                {"price": "5.15", "priceCurrency": "USD", "billingPeriod": "Month", "subscriptionTerm": "P1Y"},
+                                {"price": "5.75", "priceCurrency": "USD", "billingPeriod": "Month", "subscriptionTerm": "P6M"},
+                                {"price": "8.35", "priceCurrency": "USD", "billingPeriod": "Month", "subscriptionTerm": "P1M"}
+                            ]
+                        }
+                    },
+                    {
+                        "@type": "Product",
+                        "name": "PitPat Dog Activity Monitor",
+                        "description": "Dog activity monitor with no monthly fee",
+                        "brand": "PitPat",
+                        "offers": {
+                            "@type": "Offer",
+                            "priceCurrency": "GBP",
+                            "price": "149.00",
+                            "priceSpecification": [
+                                {"price": "149.00", "priceCurrency": "GBP", "billingPeriod": "OneTime"},
+                                {"price": "12.00", "priceCurrency": "GBP", "billingPeriod": "Month"}
+                            ]
+                        }
+                    },
+                    {
+                        "@type": "Product",
+                        "name": "Weenect Pet Tracker",
+                        "description": "Compact GPS tracker for cats and dogs",
+                        "brand": "Weenect",
+                        "offers": {
+                            "@type": "Offer",
+                            "priceCurrency": "EUR",
+                            "price": "4.16",
+                            "priceSpecification": [
+                                {"price": "4.16", "priceCurrency": "EUR", "billingPeriod": "Month", "subscriptionTerm": "P3Y"},
+                                {"price": "6.67", "priceCurrency": "EUR", "billingPeriod": "Month", "subscriptionTerm": "P1Y"},
+                                {"price": "12.99", "priceCurrency": "EUR", "billingPeriod": "Month", "subscriptionTerm": "P1M"}
+                            ]
+                        }
+                    },
+                    {
+                        "@type": "Product",
+                        "name": "Kippy GPS Pet Tracker",
+                        "description": "Italian GPS pet tracker with activity monitoring",
+                        "brand": "Kippy",
+                        "offers": {
+                            "@type": "Offer",
+                            "priceCurrency": "EUR",
+                            "price": "3.33",
+                            "priceSpecification": [
+                                {"price": "3.33", "priceCurrency": "EUR", "billingPeriod": "Month", "subscriptionTerm": "P5Y"},
+                                {"price": "4.16", "priceCurrency": "EUR", "billingPeriod": "Month", "subscriptionTerm": "P2Y"},
+                                {"price": "5.83", "priceCurrency": "EUR", "billingPeriod": "Month", "subscriptionTerm": "P1Y"},
+                                {"price": "10.99", "priceCurrency": "EUR", "billingPeriod": "Month", "subscriptionTerm": "P1M"}
+                            ]
+                        }
+                    },
+                    {
+                        "@type": "Product",
+                        "name": "Apple AirTag",
+                        "description": "Item-finder style, no subscription",
+                        "brand": "Apple",
+                        "offers": {
+                            "@type": "Offer",
+                            "priceCurrency": "USD",
+                            "price": "29.00",
+                            "priceSpecification": [
+                                {"price": "29.00", "priceCurrency": "USD", "billingPeriod": "OneTime"}
+                            ]
+                        }
+                    },
+                    {
+                        "@type": "Product",
+                        "name": "Petcube Tracker",
+                        "description": "GPS tracker with live location, escape alerts, and activity monitoring",
+                        "brand": "Petcube",
+                        "offers": {
+                            "@type": "Offer",
+                            "priceCurrency": "USD",
+                            "price": "5.00",
+                            "priceSpecification": [
+                                {"price": "5.00", "priceCurrency": "USD", "billingPeriod": "Month", "subscriptionTerm": "P2Y"},
+                                {"price": "7.00", "priceCurrency": "USD", "billingPeriod": "Month", "subscriptionTerm": "P1Y"},
+                                {"price": "12.00", "priceCurrency": "USD", "billingPeriod": "Month", "subscriptionTerm": "P1M"}
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    </script>
+    <style>
+        :root{
+            --bg:#f8fafc; --card:#ffffff; --accent:#4361ee; --muted:#64748b; --glass: rgba(255,255,255,0.8);
+            --radius:16px; --maxw:1100px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        *{box-sizing:border-box}
+        html,body{height:100%;margin:0;background:linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);color:#1e293b}
+        .wrap{max-width:var(--maxw);margin:32px auto;padding:24px}
+        header h1{margin:0;font-size:28px;color:#0f172a;font-weight:700}
+        p.lead{margin:8px 0 24px;color:var(--muted);font-size:16px;line-height:1.6}
+
+        /* SEO优化：确保标题和段落有良好的层次结构 */
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        h2 { font-size: 2rem; margin-top: 2rem; margin-bottom: 1rem; }
+        h3 { font-size: 1.5rem; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        
+        /* SEO优化：确保FAQ部分对搜索引擎友好 */
+        .faq-section { margin-top: 2rem; }
+        .faq-item { margin-bottom: 1.5rem; }
+        .faq-item h3 { margin-top: 0; }
+        
+        .searchbar{display:flex;gap:16px;align-items:center;background:var(--glass);padding:16px 20px;border-radius:var(--radius);box-shadow:0 4px 20px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.05)}
+        .searchbar input[type=text]{flex:1;padding:12px 16px;border-radius:12px;border:1px solid #cbd5e1;background:#ffffff;color:#1e293b;font-size:16px;transition:all 0.2s}
+        .searchbar input[type=text]:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(67, 97, 238, 0.2)}
+        .searchbar .btn{padding:12px 20px;border-radius:12px;border:0;background:linear-gradient(135deg, var(--accent), #3a56d4);color:#ffffff;font-weight:600;cursor:pointer;font-size:16px;transition:all 0.2s;box-shadow:0 2px 10px rgba(67, 97, 238, 0.3)}
+        .searchbar .btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(67, 97, 238, 0.4)}
+
+        .controls{display:flex;gap:16px;margin-top:24px;flex-wrap:wrap}
+        .select{background:var(--card);padding:12px 16px;border-radius:12px;border:1px solid #e2e8f0;color:#1e293b;display:flex;align-items:center;gap:8px;font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+        select{background:#ffffff;border:1px solid #cbd5e1;color:#1e293b;padding:8px 12px;border-radius:8px;font-size:15px;cursor:pointer}
+        select:focus{outline:2px solid var(--accent)}
+
+        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:32px}
+        .card{background:var(--card);padding:20px;border-radius:var(--radius);border:1px solid #e2e8f0;box-shadow:0 6px 20px rgba(0,0,0,0.08);display:flex;flex-direction:column;gap:16px;color:#1e293b;transition:all 0.3s ease}
+        .card:hover{transform:translateY(-5px);box-shadow:0 12px 30px rgba(0,0,0,0.12)}
+        .meta{display:flex;align-items:center;gap:12px}
+        .logo{width:50px;height:50px;background:#f1f5f9;color:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;flex-shrink:0;border:2px solid #e2e8f0;}
+        .meta h3{margin:0;font-size:18px;color:#0f172a;font-weight:600}
+        .meta p{margin:4px 0 0;color:var(--muted);font-size:14px}
+
+        .region {font-size:13px;color:var(--accent);margin-top:4px;font-weight:500}
+
+        .features{display:flex;gap:8px;flex-wrap:wrap}
+        .chip{padding:6px 12px;background:#f1f5f9;border-radius:999px;font-size:13px;color:#475569;border:1px solid #e2e8f0;font-weight:500}
+
+        .price{display:flex;align-items:baseline;gap:8px;margin-top:8px}
+        .price .monthly{font-weight:800;font-size:22px;color:#0f172a}
+        .price .term{color:var(--muted);font-size:14px}
+
+        .card footer{display:flex;gap:12px;align-items:center;margin-top:8px}
+        .link{padding:10px 16px;border-radius:10px;background:#f8fafc;color:#1e293b;border:1px solid #e2e8f0;cursor:pointer;font-weight:500;transition:all 0.2s}
+        .link:hover{background:#f1f5f9;border-color:#cbd5e1}
+
+        /* Add modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            overflow: auto;
+            -webkit-overflow-scrolling: touch; /* iOS scrolling optimization */
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--card);
+            margin: 5% auto;
+            padding: 0;
+            border-radius: var(--radius);
+            border: 1px solid #e2e8f0;
+            width: 90%;
+            max-width: 650px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            animation: modalopen 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalopen {
+            from {opacity: 0; transform: translateY(-60px) scale(0.95);}
+            to {opacity: 1; transform: translateY(0) scale(1);}
+        }
+
+        @keyframes cardAppear {
+            from {opacity: 0; transform: translateY(20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        .card {
+            animation: cardAppear 0.3s ease-out;
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 24px;
+            color: #0f172a;
+            flex: 1;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .close {
+            color: #94a3b8;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            margin-left: auto; /* Ensure close button is on the right */
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #0f172a;
+            background-color: #f1f5f9;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 24px;
+            max-height: 70vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* iOS scrolling optimization */
+            color: #0f172a;
+        }
+
+        .subscription-plan {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .subscription-plan:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            border-color: #cbd5e1;
+        }
+
+        .subscription-plan-group {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .subscription-plan-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .subscription-plan-group h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #0f172a;
+            font-size: 22px;
+            font-weight: 700;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        .plan-name {
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #0f172a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .plan-price-tag {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .plan-price {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent);
+            margin: 12px 0;
+        }
+
+        .plan-details {
+            margin: 12px 0;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .plan-features {
+            margin: 20px 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .plan-features li {
+            margin-bottom: 10px;
+            padding-left: 28px;
+            position: relative;
+            color: #0f172a;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .plan-features li:before {
+            content: "✓";
+            color: var(--accent);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 18px;
+            top: 1px;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .subscription-plan {
+                padding: 12px;
+            }
+
+            .subscription-plan-group h3 {
+                font-size: 20px;
+                margin-bottom: 16px;
+                padding-bottom: 8px;
+                color: #0f172a;
+            }
+
+            .plan-name {
+                font-size: 15px;
+            }
+
+            .plan-price {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+                margin: 5% auto;
+            }
+
+            .modal-header {
+                padding: 12px 15px;
+            }
+
+            .modal-body {
+                padding: 12px;
+                max-height: 65vh;
+            }
+
+            .subscription-plan {
+                padding: 10px;
+                margin-bottom: 12px;
+            }
+
+            .subscription-plan-group h3 {
+                font-size: 18px;
+                margin-bottom: 14px;
+                padding-bottom: 6px;
+                color: #0f172a;
+            }
+
+            .plan-name {
+                font-size: 14px;
+            }
+
+            .plan-price-tag {
+                font-size: 12px;
+                padding: 2px 6px;
+            }
+
+            .plan-price {
+                font-size: 15px;
+            }
+
+            .plan-details {
+                font-size: 12px;
+            }
+
+            .plan-features li {
+                font-size: 13px;
+                margin-bottom: 6px;
+                padding-left: 18px;
+            }
+        }
+
+        /* 超小屏幕适配 */
+        @media (max-width: 360px) {
+            .modal-header h2 {
+                font-size: 16px;
+            }
+
+            .close {
+                font-size: 24px;
+                width: 24px;
+                height: 24px;
+            }
+
+            .subscription-plan-group h3 {
+                font-size: 16px;
+                margin-bottom: 12px;
+                padding-bottom: 4px;
+                color: #0f172a;
+            }
+
+            .plan-name {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .plan-price-tag {
+                font-size: 11px;
+            }
+
+            .plan-features li {
+                font-size: 12px;
+                padding-left: 16px;
+            }
+        }
+
+        /* Landscape mode optimization */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .modal-content {
+                margin: 2% auto;
+                max-height: 90vh;
+            }
+
+            .modal-body {
+                max-height: 70vh;
+            }
+        }
+
+        .empty{padding:60px;border-radius:var(--radius);background:#f8fafc;text-align:center;color:var(--muted);border:1px dashed #cbd5e1;margin-top:30px;box-shadow:0 4px 12px rgba(0,0,0,0.05)}
+
+        .muted{color:var(--muted)}
+        @media (max-width:560px){header{flex-direction:column;align-items:flex-start}}
+    </style>
+</head>
+<body>
+<header class="header">
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a th:href="@{/}" class="brand-link">
+                    <i class="fas fa-paw"></i>
+                    <span>Pet Tracker Review</span>
+                </a>
+            </div>
+
+            <div class="nav-menu" id="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a th:href="@{/}" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/blogs}" class="nav-link">Blogs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/reviews}" class="nav-link">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/subscription}" class="nav-link">Subscription</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-search">
+                <form th:action="@{/search}" method="get" class="search-form">
+                    <input type="text" name="q" placeholder="Search..." class="search-input">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="wrap">
+    <header>
+        <div>
+            <h1>Compare Pet Tracker Subscription Plans & Pricing</h1>
+            <p class="lead">Search & compare subscription plans from popular GPS pet tracker brands including Tractive, Fi, Pawfit, PitPat, Weenect, Kippy & more. Filter by features like live tracking, geofencing, and health monitoring. To find the best pet tracker subscription for your needs.</p>
+        </div>
+    </header>
+
+    <div class="searchbar" role="search" aria-label="Brand search">
+        <input id="q" type="text" placeholder="Search brands, features (e.g. Tractive, live)" />
+        <button id="clearBtn" class="btn" title="Clear">Clear</button>
+    </div>
+
+    <div class="controls">
+        <div class="select">
+            Sort:
+            <select id="sort">
+                <option value="relevance">Relevance</option>
+                <option value="price-asc">Price: low → high</option>
+                <option value="price-desc">Price: high → low</option>
+                <option value="name">Name A→Z</option>
+            </select>
+        </div>
+
+        <div class="select">
+            Filter by feature:
+            <select id="featureFilter">
+                <option value="any">Any</option>
+                <option value="live">Live tracking</option>
+                <option value="fence">Virtual fence</option>
+                <option value="health">Health monitoring</option>
+                <option value="offline">Offline finding</option>
+            </select>
+        </div>
+
+
+    </div>
+
+    <main id="results" class="grid" aria-live="polite">
+        <!-- Search results will be dynamically populated by JavaScript -->
+    </main>
+
+    <!-- FAQ Structured Data -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "What is a pet tracker subscription and how does it work?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "A pet tracker subscription is a recurring fee that allows your GPS pet tracker to connect to cellular networks and provide real-time location data. Most GPS pet trackers require a monthly subscription for data connectivity. Popular brands like Tractive, Fi, and Pawfit offer various subscription plans ranging from $3 to $12 per month."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Which pet tracker has the cheapest subscription?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Based on our comparison, Kippy offers some of the most affordable long-term subscription plans starting at €3.33/month for a 5-year commitment. However, the best value depends on your specific needs, features required, and contract length preferences."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Are there pet trackers without monthly fees?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes, some pet trackers don't require monthly subscriptions. Apple AirTag works with the Find My network without subscription fees but offers limited features compared to GPS trackers. PitPat offers a one-time device purchase with optional membership plans."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "What features are typically included in pet tracker subscriptions?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Most pet tracker subscriptions include real-time GPS tracking, location history, geofencing/virtual fences, and activity monitoring. Premium plans often include additional features like health monitoring, extended location history, worldwide coverage, and family sharing options."
+                    }
+                }
+            ]
+        }
+    </script>
+
+    <template id="cardTpl">
+        <article class="card" itemscope itemtype="https://schema.org/Product">
+            <div class="meta">
+                <div class="logo" data-logo itemprop="brand"></div>
+                <div>
+                    <h3 data-name itemprop="name"></h3>
+                    <p data-tagline class="muted" itemprop="description"></p>
+                    <div class="region" data-region></div>
+                </div>
+            </div>
+            <div class="features" data-features></div>
+            <div class="price">
+                <div class="monthly" data-monthly itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <span itemprop="price"></span>
+                    <link itemprop="priceCurrency" href="https://schema.org/USD" />
+                </div>
+                <div class="term muted" data-term itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <span itemprop="priceSpecification"></span>
+                </div>
+            </div>
+            <p class="muted" data-notes></p>
+            <footer>
+                <button class="link" data-link>Visit</button>
+                <button class="link" data-subscriptions>Plans</button> <!-- Add subscription details button -->
+            </footer>
+        </article>
+    </template>
+
+    <!-- Add modal template -->
+    <div id="subscriptionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2 id="modalBrandName"></h2>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Subscription plans will be dynamically populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add hidden subscription plan content for SEO -->
+    <div style="display: none;" aria-hidden="true">
+        <!-- Tractive Subscription Plans -->
+        <div id="seo-tractive">
+            <h3>Tractive GPS Pet Tracker Subscription Plans</h3>
+            <p>Tractive offers Basic and Premium subscription plans. Basic plans start at €5/month for a 2-year commitment. Premium plans include worldwide coverage and family sharing features.</p>
+            <ul>
+                <li>Basic Plan: €5/month (2-year), €7/month (annual), €13/month (monthly)</li>
+                <li>Premium Plan: €5/month (5-year), €6/month (2-year), €8/month (annual)</li>
+                <li>All plans include live tracking, location history, and activity monitoring</li>
+            </ul>
+        </div>
+
+        <!-- Fi Subscription Plans -->
+        <div id="seo-fi">
+            <h3>Fi GPS Pet Tracker Subscription Plans</h3>
+            <p>Fi offers Prepay and Monthly subscription options. Prepay plans start at $3.20/week for a 2-year commitment. Monthly plans are available at $4.40/week.</p>
+            <ul>
+                <li>Prepay Plan: $3.20/week (2-year), $3.60/week (annual), $3.80/week (6-month)</li>
+                <li>Monthly Plan: $4.40/week</li>
+                <li>All plans include live tracking, geofencing, and activity monitoring</li>
+            </ul>
+        </div>
+
+        <!-- Pawfit Subscription Plans -->
+        <div id="seo-pawfit">
+            <h3>Pawfit Pet Tracker Subscription Plans</h3>
+            <p>Pawfit offers Basic and Premium subscription plans. Basic plans start at $4.75/month for a 2-year commitment. Premium plans include extended walk time limits.</p>
+            <ul>
+                <li>Basic Plan: $4.75/month (2-year), $5.15/month (annual), $5.75/month (6-month), $8.35/month (monthly)</li>
+                <li>Premium Plan: $5.55/month (2-year), $6.05/month (annual), $6.85/month (6-month), $9.55/month (monthly)</li>
+                <li>All plans include live tracking, geofencing, and activity monitoring</li>
+            </ul>
+        </div>
+
+        <!-- PitPat Subscription Plans -->
+        <div id="seo-pitpat">
+            <h3>PitPat Dog Activity Monitor Subscription Plans</h3>
+            <p>PitPat offers a one-time device purchase with optional LIFE Membership. The device includes basic activity monitoring with no monthly fees.</p>
+            <ul>
+                <li>Device Only: £149 one-time purchase</li>
+                <li>LIFE Membership: £12/month or £3.99/month (Pay Once)</li>
+                <li>Features include activity monitoring, sleep tracking, and health insights</li>
+            </ul>
+        </div>
+
+        <!-- Weenect Subscription Plans -->
+        <div id="seo-weenect">
+            <h3>Weenect Pet Tracker Subscription Plans</h3>
+            <p>Weenect offers Standard subscription plans with prepaid and monthly options. Prepaid plans offer significant savings over monthly plans.</p>
+            <ul>
+                <li>Standard Plan: €4.16/month (3-year prepaid), €6.67/month (annual prepaid), €12.99/month (monthly)</li>
+                <li>All plans include live tracking, geofencing, and activity monitoring</li>
+                <li>Prepaid plans can be cancelled at each anniversary</li>
+            </ul>
+        </div>
+
+        <!-- Kippy Subscription Plans -->
+        <div id="seo-kippy">
+            <h3>Kippy GPS Pet Tracker Subscription Plans</h3>
+            <p>Kippy offers multiple subscription tiers with long-term prepaid options. Monthly plans start at €10.99, with prepaid options offering significant savings.</p>
+            <ul>
+                <li>Supreme Plan: €3.33/month (5-year prepaid)</li>
+                <li>Ultimate Plan: €4.16/month (2-year prepaid)</li>
+                <li>Premium Plan: €5.83/month (annual prepaid)</li>
+                <li>Basic Plan: €10.99/month (monthly)</li>
+                <li>All plans include live tracking, geofencing, and activity monitoring</li>
+            </ul>
+        </div>
+
+        <!-- Petcube Subscription Plans -->
+        <div id="seo-petcube">
+            <h3>Petcube Tracker Subscription Plans</h3>
+            <p>Petcube offers Basic and Premium subscription plans. Premium plans include unlimited location history and coverage for unlimited pets.</p>
+            <ul>
+                <li>Basic Plan: $5/month (2-year), $7/month (annual), $12/month (monthly)</li>
+                <li>Premium Plan: $5/month (5-year), $6/month (2-year), $8/month (annual)</li>
+                <li>All plans include GPS tracking, activity monitoring, and 24/7 vet chat</li>
+            </ul>
+        </div>
+        
+        <!-- Apple AirTag -->
+        <div id="seo-airtag">
+            <h3>Apple AirTag Subscription Plans</h3>
+            <p>Apple AirTag does not require a monthly subscription. It works with the Find My network for location services. The device has a replaceable battery that typically lasts about a year.</p>
+            <ul>
+                <li>Device only: $29 one-time purchase</li>
+                <li>No monthly fees required</li>
+                <li>Works with iPhone/iPad devices running iOS 14.5 or later</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" style="max-width: var(--maxw); margin: 30px auto 0;">
+        <h2>Frequently Asked Questions About Pet Tracker Subscriptions</h2>
+        <div class="faq-item">
+            <h3>What is a pet tracker subscription and how does it work?</h3>
+            <p>A pet tracker subscription is a recurring fee that allows your GPS pet tracker to connect to cellular networks and provide real-time location data. Most GPS pet trackers require a monthly subscription for data connectivity. Popular brands like Tractive, Fi, and Pawfit offer various subscription plans ranging from $3 to $12 per month.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Which pet tracker has the cheapest subscription?</h3>
+            <p>Based on our comparison, Kippy offers some of the most affordable long-term subscription plans starting at €3.33/month for a 5-year commitment. However, the best value depends on your specific needs, features required, and contract length preferences.</p>
+        </div>
+        <div class="faq-item">
+            <h3>Are there pet trackers without monthly fees?</h3>
+            <p>Yes, some pet trackers don't require monthly subscriptions. Apple AirTag works with the Find My network without subscription fees but offers limited features compared to GPS trackers. PitPat offers a one-time device purchase with optional membership plans.</p>
+        </div>
+        <div class="faq-item">
+            <h3>What features are typically included in pet tracker subscriptions?</h3>
+            <p>Most pet tracker subscriptions include real-time GPS tracking, location history, geofencing/virtual fences, and activity monitoring. Premium plans often include additional features like health monitoring, extended location history, worldwide coverage, and family sharing options.</p>
+        </div>
+    </section>
+
+    <!-- Data Accuracy Disclaimer -->
+    <div style="max-width: var(--maxw); margin: 40px auto 0; padding: 20px; background-color: #fff8e6; border-radius: 10px; border: 1px solid #ffe0b3; color: #333; font-size: 14px;">
+        <h3 style="margin-top: 0; color: #e67300; font-size: 16px;">Data Accuracy Notice</h3>
+        <p style="margin-bottom: 0; line-height: 1.5;">Please note that subscription plan details and pricing information are subject to change by the respective brands. We strive to keep this information up-to-date, but there may be delays in reflecting the latest changes from official sources. Always verify current pricing and plan details on the official brand websites before making purchasing decisions. Last updated: September 2025.</p>
+    </div>
+
+
+</div>
+
+<script>
+    const q = document.getElementById('q');
+    const results = document.getElementById('results');
+    const tpl = document.getElementById('cardTpl');
+    const sortEl = document.getElementById('sort');
+    const featureFilter = document.getElementById('featureFilter');
+    const clearBtn = document.getElementById('clearBtn');
+
+    // Add subscription data and modal related elements
+    const modal = document.getElementById("subscriptionModal");
+    const modalBrandName = document.getElementById("modalBrandName");
+    const modalBody = document.getElementById("modalBody");
+    const span = document.getElementsByClassName("close")[0];
+
+    // Extend brand data, add detailed subscription plan information
+    const BRANDS = [
+        {
+            id:'tractive',
+            name:'Tractive',
+            logo:'T',
+            region:'🇪🇺',
+            short:'GPS tracker, global coverage',
+            monthly:5,
+            term:'from €5/mo (2-year)',
+            features:['live','fence'],
+            url:'https://tractive.com',
+            subscriptions: [
+                {name: "Basic", price: "€5", term: "per month", duration: "2-Year plan", features: ["Live tracking", "Location history (2-60 min updates)", "Unlimited LIVE tracking", "Heart & respiratory monitoring", "Activity & sleep monitoring"]},
+                {name: "Basic", price: "€7", term: "per month", duration: "Annual plan", features: ["Live tracking", "Location history (2-60 min updates)", "Unlimited LIVE tracking", "Heart & respiratory monitoring", "Activity & sleep monitoring"]},
+                {name: "Basic", price: "€13", term: "per month", duration: "Monthly plan", features: ["Live tracking", "Location history (2-60 min updates)", "Unlimited LIVE tracking", "Heart & respiratory monitoring", "Activity & sleep monitoring"]},
+                {name: "Premium", price: "€5", term: "per month", duration: "5-Year plan", features: ["All Basic features", "Worldwide coverage", "Family sharing", "365-day location history", "GPS data export"]},
+                {name: "Premium", price: "€6", term: "per month", duration: "2-Year plan", features: ["All Basic features", "Worldwide coverage", "Family sharing", "365-day location history", "GPS data export"]},
+                {name: "Premium", price: "€8", term: "per month", duration: "Annual plan", features: ["All Basic features", "Worldwide coverage", "Family sharing", "365-day location history", "GPS data export"]}
+            ]
+        },
+        {
+            id:'fi',
+            name:'Fi',
+            logo:'F',
+            region:'🇺🇸',
+            short:'Battery-smart GPS for dogs',
+            monthly:3.20,
+            term:'from $3.20/wk (2-year)',
+            features:['live','fence','health'],
+            url:'https://tryfi.com',
+            subscriptions: [
+                {name: "Prepay", price: "$3.20", term: "per week", duration: "2-Year plan", features: ["Live tracking", "Location history (30 days)", "Geofencing", "Activity monitoring", "Sleep tracking", "Billed as $339 biennially"]},
+                {name: "Prepay", price: "$3.60", term: "per week", duration: "1-Year plan", features: ["Live tracking", "Location history (30 days)", "Geofencing", "Activity monitoring", "Sleep tracking", "Billed as $189 annually", "Most popular"]},
+                {name: "Prepay", price: "$3.80", term: "per week", duration: "6-Month plan", features: ["Live tracking", "Location history (30 days)", "Geofencing", "Activity monitoring", "Sleep tracking", "Billed as $99 semi-annually"]},
+                {name: "Monthly", price: "$4.40", term: "per week", duration: "Monthly plan", features: ["Live tracking", "Location history (30 days)", "Geofencing", "Activity monitoring", "Sleep tracking", "Billed as $19/month"]}
+            ]
+        },
+        {
+            id:'pawfit',
+            name:'Pawfit',
+            logo:'P',
+            region:'🇬🇧',
+            short:'Pet tracker with audio and fitness',
+            monthly:4.75,
+            term:'from $4.75/mo (2-year)',
+            features:['live','health','fence'],
+            url:'https://www.pawfit.com',
+            subscriptions: [
+                {name: "Basic", price: "$4.75", term: "per month", duration: "2-Year plan", features: ["Live tracking", "Location history", "Geofencing", "Activity monitoring", "2-hour maximum walk duration"]},
+                {name: "Basic", price: "$5.15", term: "per month", duration: "Annual plan", features: ["Live tracking", "Location history", "Geofencing", "Activity monitoring", "2-hour maximum walk duration"]},
+                {name: "Basic", price: "$5.75", term: "per month", duration: "6-Month plan", features: ["Live tracking", "Location history", "Geofencing", "Activity monitoring", "2-hour maximum walk duration"]},
+                {name: "Basic", price: "$8.35", term: "per month", duration: "Monthly plan", features: ["Live tracking", "Location history", "Geofencing", "Activity monitoring", "2-hour maximum walk duration"]},
+                {name: "Premium", price: "$5.55", term: "per month", duration: "2-Year plan", features: ["All Basic features", "Extended walk time limits (4-6 hours)", "Increased location update frequency"]},
+                {name: "Premium", price: "$6.05", term: "per month", duration: "Annual plan", features: ["All Basic features", "Extended walk time limits (4-6 hours)", "Increased location update frequency"]},
+                {name: "Premium", price: "$6.85", term: "per month", duration: "6-Month plan", features: ["All Basic features", "Extended walk time limits (4-6 hours)", "Increased location update frequency"]},
+                {name: "Premium", price: "$9.55", term: "per month", duration: "Monthly plan", features: ["All Basic features", "Extended walk time limits (4-6 hours)", "Increased location update frequency"]}
+            ]
+        },
+        {
+            id:'pitpat',
+            name:'PitPat',
+            logo:'PP',
+            region:'🇬🇧',
+            short:'Dog activity monitor with no monthly fee',
+            monthly:0,
+            term:'No subscription',
+            features:['health'],
+            url:'https://www.pitpat.com',
+            subscriptions: [
+                {name: "Device Only", price: "£149", term: "one-time", duration: "Lifetime", features: ["Activity monitoring", "Sleep tracking", "Health insights", "No monthly fees"]},
+                {name: "LIFE Membership", price: "£12.00", term: "per month", duration: "Monthly", features: ["PitPat GPS Tracker included", "Bonus app features", "Loss and damage protection", "Exclusive member benefits", "Minimum 12 monthly-payments", "Around 40p/day"]},
+                {name: "LIFE Membership", price: "£3.99", term: "per month", duration: "Pay Once", features: ["Extended features", "Walk recording", "Leaderboard access", "Cancel anytime"]}
+            ]
+        },
+        {
+            id:'weenect',
+            name:'Weenect',
+            logo:'W',
+            region:'🇪🇺',
+            short:'Compact GPS tracker for cats and dogs',
+            monthly:4.16,
+            term:'from €4.16/mo (3-year)',
+            features:['live','fence'],
+            url:'https://www.weenect.com',
+            subscriptions: [
+                {name: "Standard", price: "€4.16", term: "per month", duration: "3-Year prepaid", features: ["Live tracking", "Location history", "Geofencing", "Activity monitoring", "Billed as €149.99 every 3 years", "Can be cancelled at each anniversary"]},
+                {name: "Standard", price: "€6.67", term: "per month", duration: "1-Year prepaid", features: ["Live tracking", "Location history", "Geofencing", "Activity monitoring", "Billed as €79.99 annually", "Can be cancelled at each anniversary"]},
+                {name: "Standard", price: "€12.99", term: "per month", duration: "Monthly", features: ["Live tracking", "Location history", "Geofencing", "Activity monitoring", "Billed monthly", "Can be cancelled at any time", "No commitment"]}
+            ]
+        },
+        {
+            id:'kippy',
+            name:'Kippy',
+            logo:'K',
+            region:'🇪🇺',
+            short:'Italian GPS pet tracker with activity monitoring',
+            monthly:3.33,
+            term:'from €3.33/mo (60-month)',
+            features:['live','fence','health'],
+            url:'https://www.kippy.eu',
+            subscriptions: [
+                {name: "Supreme", price: "€3.33", term: "per month", duration: "60-Month plan", features: ["Live tracking", "Location history", "Geofencing", "Activity monitoring", "Billed as €199.99 every 60 months", "Connectivity 60 months"]},
+                {name: "Ultimate", price: "€4.16", term: "per month", duration: "24-Month plan", features: ["Live tracking", "Location history", "Geofencing", "Activity monitoring", "Billed as €99.99 every 24 months", "Connectivity 24 months"]},
+                {name: "Premium", price: "€5.83", term: "per month", duration: "12-Month plan", features: ["Live tracking", "Location history", "Geofencing", "Activity monitoring", "Billed as €69.99 annually", "Connectivity 12 months", "Best Seller"]},
+                {name: "Basic", price: "€10.99", term: "per month", duration: "Monthly", features: ["Live tracking", "Location history", "Geofencing", "Activity monitoring", "Billed monthly", "Connectivity 1 month", "Minimum of 4 consecutive months"]}
+            ]
+        },
+        {
+            id:'airtag',
+            name:'Apple AirTag',
+            logo:'A',
+            region:'🇺🇸',
+            short:'Item-finder style, no subscription',
+            monthly:0,
+            term:'No subscription',
+            features:['offline'],
+            url:'https://www.apple.com/airtag/',
+            subscriptions: [
+                {name: "Device only", price: "$29", term: "one-time", duration: "One-time purchase", features: ["Offline finding with Find My network", "Precision Finding", "Water resistant", "Replaceable battery"]}
+            ]
+        },
+        {
+            id:'petcube',
+            name:'Petcube Tracker',
+            logo:'P',
+            region:'🇺🇸',
+            short:'GPS tracker with live location, escape alerts, and activity monitoring',
+            monthly:5,
+            term:'from $5/mo (2-year)',
+            features:['live','fence','health'],
+            url:'https://petcube.com/tracker/',
+            subscriptions: [
+                {name: "Basic", price: "$5", term: "per month", duration: "2-Year plan", features: ["GPS Live Location Tracking", "7 Days Location History", "7 Days Activity/Wellness", "1 Pet Covered", "24/7 Certified Vet Chat", "Lifetime Warranty", "Total: $120"]},
+                {name: "Basic", price: "$7", term: "per month", duration: "Yearly", features: ["GPS Live Location Tracking", "7 Days Location History", "7 Days Activity/Wellness", "1 Pet Covered", "24/7 Certified Vet Chat", "Lifetime Warranty", "Total: $84"]},
+                {name: "Basic", price: "$12", term: "per month", duration: "Monthly", features: ["GPS Live Location Tracking", "7 Days Location History", "7 Days Activity/Wellness", "1 Pet Covered", "24/7 Certified Vet Chat", "Lifetime Warranty", "Total: $12"]},
+                {name: "Premium", price: "$5", term: "per month", duration: "5-Year plan", features: ["GPS Live Location Tracking", "Unlimited Location History", "Unlimited Activity/Wellness", "Unlimited Pets Covered", "24/7 Certified Vet Chat", "Lifetime Warranty", "Total: $300"]},
+                {name: "Premium", price: "$6", term: "per month", duration: "2-Year plan", features: ["GPS Live Location Tracking", "Unlimited Location History", "Unlimited Activity/Wellness", "Unlimited Pets Covered", "24/7 Certified Vet Chat", "Lifetime Warranty", "Total: $144"]},
+                {name: "Premium", price: "$8", term: "per month", duration: "Yearly", features: ["GPS Live Location Tracking", "Unlimited Location History", "Unlimited Activity/Wellness", "Unlimited Pets Covered", "24/7 Certified Vet Chat", "Lifetime Warranty", "Total: $96"]}
+            ]
+        }
+    ];
+
+    // Show subscription details modal
+    function showSubscriptionModal(brand) {
+        modalBrandName.textContent = brand.name + " Subscription Plans";
+        modalBody.innerHTML = "";
+
+        // If no subscription information, show prompt
+        if (!brand.subscriptions || brand.subscriptions.length === 0) {
+            modalBody.innerHTML = `<div class="empty" style="text-align: center; padding: 40px;">
+          <strong>No subscription plans available</strong>
+          <div style="margin-top: 8px; color: var(--muted)">This brand may not require a subscription or information is not available.</div>
+        </div>`;
+            modal.style.display = "block";
+            document.body.style.overflow = 'hidden';
+
+            // Mobile optimization: ensure modal is visible
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    modal.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 100);
+            }
+            return;
+        }
+
+        // Group by plan type
+        const planGroups = {};
+        brand.subscriptions.forEach(plan => {
+            if (!planGroups[plan.name]) {
+                planGroups[plan.name] = [];
+            }
+            planGroups[plan.name].push(plan);
+        });
+
+        // Render grouped plans
+        Object.keys(planGroups).forEach(planName => {
+            const plans = planGroups[planName];
+            const planGroupElement = document.createElement('div');
+            planGroupElement.className = 'subscription-plan-group';
+
+            // Create plan group header
+            const groupHeader = document.createElement('h3');
+            groupHeader.textContent = planName;
+            groupHeader.style.marginTop = '0';
+            groupHeader.style.marginBottom = '15px';
+            groupHeader.style.color = '#0f172a';
+            groupHeader.style.fontSize = '22px';
+            groupHeader.style.fontWeight = '700';
+            groupHeader.style.paddingBottom = '10px';
+            groupHeader.style.borderBottom = '2px solid #cbd5e1';
+            planGroupElement.appendChild(groupHeader);
+
+            // Create tabbed display for each plan
+            plans.forEach((plan, index) => {
+                const planElement = document.createElement('div');
+                planElement.className = 'subscription-plan';
+                planElement.style.marginBottom = index < plans.length - 1 ? '10px' : '20px';
+
+                planElement.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div class="plan-name" style="font-size: 16px; margin: 0;">
+                ${plan.duration}
+              </div>
+              <div style="text-align: right;">
+                <div class="plan-price" style="font-size: 18px; margin: 0;">${plan.price}</div>
+                <div class="plan-details" style="font-size: 12px; margin: 3px 0 0;">${plan.term}</div>
+              </div>
+            </div>
+            <ul class="plan-features">
+              ${plan.features.map(feature => `<li>${feature}</li>`).join('')}
+            </ul>
+          `;
+                planGroupElement.appendChild(planElement);
+            });
+
+            modalBody.appendChild(planGroupElement);
+        });
+
+        modal.style.display = "block";
+
+        // Prevent background scrolling
+        document.body.style.overflow = 'hidden';
+
+        // Mobile optimization: ensure modal is visible and scroll to top
+        if (window.innerWidth <= 768) {
+            setTimeout(() => {
+                modal.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100);
+        }
+    }
+
+    // When user clicks <span> (x), close modal
+    span.onclick = function() {
+        modal.style.display = "none";
+        document.body.style.overflow = 'auto';
+    }
+
+    // When user clicks outside the modal, close modal
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    // Add ESC key to close modal functionality
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && modal.style.display === 'block') {
+            modal.style.display = "none";
+            document.body.style.overflow = 'auto';
+        }
+    });
+
+    // Mobile touch optimization: support swipe to close
+    let startY = 0;
+    let currentY = 0;
+
+    modal.addEventListener('touchstart', function(e) {
+        startY = e.touches[0].clientY;
+    });
+
+    modal.addEventListener('touchmove', function(e) {
+        currentY = e.touches[0].clientY;
+        // If swiping down in the top area of the modal, close the modal
+        if (startY < 50 && currentY > startY + 50) {
+            modal.style.display = "none";
+            document.body.style.overflow = 'auto';
+        }
+    });
+
+    function render(list){
+        results.innerHTML = '';
+        if(!list.length){
+            const e = document.createElement('div'); e.className='empty'; e.innerHTML = '<strong>No brands found</strong><div style="margin-top:8px;color:var(--muted)">Try removing filters or search terms.</div>';
+            results.appendChild(e); return;
+        }
+        list.forEach(b=>{
+            const node = tpl.content.cloneNode(true);
+            node.querySelector('[data-name]').textContent = b.name;
+            node.querySelector('[data-tagline]').textContent = b.short;
+            node.querySelector('[data-region]').textContent = b.region;
+            node.querySelector('[data-logo]').textContent = b.logo;
+
+            // Set structured data attributes
+            const card = node.querySelector('article');
+            card.setAttribute('data-brand-id', b.id);
+
+            // Use correct currency symbol based on brand
+            let currencySymbol = '$';
+            if (b.id === 'pitpat') {
+                currencySymbol = '£';
+            } else if (b.id === 'tractive' || b.id === 'weenect' || b.id === 'kippy') {
+                currencySymbol = '€';
+            }
+
+            const monthlyText = b.monthly>0?`${currencySymbol}${b.monthly.toFixed(2)}`:'Free';
+            node.querySelector('[data-monthly]').textContent = monthlyText;
+
+            // Set structured data
+            const priceElement = node.querySelector('[itemprop="price"]');
+            if (priceElement) {
+                priceElement.textContent = b.monthly.toFixed(2);
+                // Set currency code
+                const currencyLink = node.querySelector('[itemprop="priceCurrency"]');
+                if (currencyLink) {
+                    let currencyCode = 'USD';
+                    if (b.id === 'pitpat') {
+                        currencyCode = 'GBP';
+                    } else if (b.id === 'tractive' || b.id === 'weenect' || b.id === 'kippy') {
+                        currencyCode = 'EUR';
+                    }
+                    currencyLink.setAttribute('href', `https://schema.org/${currencyCode}`);
+                }
+            }
+
+            node.querySelector('[data-term]').textContent = b.term;
+            const featuresWrap = node.querySelector('[data-features]');
+            b.features.forEach(f=>{
+                const c = document.createElement('div'); c.className='chip'; c.textContent = f.replace(/^[a-z]/, s=>s.toUpperCase()); featuresWrap.appendChild(c);
+            });
+            node.querySelector('[data-link]').addEventListener('click',()=>{window.open(b.url,'_blank')});
+
+            // Add subscription details button event listener
+            const subBtn = node.querySelector('[data-subscriptions]');
+            subBtn.addEventListener('click', () => {
+                showSubscriptionModal(b);
+
+                // 为SEO添加历史记录
+                if (window.history && window.history.pushState) {
+                    const brandName = b.name.replace(/\s+/g, '-').toLowerCase();
+                    window.history.pushState({}, '', `#${brandName}-subscription-plans`);
+                }
+            });
+
+            results.appendChild(node);
+        });
+    }
+
+    function applyFilters(){
+        const qv = q.value.trim().toLowerCase();
+        const feat = featureFilter.value;
+        let list = BRANDS.filter(b=>{
+            let ok = true;
+            if(qv){
+                ok = b.name.toLowerCase().includes(qv) || b.short.toLowerCase().includes(qv) || b.features.join(' ').includes(qv) || (b.monthly+'').includes(qv);
+            }
+            if(ok && feat!=='any') ok = b.features.includes(feat);
+            return ok;
+        });
+
+        const s = sortEl.value;
+        if(s==='price-asc') list.sort((a,b)=>a.monthly-b.monthly);
+        else if(s==='price-desc') list.sort((a,b)=>b.monthly-a.monthly);
+        else if(s==='name') list.sort((a,b)=>a.name.localeCompare(b.name));
+        render(list);
+    }
+
+    q.addEventListener('input', applyFilters);
+    sortEl.addEventListener('change', applyFilters);
+    featureFilter.addEventListener('change', applyFilters);
+    clearBtn.addEventListener('click', ()=>{q.value=''; featureFilter.value='any'; sortEl.value='relevance'; applyFilters();});
+
+    applyFilters();
+</script>
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Pet Tracker Review</h3>
+                <p>Your trusted source for pet tracker reviews, guides, and comparisons. Keeping your furry friends safe with the latest GPS technology.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a th:href="@{/}">Home</a></li>
+                    <li><a th:href="@{/blogs}">Blogs</a></li>
+                    <li><a th:href="@{/reviews}">Reviews</a></li>
+                    <li><a th:href="@{/search}">Search</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Categories</h4>
+                <ul class="footer-links">
+                    <li><a th:href="@{/blogs(tag='GPS')}">GPS Trackers</a></li>
+                    <li><a th:href="@{/blogs(tag='dogs')}">Dog Trackers</a></li>
+                    <li><a th:href="@{/blogs(tag='cats')}">Cat Trackers</a></li>
+                    <li><a th:href="@{/blogs(tag='buying guide')}">Buying Guides</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul class="footer-links">
+                    <li><a th:href="@{/affiliate-disclosure}">Affiliate Disclosure</a></li>
+                    <li><a th:href="@{/subscription}">Subscription Plans</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Pet Tracker Review. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- JavaScript -->
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -219,6 +219,15 @@ public class HomeController {
         return "affiliate-disclosure";
     }
     
+    @GetMapping("/subscription")
+    public String subscriptionPlans(Model model) {
+        model.addAttribute("pageTitle", "Pet Tracker Subscription Plans - Compare GPS Tracker Subscriptions");
+        model.addAttribute("metaDescription", "Compare subscription plans for popular GPS pet trackers including Tractive, Fi, Pawfit, PitPat, Weenect, Kippy & more. Find the best value pet tracking service.");
+        model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());
+        
+        return "subscription";
+    }
+    
     /**
      * Handle newsletter subscription
      */
