@@ -494,25 +494,125 @@ public class AdminController {
     
     @GetMapping("/submit-url")
     public String submitUrlPage(Model model) {
+        // Get URLs from sitemap
+        List<String> sitemapUrls = getSitemapUrls();
+        model.addAttribute("sitemapUrls", sitemapUrls);
         return "admin/submit-url";
     }
     
+    /**
+     * Get URLs from sitemap.xml
+     * @return List of URLs from sitemap
+     */
+    private List<String> getSitemapUrls() {
+        List<String> urls = new ArrayList<>();
+        try {
+            // In a real implementation, you would parse the actual sitemap.xml
+            // For now, we'll return an empty list and let the frontend fetch the URLs
+            // The frontend JavaScript will handle loading the sitemap URLs
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return urls;
+    }
+    
     @PostMapping("/submit-url")
-    public String submitUrl(@RequestParam("url") String url,
-                           @RequestParam(value = "multipleUrls", required = false, defaultValue = "false") boolean multipleUrls,
-                           RedirectAttributes redirectAttributes) {
+    public String submitUrl(
+            @RequestParam(value = "url", required = false) String url,
+            @RequestParam(value = "selectedUrls", required = false) List<String> selectedUrls,
+            @RequestParam(value = "multipleUrls", required = false, defaultValue = "false") boolean multipleUrls,
+            @RequestParam(value = "submitType", required = false) String submitType,
+            RedirectAttributes redirectAttributes) {
         try {
             boolean success = false;
             
-            if (multipleUrls) {
+            if ("selected".equals(submitType) && selectedUrls != null && !selectedUrls.isEmpty()) {
+                // Submit selected URLs
+                List<String> validUrls = new ArrayList<>();
+                List<String> invalidUrls = new ArrayList<>();
+                
+                for (String u : selectedUrls) {
+                    u = u.trim();
+                    if (!u.isEmpty()) {
+                        // Basic URL validation
+                        if (u.startsWith("http://") || u.startsWith("https://")) {
+                            validUrls.add(u);
+                        } else {
+                            // Try to fix URLs without protocol
+                            if (!u.contains("://")) {
+                                // Check if it looks like a domain
+                                if (u.contains(".") && !u.startsWith("www.")) {
+                                    validUrls.add("https://" + u);
+                                } else if (u.startsWith("www.")) {
+                                    validUrls.add("https://" + u);
+                                } else {
+                                    invalidUrls.add(u);
+                                }
+                            } else {
+                                invalidUrls.add(u);
+                            }
+                        }
+                    }
+                }
+                
+                if (!invalidUrls.isEmpty()) {
+                    redirectAttributes.addFlashAttribute("warningMessage", 
+                        "Skipped " + invalidUrls.size() + " invalid URLs. Please check the format of these URLs.");
+                }
+                
+                if (validUrls.isEmpty()) {
+                    redirectAttributes.addFlashAttribute("errorMessage", 
+                        "No valid URLs to submit. Please ensure URLs start with http:// or https://");
+                    return "redirect:/admin/submit-url";
+                }
+                
+                success = searchEngineService.submitUrlsToBing(validUrls);
+                if (success) {
+                    redirectAttributes.addFlashAttribute("successMessage", 
+                        "Successfully submitted " + validUrls.size() + " URLs to Bing for indexing!");
+                } else {
+                    redirectAttributes.addFlashAttribute("errorMessage", 
+                        "Failed to submit URLs to Bing. Please check the URLs and try again.");
+                }
+            } else if (multipleUrls && url != null && !url.isEmpty()) {
                 // Handle multiple URLs separated by newlines
                 String[] urls = url.split("\\r?\\n");
                 List<String> urlList = new ArrayList<>();
+                List<String> invalidUrls = new ArrayList<>();
+                
                 for (String u : urls) {
                     u = u.trim();
                     if (!u.isEmpty()) {
-                        urlList.add(u);
+                        // Basic URL validation
+                        if (u.startsWith("http://") || u.startsWith("https://")) {
+                            urlList.add(u);
+                        } else {
+                            // Try to fix URLs without protocol
+                            if (!u.contains("://")) {
+                                // Check if it looks like a domain
+                                if (u.contains(".") && !u.startsWith("www.")) {
+                                    urlList.add("https://" + u);
+                                } else if (u.startsWith("www.")) {
+                                    urlList.add("https://" + u);
+                                } else {
+                                    invalidUrls.add(u);
+                                }
+                            } else {
+                                invalidUrls.add(u);
+                            }
+                        }
                     }
+                }
+                
+                if (!invalidUrls.isEmpty()) {
+                    redirectAttributes.addFlashAttribute("warningMessage", 
+                        "Skipped " + invalidUrls.size() + " invalid URLs. Please check the format of these URLs.");
+                }
+                
+                if (urlList.isEmpty()) {
+                    redirectAttributes.addFlashAttribute("errorMessage", 
+                        "No valid URLs to submit. Please ensure URLs start with http:// or https://");
+                    return "redirect:/admin/submit-url";
                 }
                 
                 success = searchEngineService.submitUrlsToBing(urlList);
@@ -521,19 +621,37 @@ public class AdminController {
                         "Successfully submitted " + urlList.size() + " URLs to Bing for indexing!");
                 } else {
                     redirectAttributes.addFlashAttribute("errorMessage", 
-                        "Failed to submit URLs to Bing. Please try again.");
+                        "Failed to submit URLs to Bing. Please check the URLs and try again.");
                 }
-            } else {
+            } else if (url != null && !url.isEmpty()) {
                 // Handle single URL
-                success = searchEngineService.submitUrlToBing(url);
+                String formattedUrl = url.trim();
+                
+                // Basic URL validation and formatting
+                if (!formattedUrl.startsWith("http://") && !formattedUrl.startsWith("https://")) {
+                    if (formattedUrl.contains(".") && !formattedUrl.startsWith("www.")) {
+                        formattedUrl = "https://" + formattedUrl;
+                    } else if (formattedUrl.startsWith("www.")) {
+                        formattedUrl = "https://" + formattedUrl;
+                    } else {
+                        redirectAttributes.addFlashAttribute("errorMessage", 
+                            "Invalid URL format. Please ensure the URL starts with http:// or https://");
+                        return "redirect:/admin/submit-url";
+                    }
+                }
+                
+                success = searchEngineService.submitUrlToBing(formattedUrl);
                 
                 if (success) {
                     redirectAttributes.addFlashAttribute("successMessage", 
                         "URL submitted successfully to Bing for indexing!");
                 } else {
                     redirectAttributes.addFlashAttribute("errorMessage", 
-                        "Failed to submit URL to Bing. Please try again.");
+                        "Failed to submit URL to Bing. Please check the URL and try again.");
                 }
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", 
+                    "No URLs provided for submission.");
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", 
@@ -542,4 +660,5 @@ public class AdminController {
         
         return "redirect:/admin/submit-url";
     }
+    
 }

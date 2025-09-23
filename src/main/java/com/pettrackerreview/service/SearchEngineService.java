@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -26,11 +27,31 @@ public class SearchEngineService {
     }
 
     /**
+     * Validate if a string is a valid URL
+     * @param urlString The string to validate
+     * @return true if valid URL, false otherwise
+     */
+    private boolean isValidUrl(String urlString) {
+        try {
+            new URL(urlString);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
      * Submit URL to Bing IndexNow API for indexing
      * @param url The URL to be indexed
      * @return true if submission was successful, false otherwise
      */
     public boolean submitUrlToBing(String url) {
+        // Validate URL format
+        if (!isValidUrl(url)) {
+            System.err.println("Invalid URL format: " + url);
+            return false;
+        }
+        
         try {
             // Prepare request headers
             HttpHeaders headers = new HttpHeaders();
@@ -75,6 +96,22 @@ public class SearchEngineService {
      * @return true if submission was successful, false otherwise
      */
     public boolean submitUrlsToBing(List<String> urls) {
+        // Filter out invalid URLs
+        List<String> validUrls = new ArrayList<>();
+        for (String url : urls) {
+            if (isValidUrl(url)) {
+                validUrls.add(url);
+            } else {
+                System.err.println("Skipping invalid URL: " + url);
+            }
+        }
+        
+        // Check if we have any valid URLs left
+        if (validUrls.isEmpty()) {
+            System.err.println("No valid URLs to submit");
+            return false;
+        }
+        
         try {
             // Prepare request headers
             HttpHeaders headers = new HttpHeaders();
@@ -85,7 +122,7 @@ public class SearchEngineService {
             requestBody.put("host", "pettrackerreview.com");
             requestBody.put("key", BING_API_KEY);
             requestBody.put("keyLocation", "https://pettrackerreview.com/" + BING_API_KEY + ".txt");
-            requestBody.put("urlList", urls);
+            requestBody.put("urlList", validUrls);
             
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
             
