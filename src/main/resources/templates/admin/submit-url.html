@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit URL for Indexing - Pet Tracker Review</title>
+    <link rel="stylesheet" th:href="@{/css/pages/admin-dashboard.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        .admin-sidebar {
+            background-color: #2d3748;
+            color: white;
+            padding: 2rem 0;
+        }
+        .admin-content {
+            padding: 2rem;
+            background-color: #f7fafc;
+        }
+        .sidebar-header {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .sidebar-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .sidebar-nav li a {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #a0aec0;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .sidebar-nav li a:hover {
+            background-color: #4a5568;
+            color: white;
+        }
+        .sidebar-nav li a i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+        .submit-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+        .form-control.textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: #3182ce;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background-color: #2c5aa0;
+        }
+        .btn-outline {
+            background-color: transparent;
+            color: #3182ce;
+            border: 1px solid #3182ce;
+        }
+        .btn-outline:hover {
+            background-color: #3182ce;
+            color: white;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        .alert-success {
+            background-color: #f0fff4;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+        .alert-error {
+            background-color: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #f56565;
+        }
+        .help-text {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 0.5rem;
+        }
+        .requirements {
+            background: #ebf8ff;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid #3182ce;
+            margin-bottom: 1.5rem;
+        }
+        .requirements h4 {
+            margin: 0 0 0.5rem 0;
+            color: #2d3748;
+        }
+        .requirements ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+        .requirements li {
+            margin-bottom: 0.25rem;
+            color: #4a5568;
+        }
+        code {
+            background-color: #f1f5f9;
+            padding: 0.125rem 0.25rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: #1a202c;
+        }
+        .hidden {
+            display: none;
+        }
+        .btn-secondary {
+            background-color: #718096;
+        }
+        .btn-secondary:hover {
+            background-color: #4a5568;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-paw"></i> Admin Panel</h3>
+            </div>
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="/admin/blogs"><i class="fas fa-blog"></i> Blogs</a></li>
+                    <li><a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a></li>
+                    <li><a href="/admin/images"><i class="fas fa-images"></i> Images</a></li>
+                    <li><a href="/admin/ai-content-generator"><i class="fas fa-robot"></i> AI Content Generator</a></li>
+                    <li><a href="/admin/import"><i class="fas fa-upload"></i> Import Data</a></li>
+                    <li><a href="/admin/submit-url" class="active"><i class="fas fa-link"></i> Submit URL</a></li>
+                    <li><a href="#" onclick="exportContent()"><i class="fas fa-download"></i> Export Data</a></li>
+                    <li><a href="/"><i class="fas fa-external-link-alt"></i> View Site</a></li>
+                    <li><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="admin-content">
+            <h1><i class="fas fa-link"></i> Submit URL for Indexing</h1>
+            <p>Submit URLs to Bing search engine to request indexing of your content.</p>
+            
+            <!-- Alert Messages -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+            </div>
+            
+            <div class="submit-container">
+                <!-- Requirements -->
+                <div class="requirements">
+                    <h4><i class="fas fa-info-circle"></i> Submit URL Information</h4>
+                    <ul>
+                        <li>You can submit URLs to Bing for indexing using IndexNow API</li>
+                        <li>Submitting a URL requests that Bing crawls and indexes the page</li>
+                        <li>This does not guarantee immediate indexing, but it speeds up the process</li>
+                        <li>Only submit URLs that are publicly accessible and contain valuable content</li>
+                        <li>Bing supports submitting multiple URLs at once using IndexNow API</li>
+                    </ul>
+                </div>
+                
+                <!-- Submit URL Form -->
+                <form method="post" th:action="@{/admin/submit-url}">
+                    <!-- URL Input Type Toggle -->
+                    <div class="form-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="multipleUrls" name="multipleUrls" value="true" onchange="toggleUrlInput()">
+                            <label for="multipleUrls">Submit multiple URLs</label>
+                        </div>
+                        <div class="help-text">Check this box to submit multiple URLs (one per line)</div>
+                    </div>
+                    
+                    <!-- Single URL Input -->
+                    <div class="form-group" id="singleUrlGroup">
+                        <label class="form-label"><i class="fas fa-link"></i> URL to Submit</label>
+                        <input type="url" class="form-control" name="url" placeholder="https://example.com/page-to-index" required>
+                        <div class="help-text">Enter the full URL you want Bing to index</div>
+                    </div>
+                    
+                    <!-- Multiple URLs Input -->
+                    <div class="form-group hidden" id="multipleUrlsGroup">
+                        <label class="form-label"><i class="fas fa-link"></i> URLs to Submit</label>
+                        <textarea class="form-control textarea" name="url" id="urlList" placeholder="https://example.com/page1&#10;https://example.com/page2&#10;https://example.com/page3" required></textarea>
+                        <div class="help-text">Enter multiple URLs, one per line</div>
+                        <div style="margin-top: 0.5rem;">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="loadSitemapUrls()">
+                                <i class="fas fa-sitemap"></i> Load Latest 20 URLs from Sitemap
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div style="text-align: right; margin-top: 2rem;">
+                        <a href="/admin/dashboard" class="btn btn-outline" style="margin-right: 1rem;">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn">
+                            <i class="fas fa-paper-plane"></i> Submit URL(s) to Bing
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        function toggleUrlInput() {
+            const multipleUrlsCheckbox = document.getElementById('multipleUrls');
+            const singleUrlGroup = document.getElementById('singleUrlGroup');
+            const multipleUrlsGroup = document.getElementById('multipleUrlsGroup');
+            
+            if (multipleUrlsCheckbox.checked) {
+                singleUrlGroup.classList.add('hidden');
+                multipleUrlsGroup.classList.remove('hidden');
+            } else {
+                singleUrlGroup.classList.remove('hidden');
+                multipleUrlsGroup.classList.add('hidden');
+            }
+        }
+        
+        function loadSitemapUrls() {
+            // Fetch the sitemap and extract the latest 20 URLs
+            fetch('/sitemap.xml')
+                .then(response => response.text())
+                .then(data => {
+                    // Parse the XML
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(data, "text/xml");
+                    
+                    // Extract all loc elements
+                    const locElements = xmlDoc.getElementsByTagName('loc');
+                    let urls = [];
+                    
+                    // Get up to 20 URLs
+                    for (let i = 0; i < Math.min(locElements.length, 20); i++) {
+                        urls.push(locElements[i].textContent);
+                    }
+                    
+                    // Populate the textarea
+                    document.getElementById('urlList').value = urls.join('\n');
+                })
+                .catch(error => {
+                    console.error('Error loading sitemap:', error);
+                    alert('Error loading sitemap. Please try again.');
+                });
+        }
+        
+        function exportContent() {
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = '/admin/export';
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

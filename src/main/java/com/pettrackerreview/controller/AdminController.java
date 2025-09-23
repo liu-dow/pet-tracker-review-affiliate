@@ -5,6 +5,7 @@ import com.pettrackerreview.model.Review;
 import com.pettrackerreview.model.Image;
 import com.pettrackerreview.service.YamlContentService;
 import com.pettrackerreview.service.ImageService;
+import com.pettrackerreview.service.SearchEngineService; // Added import
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,7 @@ import com.pettrackerreview.service.YamlContentService.PreviewResult;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList; // Added import
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +36,9 @@ public class AdminController {
     
     @Autowired
     private ImageService imageService;
+    
+    @Autowired
+    private SearchEngineService searchEngineService; // Added service
     
     @GetMapping("/login")
     public String login() {
@@ -485,5 +490,56 @@ public class AdminController {
     public String aiContentGenerator(Model model) {
         // Add any necessary model attributes here
         return "admin/ai-content-generator";
+    }
+    
+    @GetMapping("/submit-url")
+    public String submitUrlPage(Model model) {
+        return "admin/submit-url";
+    }
+    
+    @PostMapping("/submit-url")
+    public String submitUrl(@RequestParam("url") String url,
+                           @RequestParam(value = "multipleUrls", required = false, defaultValue = "false") boolean multipleUrls,
+                           RedirectAttributes redirectAttributes) {
+        try {
+            boolean success = false;
+            
+            if (multipleUrls) {
+                // Handle multiple URLs separated by newlines
+                String[] urls = url.split("\\r?\\n");
+                List<String> urlList = new ArrayList<>();
+                for (String u : urls) {
+                    u = u.trim();
+                    if (!u.isEmpty()) {
+                        urlList.add(u);
+                    }
+                }
+                
+                success = searchEngineService.submitUrlsToBing(urlList);
+                if (success) {
+                    redirectAttributes.addFlashAttribute("successMessage", 
+                        "Successfully submitted " + urlList.size() + " URLs to Bing for indexing!");
+                } else {
+                    redirectAttributes.addFlashAttribute("errorMessage", 
+                        "Failed to submit URLs to Bing. Please try again.");
+                }
+            } else {
+                // Handle single URL
+                success = searchEngineService.submitUrlToBing(url);
+                
+                if (success) {
+                    redirectAttributes.addFlashAttribute("successMessage", 
+                        "URL submitted successfully to Bing for indexing!");
+                } else {
+                    redirectAttributes.addFlashAttribute("errorMessage", 
+                        "Failed to submit URL to Bing. Please try again.");
+                }
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "Error submitting URL: " + e.getMessage());
+        }
+        
+        return "redirect:/admin/submit-url";
     }
 }
