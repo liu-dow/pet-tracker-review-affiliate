@@ -76,239 +76,19 @@ body {
     align-items: center;
 }
 
-.pet-scene {
-    position: relative;
+.banner-image-container {
     width: 100%;
     max-width: 500px;
-    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.pet {
-    position: absolute;
-    transition: transform 0.3s ease;
-}
-
-.pet.dog {
-    bottom: 20%;
-    left: 15%;
-    width: 120px;
-    height: 120px;
-    z-index: 2;
-}
-
-.pet.cat {
-    bottom: 25%;
-    right: 15%;
-    width: 100px;
-    height: 100px;
-    z-index: 3;
-}
-
-.pet-body {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 70%;
-    border-radius: 50%;
-}
-
-.pet.dog .pet-body {
-    background: linear-gradient(135deg, #87CEEB, #4682B4);
-}
-
-.pet.cat .pet-body {
-    background: linear-gradient(135deg, #FFA07A, #FF7F50);
-    height: 60%;
-}
-
-.pet-face {
-    position: absolute;
-    top: 20%;
-    left: 30%;
-    width: 40%;
-    height: 40%;
-    border-radius: 50%;
-    background: white;
-}
-
-.pet-ear {
-    position: absolute;
-    top: 10%;
-    width: 20%;
-    height: 30%;
-    border-radius: 50%;
-    background: inherit;
-}
-
-.pet.dog .pet-ear {
-    left: 20%;
-    transform: rotate(-30deg);
-}
-
-.pet.dog .pet-ear + .pet-ear {
-    right: 20%;
-    left: auto;
-    transform: rotate(30deg);
-}
-
-.pet.cat .pet-ear {
-    left: 15%;
-    width: 15%;
-    height: 35%;
-    border-radius: 0;
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-}
-
-.pet.cat .pet-ear + .pet-ear {
-    right: 15%;
-    left: auto;
-}
-
-.pet-tail {
-    position: absolute;
-    bottom: 30%;
-    width: 15%;
-    height: 40%;
-    background: inherit;
-    border-radius: 50%;
-}
-
-.pet.dog .pet-tail {
-    right: -10%;
-    transform: rotate(30deg);
-}
-
-.pet.cat .pet-tail {
-    right: -5%;
-    transform: rotate(60deg);
-    height: 30%;
-    clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
-}
-
-.collar-collar {
-    position: absolute;
-    top: 65%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 110%;
-    height: 15%;
-    background: linear-gradient(90deg, #34C759, #007AFF, #AF52DE);
+.banner-image {
+    max-width: 100%;
+    height: auto;
     border-radius: 10px;
-    z-index: 4;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.collar-collar::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 20px;
-    height: 20px;
-    background: white;
-    border-radius: 50%;
-    border: 2px solid #333;
-    box-shadow: 0 0 0 2px white;
-}
-
-.smartphone {
-    position: absolute;
-    top: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 160px;
-    height: 300px;
-    background: #333;
-    border-radius: 20px;
-    padding: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-}
-
-.phone-screen {
-    width: 100%;
-    height: 100%;
-    background: #f0f9ff;
-    border-radius: 15px;
-    overflow: hidden;
-    position: relative;
-}
-
-.map-display {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #e6f7ff, #d1e8ff);
-    position: relative;
-    border-radius: 15px;
-}
-
-.location-marker {
-    position: absolute;
-    top: 40%;
-    left: 60%;
-    width: 20px;
-    height: 20px;
-    background: #FF3B30;
-    border-radius: 50%;
-    box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.3);
-    animation: pulse 2s infinite;
-}
-
-.location-marker::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 8px;
-    height: 8px;
-    background: white;
-    border-radius: 50%;
-}
-
-.location-path {
-    position: absolute;
-    top: 50%;
-    left: 30%;
-    width: 60%;
-    height: 4px;
-    background: rgba(52, 199, 89, 0.5);
-    border-radius: 2px;
-}
-
-.location-path::before {
-    content: "";
-    position: absolute;
-    top: -3px;
-    left: 0;
-    width: 10px;
-    height: 10px;
-    background: #34C759;
-    border-radius: 50%;
-}
-
-.location-path::after {
-    content: "";
-    position: absolute;
-    top: -3px;
-    right: 0;
-    width: 10px;
-    height: 10px;
-    background: #34C759;
-    border-radius: 50%;
-}
-
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.6);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(255, 59, 48, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(255, 59, 48, 0);
-    }
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsive Design for Hero Banner */
@@ -321,13 +101,8 @@ body {
         font-size: 2.4rem;
     }
     
-    .pet-scene {
-        height: 350px;
-    }
-    
-    .smartphone {
-        width: 140px;
-        height: 260px;
+    .banner-image {
+        max-width: 90%;
     }
 }
 
@@ -355,17 +130,8 @@ body {
         font-size: 2.2rem;
     }
     
-    .pet-scene {
-        height: 300px;
-        max-width: 100%;
-    }
-    
-    .pet.dog {
-        left: 10%;
-    }
-    
-    .pet.cat {
-        right: 10%;
+    .banner-image {
+        max-width: 80%;
     }
 }
 
@@ -387,23 +153,8 @@ body {
         align-items: center;
     }
     
-    .pet-scene {
-        height: 250px;
-    }
-    
-    .pet.dog {
-        width: 100px;
-        height: 100px;
-    }
-    
-    .pet.cat {
-        width: 80px;
-        height: 80px;
-    }
-    
-    .smartphone {
-        width: 120px;
-        height: 220px;
+    .banner-image {
+        max-width: 90%;
     }
 }
 
