@@ -92,6 +92,50 @@
         .link{padding:10px 16px;border-radius:10px;background:#f8fafc;color:#1e293b;border:1px solid #e2e8f0;cursor:pointer;font-weight:500;transition:all 0.2s}
         .link:hover{background:#f1f5f9;border-color:#cbd5e1}
 
+        /* Enhanced button styles to make them more clickable */
+        .card .btn-interactive {
+            padding: 10px 16px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4361ee, #3a56d4);
+            color: white;
+            border: 1px solid #3a56d4;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.2);
+            text-align: center;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .card .btn-interactive:hover {
+            background: linear-gradient(135deg, #3a56d4, #2f49b8);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .card .btn-interactive:active {
+            transform: translateY(0);
+        }
+
+        .card .btn-secondary {
+            background: #f8fafc;
+            color: #1e293b;
+            border: 1px solid #cbd5e1;
+        }
+
+        .card .btn-secondary:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+
+        .card .btn-icon {
+            font-size: 14px;
+        }
+
         /* Add modal styles */
         .modal {
             display: none;
@@ -575,8 +619,14 @@
             </div>
             <p class="muted" data-notes></p>
             <footer>
-                <button class="link" data-link>Visit</button>
-                <button class="link" data-subscriptions>Plans</button> <!-- Add subscription details button -->
+                <button class="btn-interactive btn-secondary" data-link>
+                    <i class="fas fa-external-link-alt btn-icon"></i>
+                    Visit
+                </button>
+                <button class="btn-interactive" data-subscriptions>
+                    <i class="fas fa-file-contract btn-icon"></i>
+                    Plans
+                </button>
             </footer>
         </article>
     </template>
@@ -600,90 +650,134 @@
         <div id="seo-tractive">
             <h3>Tractive GPS Pet Tracker Subscription Plans</h3>
             <p>Tractive offers Basic and Premium subscription plans. Basic plans start at €5/month for a 2-year commitment. Premium plans include worldwide coverage and family sharing features.</p>
-            <ul>
-                <li>Basic Plan: €5/month (2-year), €7/month (annual), €13/month (monthly)</li>
-                <li>Premium Plan: €5/month (5-year), €6/month (2-year), €8/month (annual)</li>
-                <li>All plans include live tracking, location history, and activity monitoring</li>
-            </ul>
+            <div itemscope itemtype="https://schema.org/Product">
+                <span itemprop="name">Tractive GPS Pet Tracker</span>
+                <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <span itemprop="name">Basic Plan - 2-Year</span>
+                    <span itemprop="price">5.00</span>
+                    <span itemprop="priceCurrency">EUR</span>
+                </div>
+                <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <span itemprop="name">Basic Plan - Annual</span>
+                    <span itemprop="price">7.00</span>
+                    <span itemprop="priceCurrency">EUR</span>
+                </div>
+                <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <span itemprop="name">Basic Plan - Monthly</span>
+                    <span itemprop="price">13.00</span>
+                    <span itemprop="priceCurrency">EUR</span>
+                </div>
+                <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <span itemprop="name">Premium Plan - 5-Year</span>
+                    <span itemprop="price">5.00</span>
+                    <span itemprop="priceCurrency">EUR</span>
+                </div>
+                <!-- Additional plans -->
+            </div>
         </div>
 
         <!-- Fi Subscription Plans -->
         <div id="seo-fi">
             <h3>Fi GPS Pet Tracker Subscription Plans</h3>
             <p>Fi offers Prepay and Monthly subscription options. Prepay plans start at $3.20/week for a 2-year commitment. Monthly plans are available at $4.40/week.</p>
-            <ul>
-                <li>Prepay Plan: $3.20/week (2-year), $3.60/week (annual), $3.80/week (6-month)</li>
-                <li>Monthly Plan: $4.40/week</li>
-                <li>All plans include live tracking, geofencing, and activity monitoring</li>
-            </ul>
+            <div itemscope itemtype="https://schema.org/Product">
+                <span itemprop="name">Fi GPS Pet Tracker</span>
+                <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <span itemprop="name">Prepay Plan - 2-Year</span>
+                    <span itemprop="price">3.20</span>
+                    <span itemprop="priceCurrency">USD</span>
+                </div>
+                <!-- Additional plans -->
+            </div>
         </div>
 
         <!-- Pawfit Subscription Plans -->
         <div id="seo-pawfit">
             <h3>Pawfit Pet Tracker Subscription Plans</h3>
             <p>Pawfit offers Basic and Premium subscription plans. Basic plans start at $4.75/month for a 2-year commitment. Premium plans include extended walk time limits.</p>
-            <ul>
-                <li>Basic Plan: $4.75/month (2-year), $5.15/month (annual), $5.75/month (6-month), $8.35/month (monthly)</li>
-                <li>Premium Plan: $5.55/month (2-year), $6.05/month (annual), $6.85/month (6-month), $9.55/month (monthly)</li>
-                <li>All plans include live tracking, geofencing, and activity monitoring</li>
-            </ul>
+            <div itemscope itemtype="https://schema.org/Product">
+                <span itemprop="name">Pawfit Pet Tracker</span>
+                <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <span itemprop="name">Basic Plan - 2-Year</span>
+                    <span itemprop="price">4.75</span>
+                    <span itemprop="priceCurrency">USD</span>
+                </div>
+                <!-- Additional plans -->
+            </div>
         </div>
 
         <!-- PitPat Subscription Plans -->
         <div id="seo-pitpat">
             <h3>PitPat Dog Activity Monitor Subscription Plans</h3>
             <p>PitPat offers a one-time device purchase with optional LIFE Membership. The device includes basic activity monitoring with no monthly fees.</p>
-            <ul>
-                <li>Device Only: £149 one-time purchase</li>
-                <li>LIFE Membership: £12/month or £3.99/month (Pay Once)</li>
-                <li>Features include activity monitoring, sleep tracking, and health insights</li>
-            </ul>
+            <div itemscope itemtype="https://schema.org/Product">
+                <span itemprop="name">PitPat Dog Activity Monitor</span>
+                <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <span itemprop="name">Device Only</span>
+                    <span itemprop="price">149.00</span>
+                    <span itemprop="priceCurrency">GBP</span>
+                </div>
+                <!-- Additional plans -->
+            </div>
         </div>
 
         <!-- Weenect Subscription Plans -->
         <div id="seo-weenect">
             <h3>Weenect Pet Tracker Subscription Plans</h3>
             <p>Weenect offers Standard subscription plans with prepaid and monthly options. Prepaid plans offer significant savings over monthly plans.</p>
-            <ul>
-                <li>Standard Plan: €4.16/month (3-year prepaid), €6.67/month (annual prepaid), €12.99/month (monthly)</li>
-                <li>All plans include live tracking, geofencing, and activity monitoring</li>
-                <li>Prepaid plans can be cancelled at each anniversary</li>
-            </ul>
+            <div itemscope itemtype="https://schema.org/Product">
+                <span itemprop="name">Weenect Pet Tracker</span>
+                <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <span itemprop="name">Standard Plan - 3-Year prepaid</span>
+                    <span itemprop="price">4.16</span>
+                    <span itemprop="priceCurrency">EUR</span>
+                </div>
+                <!-- Additional plans -->
+            </div>
         </div>
 
         <!-- Kippy Subscription Plans -->
         <div id="seo-kippy">
             <h3>Kippy GPS Pet Tracker Subscription Plans</h3>
             <p>Kippy offers multiple subscription tiers with long-term prepaid options. Monthly plans start at €10.99, with prepaid options offering significant savings.</p>
-            <ul>
-                <li>Supreme Plan: €3.33/month (5-year prepaid)</li>
-                <li>Ultimate Plan: €4.16/month (2-year prepaid)</li>
-                <li>Premium Plan: €5.83/month (annual prepaid)</li>
-                <li>Basic Plan: €10.99/month (monthly)</li>
-                <li>All plans include live tracking, geofencing, and activity monitoring</li>
-            </ul>
+            <div itemscope itemtype="https://schema.org/Product">
+                <span itemprop="name">Kippy GPS Pet Tracker</span>
+                <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <span itemprop="name">Supreme Plan - 5-Year prepaid</span>
+                    <span itemprop="price">3.33</span>
+                    <span itemprop="priceCurrency">EUR</span>
+                </div>
+                <!-- Additional plans -->
+            </div>
         </div>
 
         <!-- Petcube Subscription Plans -->
         <div id="seo-petcube">
             <h3>Petcube Tracker Subscription Plans</h3>
             <p>Petcube offers Basic and Premium subscription plans. Premium plans include unlimited location history and coverage for unlimited pets.</p>
-            <ul>
-                <li>Basic Plan: $5/month (2-year), $7/month (annual), $12/month (monthly)</li>
-                <li>Premium Plan: $5/month (5-year), $6/month (2-year), $8/month (annual)</li>
-                <li>All plans include GPS tracking, activity monitoring, and 24/7 vet chat</li>
-            </ul>
+            <div itemscope itemtype="https://schema.org/Product">
+                <span itemprop="name">Petcube Tracker</span>
+                <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <span itemprop="name">Basic Plan - 2-Year</span>
+                    <span itemprop="price">5.00</span>
+                    <span itemprop="priceCurrency">USD</span>
+                </div>
+                <!-- Additional plans -->
+            </div>
         </div>
         
         <!-- Apple AirTag -->
         <div id="seo-airtag">
             <h3>Apple AirTag Subscription Plans</h3>
             <p>Apple AirTag does not require a monthly subscription. It works with the Find My network for location services. The device has a replaceable battery that typically lasts about a year.</p>
-            <ul>
-                <li>Device only: $29 one-time purchase</li>
-                <li>No monthly fees required</li>
-                <li>Works with iPhone/iPad devices running iOS 14.5 or later</li>
-            </ul>
+            <div itemscope itemtype="https://schema.org/Product">
+                <span itemprop="name">Apple AirTag</span>
+                <div itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <span itemprop="name">Device Only</span>
+                    <span itemprop="price">29.00</span>
+                    <span itemprop="priceCurrency">USD</span>
+                </div>
+            </div>
         </div>
     </div>
 
