@@ -228,6 +228,15 @@ public class HomeController {
         return "subscription";
     }
     
+    @GetMapping("/about-us")
+    public String aboutUs(Model model) {
+        model.addAttribute("pageTitle", "About Us - Pet Tracker Review");
+        model.addAttribute("metaDescription", "Learn about Pet Tracker Review, our mission to help pet owners keep their furry friends safe with the best GPS tracking technology.");
+        model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());
+        
+        return "about-us";
+    }
+    
     /**
      * Handle newsletter subscription
      */
