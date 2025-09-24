@@ -23,6 +23,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-security.version>5.7.11</spring-security.version>
     </properties>
 
     <dependencies>
@@ -54,6 +55,14 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-bom</artifactId>
+            <version>${spring-security.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+
         <!-- Spring Boot Cache -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -71,7 +80,7 @@
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
         </dependency>
-        
+
         <!-- Jackson JSR310 for Java 8 Date/Time -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -87,7 +96,7 @@
             <optional>true</optional>
         </dependency>
         -->
-        
+
         <!-- Apache Commons IO -->
         <dependency>
             <groupId>commons-io</groupId>
@@ -102,27 +111,27 @@
             <artifactId>imageio-jpeg</artifactId>
             <version>3.9.4</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-tiff</artifactId>
             <version>3.9.4</version>
         </dependency>
-        
+
         <!-- 添加WebP格式支持 -->
         <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-webp</artifactId>
             <version>3.9.4</version>
         </dependency>
-        
+
         <!-- Image Scaling and Processing -->
         <dependency>
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
             <version>0.4.19</version>
         </dependency>
-        
+
         <!-- Additional Commons for file operations -->
         <dependency>
             <groupId>org.apache.commons</groupId>
