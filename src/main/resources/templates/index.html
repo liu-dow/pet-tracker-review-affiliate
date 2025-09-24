@@ -98,145 +98,46 @@
         </nav>
     </header>
 
-    <!-- Smart Bark Style Banner (Final Version) -->
-    <section class="banner-style-6">
-        <div class="smart-banner-container">
-            <div class="smart-banner-content">
-                <div class="content-section">
-                    <div class="product-badge">
-                        <span class="badge-icon">⭐</span>
-                        <span class="badge-text">Expert Reviews & Comparisons</span>
-                    </div>
-                    
-                    <h1 class="smart-title">
-                        Find the <span class="smart-highlight">Perfect Pet Tracker</span>
-                        <br>With Our Expert Reviews
-                    </h1>
-                    
-                    <p class="smart-description">
-                        In-depth testing and honest reviews of GPS pet trackers, smart collars, and activity monitors. 
-                        We help you choose the best tracking solution for your furry friend.
+    <!-- 新设计的首页Banner -->
+    <section class="hero-banner">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">Find the Best Pet Tracker for Your Pet</h1>
+                    <p class="hero-description">
+                        Discover the perfect GPS pet tracker with our expert reviews and comparisons. 
+                        Keep your furry friends safe with the latest technology.
                     </p>
-                    
-                    <div class="smart-features">
-                        <div class="smart-feature">
-                            <div class="feature-number">50+</div>
-                            <div class="feature-label">Devices Tested</div>
-                        </div>
-                        <div class="smart-feature">
-                            <div class="feature-number">100+</div>
-                            <div class="feature-label">Hours of Testing</div>
-                        </div>
-                        <div class="smart-feature">
-                            <div class="feature-number">5⭐</div>
-                            <div class="feature-label">Expert Rating</div>
-                        </div>
-                    </div>
-                    
-                    <div class="smart-cta-section">
-                        <a th:href="@{/reviews}" class="btn-smart primary">
-                            <span>Browse Reviews</span>
-                            <div class="btn-icon">
-                                <i class="fas fa-search"></i>
-                            </div>
-                        </a>
-                        <a th:href="@{/blogs}" class="btn-smart secondary">
-                            <i class="fas fa-book-open"></i>
-                            <span>Read Guides</span>
-                        </a>
+                    <div class="hero-buttons">
+                        <a href="/reviews" class="btn btn-primary">Browse Reviews</a>
+                        <a href="/blogs" class="btn btn-secondary">Read Guides</a>
                     </div>
                 </div>
-                
-                <div class="visual-section">
-                    <div class="review-showcase">
-                        <div class="showcase-header">
-                            <h3>What We Review</h3>
-                            <p>Complete evaluation of every device</p>
+                <div class="hero-visual">
+                    <div class="pet-scene">
+                        <div class="pet dog">
+                            <div class="collar-collar"></div>
+                            <div class="pet-body"></div>
+                            <div class="pet-face"></div>
+                            <div class="pet-ear"></div>
+                            <div class="pet-tail"></div>
                         </div>
-                        
-                        <div class="review-categories">
-                            <div class="category-card">
-                                <div class="category-icon">
-                                    <i class="fas fa-satellite-dish"></i>
-                                </div>
-                                <div class="category-info">
-                                    <h4>GPS Trackers</h4>
-                                    <p>Real-time location tracking</p>
-                                </div>
-                                <div class="category-rating">4.5★</div>
-                            </div>
-                            
-                            <div class="category-card">
-                                <div class="category-icon">
-                                    <i class="fas fa-microchip"></i>
-                                </div>
-                                <div class="category-info">
-                                    <h4>Smart Collars</h4>
-                                    <p>Activity & health monitoring</p>
-                                </div>
-                                <div class="category-rating">4.3★</div>
-                            </div>
-                            
-                            <div class="category-card">
-                                <div class="category-icon">
-                                    <i class="fas fa-heartbeat"></i>
-                                </div>
-                                <div class="category-info">
-                                    <h4>Fitness Monitors</h4>
-                                    <p>Exercise & wellness tracking</p>
-                                </div>
-                                <div class="category-rating">4.1★</div>
-                            </div>
+                        <div class="pet cat">
+                            <div class="collar-collar"></div>
+                            <div class="pet-body"></div>
+                            <div class="pet-face"></div>
+                            <div class="pet-ear"></div>
+                            <div class="pet-tail"></div>
                         </div>
-                        
-                        <div class="evaluation-metrics">
-                            <div class="metrics-title">Our Testing Standards</div>
-                            <div class="metrics-grid">
-                                <div class="metric-item">
-                                    <span class="metric-label">Battery Life</span>
-                                    <div class="metric-bar"><div class="metric-fill" style="width: 90%;"></div></div>
+                        <div class="smartphone">
+                            <div class="phone-screen">
+                                <div class="map-display">
+                                    <div class="location-marker"></div>
+                                    <div class="location-path"></div>
                                 </div>
-                                <div class="metric-item">
-                                    <span class="metric-label">GPS Accuracy</span>
-                                    <div class="metric-bar"><div class="metric-fill" style="width: 95%;"></div></div>
-                                </div>
-                                <div class="metric-item">
-                                    <span class="metric-label">Build Quality</span>
-                                    <div class="metric-bar"><div class="metric-fill" style="width: 85%;"></div></div>
-                                </div>
-                                <div class="metric-item">
-                                    <span class="metric-label">Value for Money</span>
-                                    <div class="metric-bar"><div class="metric-fill" style="width: 80%;"></div></div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="testing-badge">
-                            <div class="badge-content">
-                                <span class="badge-number">30+ Days</span>
-                                <span class="badge-text">Real-World Testing</span>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            
-            <div class="trust-section">
-                <div class="trust-item">
-                    <span class="trust-number">2025</span>
-                    <span class="trust-label">Latest Reviews</span>
-                </div>
-                <div class="trust-item">
-                    <span class="trust-number">100%</span>
-                    <span class="trust-label">Unbiased</span>
-                </div>
-                <div class="trust-item">
-                    <span class="trust-number">Real</span>
-                    <span class="trust-label">Pet Testing</span>
-                </div>
-                <div class="trust-item">
-                    <span class="trust-number">Free</span>
-                    <span class="trust-label">Expert Advice</span>
                 </div>
             </div>
         </div>

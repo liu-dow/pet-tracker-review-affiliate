@@ -152,6 +152,8 @@ a:hover {
     background-color: #2c5aa0;
     border-color: #2c5aa0;
     color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(49, 130, 206, 0.3);
 }
 
 .btn-secondary {
@@ -163,6 +165,8 @@ a:hover {
 .btn-secondary:hover {
     background-color: #3182ce;
     color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(49, 130, 206, 0.3);
 }
 
 .btn-outline {
