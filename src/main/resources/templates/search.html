@@ -13,6 +13,14 @@
     <link rel="stylesheet" th:href="@{/css/pages/footer.css(v=${cssVersion})}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- hreflang tags for SEO -->
+    <link rel="alternate" hreflang="en" th:href="@{/search(lang='en')}">
+    <link rel="alternate" hreflang="de" th:href="@{/search(lang='de')}">
+    <link rel="alternate" hreflang="fr" th:href="@{/search(lang='fr')}">
+    <link rel="alternate" hreflang="es" th:href="@{/search(lang='es')}">
+    <link rel="alternate" hreflang="ja" th:href="@{/search(lang='ja')}">
+    <link rel="alternate" hreflang="x-default" th:href="@{/search(lang='en')}">
 </head>
 <body>
     <!-- Header -->

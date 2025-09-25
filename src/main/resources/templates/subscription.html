@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${pageTitle}">Compare Pet Tracker Subscription Plans & Pricing - Pet Tracker Review</title>
-    <meta name="description" th:content="${metaDescription}" content="Compare pet tracker subscription plans and pricing from top brands like Tractive, Fi, Pawfit, PitPat, Weenect, Kippy. Find the best GPS pet tracker with affordable monthly fees.">
+    <title th:text="#{subscription.title}">Compare Pet Tracker Subscription Plans & Pricing - Pet Tracker Review</title>
+    <meta name="description" th:content="#{subscription.description}" content="Compare pet tracker subscription plans and pricing from top brands like Tractive, Fi, Pawfit, PitPat, Weenect, Kippy. Find the best GPS pet tracker with affordable monthly fees.">
     
     <!-- Canonical URL to prevent duplicate content issues -->
     <link rel="canonical" th:href="${canonicalUrl}" href="http://pettrackerreview.com/subscription" />
@@ -12,12 +12,12 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" th:content="${canonicalUrl}" content="http://pettrackerreview.com/subscription">
-    <meta property="og:description" th:content="${metaDescription}" content="Compare pet tracker subscription plans and pricing from top brands like Tractive, Fi, Pawfit, PitPat, Weenect, Kippy. Find the best GPS pet tracker with affordable monthly fees.">
+    <meta property="og:description" th:content="#{subscription.description}" content="Compare pet tracker subscription plans and pricing from top brands like Tractive, Fi, Pawfit, PitPat, Weenect, Kippy. Find the best GPS pet tracker with affordable monthly fees.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" th:content="${canonicalUrl}" content="http://pettrackerreview.com/subscription">
-    <meta property="twitter:description" th:content="${metaDescription}" content="Compare pet tracker subscription plans and pricing from top brands like Tractive, Fi, Pawfit, PitPat, Weenect, Kippy. Find the best GPS pet tracker with affordable monthly fees.">
+    <meta property="twitter:description" th:content="#{subscription.description}" content="Compare pet tracker subscription plans and pricing from top brands like Tractive, Fi, Pawfit, PitPat, Weenect, Kippy. Find the best GPS pet tracker with affordable monthly fees.">
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -37,6 +37,14 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Structured Data -->
+
+    <!-- hreflang tags for SEO -->
+    <link rel="alternate" hreflang="en" th:href="@{/subscription(lang='en')}">
+    <link rel="alternate" hreflang="de" th:href="@{/subscription(lang='de')}">
+    <link rel="alternate" hreflang="fr" th:href="@{/subscription(lang='fr')}">
+    <link rel="alternate" hreflang="es" th:href="@{/subscription(lang='es')}">
+    <link rel="alternate" hreflang="ja" th:href="@{/subscription(lang='ja')}">
+    <link rel="alternate" hreflang="x-default" th:href="@{/subscription(lang='en')}">
 
     <style>
         :root{
@@ -471,30 +479,30 @@
             <div class="nav-brand">
                 <a th:href="@{/}" class="brand-link">
                     <i class="fas fa-paw"></i>
-                    <span>Pet Tracker Review</span>
+                    <span th:text="#{site.title}">Pet Tracker Review</span>
                 </a>
             </div>
 
             <div class="nav-menu" id="nav-menu">
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <a th:href="@{/}" class="nav-link">Home</a>
+                        <a th:href="@{/}" class="nav-link" th:text="#{footer.home}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a th:href="@{/blogs}" class="nav-link">Blogs</a>
+                        <a th:href="@{/blogs}" class="nav-link" th:text="#{footer.blogs}">Blogs</a>
                     </li>
                     <li class="nav-item">
-                        <a th:href="@{/reviews}" class="nav-link">Reviews</a>
+                        <a th:href="@{/reviews}" class="nav-link" th:text="#{footer.reviews}">Reviews</a>
                     </li>
                     <li class="nav-item">
-                        <a th:href="@{/subscription}" class="nav-link">Subscription</a>
+                        <a th:href="@{/subscription}" class="nav-link" th:text="#{footer.subscription}">Subscription</a>
                     </li>
                 </ul>
             </div>
 
             <div class="nav-search">
                 <form th:action="@{/search}" method="get" class="search-form">
-                    <input type="text" name="q" placeholder="Search..." class="search-input">
+                    <input type="text" name="q" th:placeholder="#{footer.search}" class="search-input">
                     <button type="submit" class="search-btn">
                         <i class="fas fa-search"></i>
                     </button>
@@ -506,39 +514,37 @@
 <div class="wrap">
     <header>
         <div>
-            <h1>Compare Pet Tracker Subscription Plans & Pricing</h1>
-            <p class="lead">Search & compare subscription plans from popular GPS pet tracker brands including Tractive, Fi, Pawfit, PitPat, Weenect, Kippy & more. Filter by features like live tracking, geofencing, and health monitoring. To find the best pet tracker subscription for your needs.</p>
+            <h1 th:text="#{subscription.title}">Compare Pet Tracker Subscription Plans & Pricing</h1>
+            <p class="lead" th:text="#{subscription.description}">Search & compare subscription plans from popular GPS pet tracker brands including Tractive, Fi, Pawfit, PitPat, Weenect, Kippy & more. Filter by features like live tracking, geofencing, and health monitoring. To find the best pet tracker subscription for your needs.</p>
         </div>
     </header>
 
     <div class="searchbar" role="search" aria-label="Brand search">
-        <input id="q" type="text" placeholder="Search brands, features (e.g. Tractive, live)" />
-        <button id="clearBtn" class="btn" title="Clear">Clear</button>
+        <input id="q" type="text" th:placeholder="#{subscription.search.placeholder}" />
+        <button id="clearBtn" class="btn" th:title="#{subscription.search.clear}" th:text="#{subscription.search.clear}">Clear</button>
     </div>
 
     <div class="controls">
         <div class="select">
-            Sort:
+            <span th:text="#{subscription.sort.label}">Sort:</span>
             <select id="sort">
-                <option value="relevance">Relevance</option>
-                <option value="price-asc">Price: low → high</option>
-                <option value="price-desc">Price: high → low</option>
-                <option value="name">Name A→Z</option>
+                <option value="relevance" th:text="#{subscription.sort.relevance}">Relevance</option>
+                <option value="price-asc" th:text="#{subscription.sort.priceAsc}">Price: low → high</option>
+                <option value="price-desc" th:text="#{subscription.sort.priceDesc}">Price: high → low</option>
+                <option value="name" th:text="#{subscription.sort.name}">Name A→Z</option>
             </select>
         </div>
 
         <div class="select">
-            Filter by feature:
+            <span th:text="#{subscription.filter.label}">Filter by feature:</span>
             <select id="featureFilter">
-                <option value="any">Any</option>
-                <option value="live">Live tracking</option>
-                <option value="fence">Virtual fence</option>
-                <option value="health">Health monitoring</option>
-                <option value="offline">Offline finding</option>
+                <option value="any" th:text="#{subscription.filter.any}">Any</option>
+                <option value="live" th:text="#{subscription.filter.live}">Live tracking</option>
+                <option value="fence" th:text="#{subscription.filter.fence}">Virtual fence</option>
+                <option value="health" th:text="#{subscription.filter.health}">Health monitoring</option>
+                <option value="offline" th:text="#{subscription.filter.offline}">Offline finding</option>
             </select>
         </div>
-
-
     </div>
 
     <main id="results" class="grid" aria-live="polite">
@@ -553,42 +559,42 @@
             "mainEntity": [
                 {
                     "@type": "Question",
-                    "name": "What is a pet tracker subscription and how does it work?",
+                    "name": "#{subscription.faq.q1}",
                     "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "A pet tracker subscription is a recurring fee that allows your GPS pet tracker to connect to cellular networks and provide real-time location data. Most GPS pet trackers require a monthly subscription for data connectivity. Popular brands like Tractive, Fi, and Pawfit offer various subscription plans ranging from $3 to $12 per month."
+                        "text": "#{subscription.faq.a1}"
                     }
                 },
                 {
                     "@type": "Question",
-                    "name": "Why do pet trackers need subscriptions? What about the SIM card?",
+                    "name": "#{subscription.faq.q2}",
                     "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "Pet GPS trackers require subscriptions because they contain embedded SIM cards that connect to cellular networks, similar to smartphones. This connectivity enables real-time location tracking, geofencing, and activity monitoring. The business model differs from item finders like Apple AirTag, which use Bluetooth and the crowd-sourced Find My network without monthly fees. GPS pet trackers provide continuous, precise location data anywhere with cell coverage, which requires ongoing data transmission costs covered by subscription fees. The embedded SIM card allows the device to communicate with cellular towers, sending location data to servers that you access through mobile apps. Without an active subscription, the SIM card loses network access, rendering the GPS tracking features unusable. This subscription-based model ensures consistent revenue for companies to maintain network infrastructure, provide customer support, and develop new features."
+                        "text": "#{subscription.faq.a2}"
                     }
                 },
                 {
                     "@type": "Question",
-                    "name": "Which pet tracker has the cheapest subscription?",
+                    "name": "#{subscription.faq.q3}",
                     "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "Based on our comparison, Kippy offers some of the most affordable long-term subscription plans starting at €3.33/month for a 5-year commitment. However, the best value depends on your specific needs, features required, and contract length preferences."
+                        "text": "#{subscription.faq.a3}"
                     }
                 },
                 {
                     "@type": "Question",
-                    "name": "Are there pet trackers without monthly fees?",
+                    "name": "#{subscription.faq.q4}",
                     "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "Yes, some pet trackers don't require monthly subscriptions. Apple AirTag works with the Find My network without subscription fees but offers limited features compared to GPS trackers. PitPat offers a one-time device purchase with optional membership plans."
+                        "text": "#{subscription.faq.a4}"
                     }
                 },
                 {
                     "@type": "Question",
-                    "name": "What features are typically included in pet tracker subscriptions?",
+                    "name": "#{subscription.faq.q5}",
                     "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "Most pet tracker subscriptions include real-time GPS tracking, location history, geofencing/virtual fences, and activity monitoring. Premium plans often include additional features like health monitoring, extended location history, worldwide coverage, and family sharing options."
+                        "text": "#{subscription.faq.a5}"
                     }
                 }
             ]
@@ -621,11 +627,11 @@
             <footer>
                 <button class="btn-interactive btn-secondary" data-link>
                     <i class="fas fa-external-link-alt btn-icon"></i>
-                    Visit
+                    <span th:text="#{subscription.visit}">Visit</span>
                 </button>
                 <button class="btn-interactive" data-subscriptions>
                     <i class="fas fa-file-contract btn-icon"></i>
-                    Plans
+                    <span th:text="#{subscription.plans}">Plans</span>
                 </button>
             </footer>
         </article>
@@ -739,36 +745,34 @@
 
     <!-- FAQ Section -->
     <section class="faq-section" style="max-width: var(--maxw); margin: 30px auto 0;">
-        <h2>Frequently Asked Questions About Pet Tracker Subscriptions</h2>
+        <h2 th:text="#{subscription.faq.title}">Frequently Asked Questions About Pet Tracker Subscriptions</h2>
         <div class="faq-item">
-            <h3>What is a pet tracker subscription and how does it work?</h3>
-            <p>A pet tracker subscription is a recurring fee that allows your GPS pet tracker to connect to cellular networks and provide real-time location data. Most GPS pet trackers require a monthly subscription for data connectivity. Popular brands like Tractive, Fi, and Pawfit offer various subscription plans ranging from $3 to $12 per month.</p>
+            <h3 th:text="#{subscription.faq.q1}">What is a pet tracker subscription and how does it work?</h3>
+            <p th:text="#{subscription.faq.a1}">A pet tracker subscription is a recurring fee that allows your GPS pet tracker to connect to cellular networks and provide real-time location data. Most GPS pet trackers require a monthly subscription for data connectivity. Popular brands like Tractive, Fi, and Pawfit offer various subscription plans ranging from $3 to $12 per month.</p>
         </div>
         <div class="faq-item">
-            <h3>Why do pet trackers need subscriptions? What about the SIM card?</h3>
-            <p>Pet GPS trackers require subscriptions because they contain embedded SIM cards that connect to cellular networks, similar to smartphones. This connectivity enables real-time location tracking, geofencing, and activity monitoring. The business model differs from item finders like Apple AirTag, which use Bluetooth and the crowd-sourced Find My network without monthly fees. GPS pet trackers provide continuous, precise location data anywhere with cell coverage, which requires ongoing data transmission costs covered by subscription fees. The embedded SIM card allows the device to communicate with cellular towers, sending location data to servers that you access through mobile apps. Without an active subscription, the SIM card loses network access, rendering the GPS tracking features unusable. This subscription-based model ensures consistent revenue for companies to maintain network infrastructure, provide customer support, and develop new features.</p>
+            <h3 th:text="#{subscription.faq.q2}">Why do pet trackers need subscriptions? What about the SIM card?</h3>
+            <p th:text="#{subscription.faq.a2}">Pet GPS trackers require subscriptions because they contain embedded SIM cards that connect to cellular networks, similar to smartphones. This connectivity enables real-time location tracking, geofencing, and activity monitoring. The business model differs from item finders like Apple AirTag, which use Bluetooth and the crowd-sourced Find My network without monthly fees. GPS pet trackers provide continuous, precise location data anywhere with cell coverage, which requires ongoing data transmission costs covered by subscription fees. The embedded SIM card allows the device to communicate with cellular towers, sending location data to servers that you access through mobile apps. Without an active subscription, the SIM card loses network access, rendering the GPS tracking features unusable. This subscription-based model ensures consistent revenue for companies to maintain network infrastructure, provide customer support, and develop new features.</p>
         </div>
         <div class="faq-item">
-            <h3>Which pet tracker has the cheapest subscription?</h3>
-            <p>Based on our comparison, Kippy offers some of the most affordable long-term subscription plans starting at €3.33/month for a 5-year commitment. However, the best value depends on your specific needs, features required, and contract length preferences.</p>
+            <h3 th:text="#{subscription.faq.q3}">Which pet tracker has the cheapest subscription?</h3>
+            <p th:text="#{subscription.faq.a3}">Based on our comparison, Kippy offers some of the most affordable long-term subscription plans starting at €3.33/month for a 5-year commitment. However, the best value depends on your specific needs, features required, and contract length preferences.</p>
         </div>
         <div class="faq-item">
-            <h3>Are there pet trackers without monthly fees?</h3>
-            <p>Yes, some pet trackers don't require monthly subscriptions. Apple AirTag works with the Find My network without subscription fees but offers limited features compared to GPS trackers. PitPat offers a one-time device purchase with optional membership plans.</p>
+            <h3 th:text="#{subscription.faq.q4}">Are there pet trackers without monthly fees?</h3>
+            <p th:text="#{subscription.faq.a4}">Yes, some pet trackers don't require monthly subscriptions. Apple AirTag works with the Find My network without subscription fees but offers limited features compared to GPS trackers. PitPat offers a one-time device purchase with optional membership plans.</p>
         </div>
         <div class="faq-item">
-            <h3>What features are typically included in pet tracker subscriptions?</h3>
-            <p>Most pet tracker subscriptions include real-time GPS tracking, location history, geofencing/virtual fences, and activity monitoring. Premium plans often include additional features like health monitoring, extended location history, worldwide coverage, and family sharing options.</p>
+            <h3 th:text="#{subscription.faq.q5}">What features are typically included in pet tracker subscriptions?</h3>
+            <p th:text="#{subscription.faq.a5}">Most pet tracker subscriptions include real-time GPS tracking, location history, geofencing/virtual fences, and activity monitoring. Premium plans often include additional features like health monitoring, extended location history, worldwide coverage, and family sharing options.</p>
         </div>
     </section>
 
     <!-- Data Accuracy Disclaimer -->
     <div style="max-width: var(--maxw); margin: 40px auto 0; padding: 20px; background-color: #fff8e6; border-radius: 10px; border: 1px solid #ffe0b3; color: #333; font-size: 14px;">
-        <h3 style="margin-top: 0; color: #e67300; font-size: 16px;">Data Accuracy Notice</h3>
-        <p style="margin-bottom: 0; line-height: 1.5;">Please note that subscription plan details and pricing information are subject to change by the respective brands. We strive to keep this information up-to-date, but there may be delays in reflecting the latest changes from official sources. Always verify current pricing and plan details on the official brand websites before making purchasing decisions. Last updated: September 2025.</p>
+        <h3 style="margin-top: 0; color: #e67300; font-size: 16px;" th:text="#{subscription.dataAccuracy.title}">Data Accuracy Notice</h3>
+        <p style="margin-bottom: 0; line-height: 1.5;" th:text="#{subscription.dataAccuracy.description}">Please note that subscription plan details and pricing information are subject to change by the respective brands. We strive to keep this information up-to-date, but there may be delays in reflecting the latest changes from official sources. Always verify current pricing and plan details on the official brand websites before making purchasing decisions. Last updated: September 2025.</p>
     </div>
-
-
 </div>
 
 <script>
@@ -936,8 +940,8 @@
         // If no subscription information, show prompt
         if (!brand.subscriptions || brand.subscriptions.length === 0) {
             modalBody.innerHTML = `<div class="empty" style="text-align: center; padding: 40px;">
-          <strong>No subscription plans available</strong>
-          <div style="margin-top: 8px; color: var(--muted)">This brand may not require a subscription or information is not available.</div>
+          <strong th:text="#{subscription.noResults}">No subscription plans available</strong>
+          <div style="margin-top: 8px; color: var(--muted)" th:text="#{subscription.noResults.description}">This brand may not require a subscription or information is not available.</div>
         </div>`;
             modal.style.display = "block";
             document.body.style.overflow = 'hidden';
@@ -1059,7 +1063,7 @@
     function render(list){
         results.innerHTML = '';
         if(!list.length){
-            const e = document.createElement('div'); e.className='empty'; e.innerHTML = '<strong>No brands found</strong><div style="margin-top:8px;color:var(--muted)">Try removing filters or search terms.</div>';
+            const e = document.createElement('div'); e.className='empty'; e.innerHTML = `<strong th:text="#{subscription.noResults}">No brands found</strong><div style="margin-top:8px;color:var(--muted)" th:text="#{subscription.noResults.description}">Try removing filters or search terms.</div>`;
             results.appendChild(e); return;
         }
         list.forEach(b=>{
