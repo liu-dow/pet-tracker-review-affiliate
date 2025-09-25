@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Test I18n</title>
+</head>
+<body>
+    <h1 th:text="#{site.title}">Site Title</h1>
+    <p th:text="#{site.description}">Site Description</p>
+    
+    <h2>Language Switcher</h2>
+    <ul>
+        <li><a th:href="@{?(lang='en')}" th:text="#{language.english}">English</a></li>
+        <li><a th:href="@{?(lang='de')}" th:text="#{language.german}">German</a></li>
+        <li><a th:href="@{?(lang='fr')}" th:text="#{language.french}">French</a></li>
+        <li><a th:href="@{?(lang='es')}" th:text="#{language.spanish}">Spanish</a></li>
+        <li><a th:href="@{?(lang='ja')}" th:text="#{language.japanese}">Japanese</a></li>
+    </ul>
+</body>
+</html>

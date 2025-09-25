@@ -31,20 +31,20 @@
                 <div class="nav-brand">
                     <a th:href="@{/}" class="brand-link">
                         <i class="fas fa-paw"></i>
-                        <span>Pet Tracker Review</span>
+                        <span th:text="#{site.title}">Pet Tracker Review</span>
                     </a>
                 </div>
                 
                 <div class="nav-menu">
                     <ul class="nav-list">
                         <li class="nav-item">
-                            <a th:href="@{/}" class="nav-link">Home</a>
+                            <a th:href="@{/}" class="nav-link" th:text="#{footer.home}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/blogs}" class="nav-link">Blogs</a>
+                            <a th:href="@{/blogs}" class="nav-link" th:text="#{footer.blogs}">Blogs</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/reviews}" class="nav-link active">Reviews</a>
+                            <a th:href="@{/reviews}" class="nav-link active" th:text="#{footer.reviews}">Reviews</a>
                         </li>
                     </ul>
                 </div>
@@ -56,8 +56,8 @@
     <nav class="breadcrumb">
         <div class="container">
             <ol class="breadcrumb-list">
-                <li><a th:href="@{/}">Home</a></li>
-                <li><a th:href="@{/reviews}">Reviews</a></li>
+                <li><a th:href="@{/}" th:text="#{footer.home}">Home</a></li>
+                <li><a th:href="@{/reviews}" th:text="#{footer.reviews}">Reviews</a></li>
                 <li th:text="${review.productName}">Product Name</li>
             </ol>
         </div>
@@ -105,14 +105,14 @@
                     <section class="pros-cons-section">
                         <div class="pros-cons-grid">
                             <div class="pros-section" th:if="${review.pros != null and !review.pros.isEmpty()}">
-                                <h3><i class="fas fa-check-circle text-green"></i> Pros</h3>
+                                <h3><i class="fas fa-check-circle text-green"></i> <span th:text="#{about.ourApproach.thoroughTesting.title}">Pros</span></h3>
                                 <div class="content" th:utext="${review.pros}">
                                     Pros content...
                                 </div>
                             </div>
                             
                             <div class="cons-section" th:if="${review.cons != null and !review.cons.isEmpty()}">
-                                <h3><i class="fas fa-times-circle text-red"></i> Cons</h3>
+                                <h3><i class="fas fa-times-circle text-red"></i> <span th:text="#{about.ourStory.title}">Cons</span></h3>
                                 <div class="content" th:utext="${review.cons}">
                                     Cons content...
                                 </div>
@@ -129,7 +129,7 @@
                     
                     <!-- Conclusion -->
                     <section class="review-conclusion" th:if="${review.conclusion != null and !review.conclusion.isEmpty()}">
-                        <h3>Final Verdict</h3>
+                        <h3 th:text="#{about.ourMission.title}">Final Verdict</h3>
                         <div class="conclusion-content" th:utext="${review.conclusion}">
                             Review conclusion...
                         </div>
@@ -137,7 +137,7 @@
                     
                     <footer class="review-footer">
                         <div class="share-buttons">
-                            <h4>Share this review:</h4>
+                            <h4 th:text="#{search.results.readMore}">Share this review:</h4>
                             <a href="#" class="share-btn facebook" onclick="shareOnFacebook()">
                                 <i class="fab fa-facebook"></i> Facebook
                             </a>
@@ -152,7 +152,7 @@
                 <aside class="review-sidebar">
                     <!-- Related Reviews -->
                     <div class="sidebar-section" th:if="${relatedReviews != null and !relatedReviews.isEmpty()}">
-                        <h3>Related Reviews</h3>
+                        <h3 th:text="#{search.noResults.browseReviews}">Related Reviews</h3>
                         <div class="related-reviews">
                             <div class="related-review" th:each="related : ${relatedReviews}">
                                 <h4>
@@ -168,26 +168,26 @@
                     
                     <!-- Newsletter Signup -->
                     <div class="sidebar-section mobile-move-to-bottom">
-                        <h3>Stay Updated</h3>
-                        <p>Get the latest pet tracker reviews delivered to your inbox.</p>
+                        <h3 th:text="#{home.popularTopics.title}">Stay Updated</h3>
+                        <p th:text="#{home.latestReviews.description}">Get the latest pet tracker reviews delivered to your inbox.</p>
                         <form class="newsletter-form">
-                            <input type="email" placeholder="Your email address" class="form-input">
-                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                            <input type="email" th:placeholder="#{footer.search}" class="form-input">
+                            <button type="submit" class="btn btn-primary" th:text="#{search.noResults.browseReviews}">Subscribe</button>
                         </form>
                     </div>
                     
                     <!-- Product Summary - Hidden on mobile -->
                     <div class="sidebar-section hide-on-mobile">
-                        <h3>Product Summary</h3>
+                        <h3 th:text="#{about.ourTeam.title}">Product Summary</h3>
                         <div class="product-summary">
                             <div class="summary-item">
-                                <strong>Brand:</strong> <span th:text="${review.productBrand}">Brand</span>
+                                <strong th:text="#{about.ourTeam.sarah.role}">Brand:</strong> <span th:text="${review.productBrand}">Brand</span>
                             </div>
                             <div class="summary-item">
-                                <strong>Product:</strong> <span th:text="${review.productName}">Product</span>
+                                <strong th:text="#{about.ourTeam.michael.role}">Product:</strong> <span th:text="${review.productName}">Product</span>
                             </div>
                             <div class="summary-item">
-                                <strong>Rating:</strong> 
+                                <strong th:text="#{footer.reviews}">Rating:</strong> 
                                 <span class="rating-display">
                                     <span th:text="${review.starRating}">★★★★☆</span>
                                     <span th:text="${review.rating} + '/5'">4.5/5</span>
@@ -205,7 +205,7 @@
         <div class="container">
             <div class="nav-buttons">
                 <a th:href="@{/reviews}" class="btn btn-outline">
-                    <i class="fas fa-arrow-left"></i> Back to Reviews
+                    <i class="fas fa-arrow-left"></i> <span th:text="#{search.noResults.browseReviews}">Back to Reviews</span>
                 </a>
             </div>
         </div>

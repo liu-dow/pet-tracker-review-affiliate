@@ -41,27 +41,27 @@
             <div class="nav-brand">
                 <a th:href="@{/}" class="brand-link">
                     <i class="fas fa-paw"></i>
-                    <span>Pet Tracker Review</span>
+                    <span th:text="#{site.title}">Pet Tracker Review</span>
                 </a>
             </div>
 
             <div class="nav-menu" id="nav-menu">
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <a th:href="@{/}" class="nav-link">Home</a>
+                        <a th:href="@{/}" class="nav-link" th:text="#{footer.home}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a th:href="@{/blogs}" class="nav-link">Blogs</a>
+                        <a th:href="@{/blogs}" class="nav-link" th:text="#{footer.blogs}">Blogs</a>
                     </li>
                     <li class="nav-item">
-                        <a th:href="@{/reviews}" class="nav-link">Reviews</a>
+                        <a th:href="@{/reviews}" class="nav-link" th:text="#{footer.reviews}">Reviews</a>
                     </li>
                 </ul>
             </div>
 
             <div class="nav-search">
                 <form th:action="@{/search}" method="get" class="search-form">
-                    <input type="text" name="q" placeholder="Search..." class="search-input">
+                    <input type="text" name="q" th:placeholder="#{footer.search}" class="search-input">
                     <button type="submit" class="search-btn">
                         <i class="fas fa-search"></i>
                     </button>
@@ -73,19 +73,19 @@
 </header>
 <div class="page-header">
     <div class="container">
-        <h1>Affiliate Disclosure</h1>
-        <p>Transparency in our affiliate partnerships and editorial independence</p>
+        <h1 th:text="#{affiliate.title}">Affiliate Disclosure</h1>
+        <p th:text="#{affiliate.subtitle}">Transparency in our affiliate partnerships and editorial independence</p>
     </div>
 </div>
 
 <section class="section">
     <div class="container">
         <div class="disclosure-content">
-            <p class="last-updated">Last Updated: September 7, 2025</p>
+            <p class="last-updated" th:text="#{affiliate.lastUpdated}">Last Updated: September 7, 2025</p>
 
             <section class="disclosure-section">
-                <h2>Important Notice</h2>
-                <p>
+                <h2 th:text="#{affiliate.importantNotice.title}">Important Notice</h2>
+                <p th:text="#{affiliate.importantNotice.description}">
                     PetTrackerReview.com participates in various affiliate marketing programs, which means we may earn
                     commissions
                     from purchases made through links on our website. This disclosure is made in accordance with the
@@ -96,8 +96,8 @@
             </section>
 
             <section class="disclosure-section">
-                <h2>What This Means</h2>
-                <p>
+                <h2 th:text="#{affiliate.whatThisMeans.title}">What This Means</h2>
+                <p th:text="#{affiliate.whatThisMeans.description}">
                     When you click on certain links on our website and make a purchase, we may receive a small
                     commission at no
                     additional cost to you. These affiliate partnerships help support our website and allow us to
@@ -107,8 +107,8 @@
             </section>
 
             <section class="disclosure-section">
-                <h2>Our Editorial Independence</h2>
-                <p>
+                <h2 th:text="#{affiliate.editorialIndependence.title}">Our Editorial Independence</h2>
+                <p th:text="#{affiliate.editorialIndependence.description1}">
                     We want to be completely transparent with our readers: while we do earn commissions from some of the
                     products
                     we recommend, this does not influence our editorial content. Our reviews, comparisons, and
@@ -116,28 +116,28 @@
                     based on:
                 </p>
                 <ul>
-                    <li>Thorough research and testing</li>
-                    <li>User feedback and experiences</li>
-                    <li>Product specifications and features</li>
-                    <li>Value for money considerations</li>
-                    <li>Overall quality and reliability</li>
+                    <li th:text="#{affiliate.editorialIndependence.basedOn.item1}">Thorough research and testing</li>
+                    <li th:text="#{affiliate.editorialIndependence.basedOn.item2}">User feedback and experiences</li>
+                    <li th:text="#{affiliate.editorialIndependence.basedOn.item3}">Product specifications and features</li>
+                    <li th:text="#{affiliate.editorialIndependence.basedOn.item4}">Value for money considerations</li>
+                    <li th:text="#{affiliate.editorialIndependence.basedOn.item5}">Overall quality and reliability</li>
                 </ul>
-                <p>
+                <p th:text="#{affiliate.editorialIndependence.description2}">
                     We only recommend products that we genuinely believe will provide value to pet owners looking for
                     tracking solutions.
                 </p>
             </section>
 
             <section class="disclosure-section">
-                <h2>Affiliate Programs We Participate In</h2>
-                <p>We may participate in affiliate programs with various companies, including but not limited to:</p>
+                <h2 th:text="#{affiliate.programs.title}">Affiliate Programs We Participate In</h2>
+                <p th:text="#{affiliate.programs.description1}">We may participate in affiliate programs with various companies, including but not limited to:</p>
                 <ul>
-                    <li>Amazon Associates Program</li>
-                    <li>Pet tracker manufacturers and retailers</li>
-                    <li>Pet supply companies</li>
-                    <li>Technology and electronics retailers</li>
+                    <li th:text="#{affiliate.programs.list.item1}">Amazon Associates Program</li>
+                    <li th:text="#{affiliate.programs.list.item2}">Pet tracker manufacturers and retailers</li>
+                    <li th:text="#{affiliate.programs.list.item3}">Pet supply companies</li>
+                    <li th:text="#{affiliate.programs.list.item4}">Technology and electronics retailers</li>
                 </ul>
-                <p>
+                <p th:text="#{affiliate.programs.description2}">
                     These partnerships may change over time, and we may add or remove affiliate relationships as we
                     continue
                     to evaluate the best products and services for our readers.
@@ -145,23 +145,23 @@
             </section>
 
             <section class="disclosure-section">
-                <h2>How We Choose Products to Review</h2>
-                <p>
+                <h2 th:text="#{affiliate.howWeChoose.title}">How We Choose Products to Review</h2>
+                <p th:text="#{affiliate.howWeChoose.description}">
                     Our product selection process is independent of our affiliate relationships. We choose products to
                     review based on:
                 </p>
                 <ul>
-                    <li>Popular demand and reader interest</li>
-                    <li>Innovation and new technology</li>
-                    <li>Market reputation and user reviews</li>
-                    <li>Potential value to pet owners</li>
-                    <li>Availability and accessibility</li>
+                    <li th:text="#{affiliate.howWeChoose.basedOn.item1}">Popular demand and reader interest</li>
+                    <li th:text="#{affiliate.howWeChoose.basedOn.item2}">Innovation and new technology</li>
+                    <li th:text="#{affiliate.howWeChoose.basedOn.item3}">Market reputation and user reviews</li>
+                    <li th:text="#{affiliate.howWeChoose.basedOn.item4}">Potential value to pet owners</li>
+                    <li th:text="#{affiliate.howWeChoose.basedOn.item5}">Availability and accessibility</li>
                 </ul>
             </section>
 
             <section class="disclosure-section">
-                <h2>Pricing and Availability</h2>
-                <p>
+                <h2 th:text="#{affiliate.pricing.title}">Pricing and Availability</h2>
+                <p th:text="#{affiliate.pricing.description}">
                     Product prices and availability mentioned on our website are subject to change. We strive to keep
                     information
                     current, but prices may vary between the time of writing and your visit to the retailer's website.
@@ -171,23 +171,23 @@
             </section>
 
             <section class="disclosure-section">
-                <h2>Our Commitment to You</h2>
-                <p>
+                <h2 th:text="#{affiliate.commitment.title}">Our Commitment to You</h2>
+                <p th:text="#{affiliate.commitment.description1}">
                     We are committed to providing honest, unbiased reviews and recommendations. If we have a negative
                     opinion
                     about an affiliate product, we will share it honestly. Our goal is to help you make informed
                     decisions
                     about pet tracking devices, not just to earn commissions.
                 </p>
-                <p>
+                <p th:text="#{affiliate.commitment.description2}">
                     We believe in transparency and building trust with our readers. If you have any questions about our
                     affiliate relationships or how they might affect our content, please don't hesitate to contact us.
                 </p>
             </section>
 
             <section class="disclosure-section">
-                <h2>Contact Information</h2>
-                <p>
+                <h2 th:text="#{affiliate.contact.title}">Contact Information</h2>
+                <p th:text="#{affiliate.contact.description}">
                     If you have any questions about this affiliate disclosure or our review process, please contact us
                     at:
                 </p>
@@ -197,8 +197,8 @@
             </section>
 
             <section class="disclosure-section">
-                <h2>Changes to This Disclosure</h2>
-                <p>
+                <h2 th:text="#{affiliate.changes.title}">Changes to This Disclosure</h2>
+                <p th:text="#{affiliate.changes.description}">
                     We may update this affiliate disclosure from time to time to reflect changes in our affiliate
                     partnerships
                     or legal requirements. We will post the updated version on this page with a new "Last Updated" date.

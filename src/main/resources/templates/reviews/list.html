@@ -27,27 +27,27 @@
                 <div class="nav-brand">
                     <a th:href="@{/}" class="brand-link">
                         <i class="fas fa-paw"></i>
-                        <span>Pet Tracker Review</span>
+                        <span th:text="#{site.title}">Pet Tracker Review</span>
                     </a>
                 </div>
                 
                 <div class="nav-menu">
                     <ul class="nav-list">
                         <li class="nav-item">
-                            <a th:href="@{/}" class="nav-link">Home</a>
+                            <a th:href="@{/}" class="nav-link" th:text="#{footer.home}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/blogs}" class="nav-link">Blogs</a>
+                            <a th:href="@{/blogs}" class="nav-link" th:text="#{footer.blogs}">Blogs</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/reviews}" class="nav-link active">Reviews</a>
+                            <a th:href="@{/reviews}" class="nav-link active" th:text="#{footer.reviews}">Reviews</a>
                         </li>
                     </ul>
                 </div>
                 
                 <div class="nav-search">
                     <form th:action="@{/search}" method="get" class="search-form">
-                        <input type="text" name="q" placeholder="Search..." class="search-input">
+                        <input type="text" name="q" th:placeholder="#{footer.search}" class="search-input">
                         <button type="submit" class="search-btn">
                             <i class="fas fa-search"></i>
                         </button>
@@ -60,8 +60,8 @@
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
-            <h1>Pet Tracker Reviews</h1>
-            <p>In-depth analysis and ratings of the best pet tracking devices</p>
+            <h1 th:text="#{footer.reviews}">Pet Tracker Reviews</h1>
+            <p th:text="#{home.latestReviews.description}">In-depth analysis and ratings of the best pet tracking devices</p>
         </div>
     </section>
 
@@ -72,10 +72,10 @@
                 <!-- Sidebar -->
                 <aside class="sidebar">
                     <div class="sidebar-section">
-                        <h3>Filter by Tag</h3>
+                        <h3 th:text="#{search.results.reviews}">Filter by Tag</h3>
                         <div class="tag-filter">
                             <a th:href="@{/reviews}" 
-                               th:class="${selectedTag == null ? 'tag-link active' : 'tag-link'}">All</a>
+                               th:class="${selectedTag == null ? 'tag-link active' : 'tag-link'}" th:text="#{search.noResults.browseReviews}">All</a>
                             <a th:each="tag : ${allTags}" 
                                th:href="@{/reviews(tag=${tag})}" 
                                th:text="${tag}"
@@ -125,13 +125,13 @@
                             <div class="review-highlights">
                                 <div class="pros-cons">
                                     <div class="pros" th:if="${review.pros != null and !review.pros.isEmpty()}">
-                                        <h4><i class="fas fa-check text-green"></i> Pros</h4>
+                                        <h4><i class="fas fa-check text-green"></i> <span th:text="#{about.ourApproach.thoroughTesting.title}">Pros</span></h4>
                                         <div class="highlight-text" th:utext="${review.pros}">
                                             Pros content...
                                         </div>
                                     </div>
                                     <div class="cons" th:if="${review.cons != null and !review.cons.isEmpty()}">
-                                        <h4><i class="fas fa-times text-red"></i> Cons</h4>
+                                        <h4><i class="fas fa-times text-red"></i> <span th:text="#{about.ourStory.title}">Cons</span></h4>
                                         <div class="highlight-text" th:utext="${review.cons}">
                                             Cons content...
                                         </div>
@@ -145,7 +145,7 @@
                             
                             <div class="review-footer">
                                 <a th:href="@{'/reviews/' + ${review.slug}}" class="read-more">
-                                    Read Full Review <i class="fas fa-arrow-right"></i>
+                                    <span th:text="#{search.results.readFullReview}">Read Full Review</span> <i class="fas fa-arrow-right"></i>
                                 </a>
                             </div>
                         </div>
@@ -154,14 +154,14 @@
                     <!-- No Results -->
                     <div th:if="${reviews == null or reviews.isEmpty()}" class="no-results">
                         <i class="fas fa-search"></i>
-                        <h3>No reviews found</h3>
+                        <h3 th:text="#{search.noResults.title}">No reviews found</h3>
                         <p th:if="${selectedTag != null}">
-                            No reviews found for tag "<span th:text="${selectedTag}"></span>".
+                            <span th:text="#{search.noResults.description}">No content found for</span> "<span th:text="${selectedTag}"></span>".
                         </p>
                         <p th:if="${selectedTag == null}">
-                            No reviews available at the moment.
+                            <span th:text="#{search.noResults.emptyQuery}">No reviews available at the moment.</span>
                         </p>
-                        <a th:href="@{/reviews}" class="btn btn-primary">View All Reviews</a>
+                        <a th:href="@{/reviews}" class="btn btn-primary" th:text="#{search.noResults.browseReviews}">View All Reviews</a>
                     </div>
                 </main>
             </div>

@@ -68,27 +68,27 @@
                 <div class="nav-brand">
                     <a th:href="@{/}" class="brand-link">
                         <i class="fas fa-paw"></i>
-                        <span>Pet Tracker Review</span>
+                        <span th:text="#{site.title}">Pet Tracker Review</span>
                     </a>
                 </div>
                 
                 <div class="nav-menu" id="nav-menu">
                     <ul class="nav-list">
                         <li class="nav-item">
-                            <a th:href="@{/}" class="nav-link">Home</a>
+                            <a th:href="@{/}" class="nav-link" th:text="#{footer.home}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/blogs}" class="nav-link">Blogs</a>
+                            <a th:href="@{/blogs}" class="nav-link" th:text="#{footer.blogs}">Blogs</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/reviews}" class="nav-link">Reviews</a>
+                            <a th:href="@{/reviews}" class="nav-link" th:text="#{footer.reviews}">Reviews</a>
                         </li>
                     </ul>
                 </div>
                 
                 <div class="nav-search">
                     <form th:action="@{/search}" method="get" class="search-form">
-                        <input type="text" name="q" placeholder="Search..." class="search-input">
+                        <input type="text" name="q" th:placeholder="#{footer.search}" class="search-input">
                         <button type="submit" class="search-btn">
                             <i class="fas fa-search"></i>
                         </button>
@@ -103,14 +103,14 @@
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <h1 class="hero-title">Expert Pet Tracker Reviews & Comparisons</h1>
-                    <p class="hero-description">
+                    <h1 class="hero-title" th:text="#{home.hero.title}">Expert Pet Tracker Reviews & Comparisons</h1>
+                    <p class="hero-description" th:text="#{home.hero.description}">
                         In-depth testing and honest reviews of GPS pet trackers, smart collars, and activity monitors. 
                         We help you choose the best tracking solution for your furry friend.
                     </p>
                     <div class="hero-buttons">
-                        <a href="/reviews" class="btn btn-primary">Browse Reviews</a>
-                        <a href="/blogs" class="btn btn-secondary">Read Guides</a>
+                        <a href="/reviews" class="btn btn-primary" th:text="#{home.hero.browseReviews}">Browse Reviews</a>
+                        <a href="/blogs" class="btn btn-secondary" th:text="#{home.hero.readGuides}">Read Guides</a>
                     </div>
                 </div>
                 <div class="hero-visual">
@@ -128,8 +128,8 @@
     <section class="section">
         <div class="container">
             <div class="section-header">
-                <h2>Latest Reviews</h2>
-                <p>In-depth analysis of the newest pet tracking devices</p>
+                <h2 th:text="#{home.latestReviews.title}">Latest Reviews</h2>
+                <p th:text="#{home.latestReviews.description}">In-depth analysis of the newest pet tracking devices</p>
             </div>
             
             <div class="reviews-grid" th:if="${latestReviews != null and !latestReviews.isEmpty()}">
@@ -161,7 +161,7 @@
             </div>
             
             <div class="section-footer">
-                <a th:href="@{/reviews}" class="btn btn-outline">View All Reviews</a>
+                <a th:href="@{/reviews}" class="btn btn-outline" th:text="#{home.viewAllReviews}">View All Reviews</a>
             </div>
         </div>
     </section>
@@ -170,8 +170,8 @@
     <section class="section bg-light">
         <div class="container">
             <div class="section-header">
-                <h2>Latest Articles</h2>
-                <p>Expert guides and tips for pet safety</p>
+                <h2 th:text="#{home.latestArticles.title}">Latest Articles</h2>
+                <p th:text="#{home.latestArticles.description}">Expert guides and tips for pet safety</p>
             </div>
             
             <div class="blog-grid" th:if="${latestBlogs != null and !latestBlogs.isEmpty()}">
@@ -198,7 +198,7 @@
             </div>
             
             <div class="section-footer">
-                <a th:href="@{/blogs}" class="btn btn-outline">Read More Articles</a>
+                <a th:href="@{/blogs}" class="btn btn-outline" th:text="#{home.readMoreArticles}">Read More Articles</a>
             </div>
         </div>
     </section>
@@ -207,8 +207,8 @@
     <section class="section">
         <div class="container">
             <div class="section-header">
-                <h2>Popular Topics</h2>
-                <p>Explore content by category</p>
+                <h2 th:text="#{home.popularTopics.title}">Popular Topics</h2>
+                <p th:text="#{home.popularTopics.description}">Explore content by category</p>
             </div>
             
             <div class="tags-cloud" th:if="${allTags != null and !allTags.isEmpty()}">
@@ -227,13 +227,13 @@
     <div id="cookie-banner" class="cookie-banner" style="display: none;">
         <div class="cookie-banner-content">
             <div class="cookie-banner-text">
-                <h4>Cookie Settings</h4>
-                <p>We use cookies to improve your browsing experience, provide personalized content, and analyze our traffic. You can choose to accept all cookies or customize your preferences.</p>
+                <h4 th:text="#{cookie.banner.title}">Cookie Settings</h4>
+                <p th:text="#{cookie.banner.description}">We use cookies to improve your browsing experience, provide personalized content, and analyze our traffic. You can choose to accept all cookies or customize your preferences.</p>
             </div>
             <div class="cookie-banner-actions">
-                <button id="accept-all-cookies" class="btn btn-primary">Accept All</button>
-                <button id="manage-cookies" class="btn btn-secondary">Manage Preferences</button>
-                <button id="reject-all-cookies" class="btn btn-outline">Reject All</button>
+                <button id="accept-all-cookies" class="btn btn-primary" th:text="#{cookie.banner.acceptAll}">Accept All</button>
+                <button id="manage-cookies" class="btn btn-secondary" th:text="#{cookie.banner.managePreferences}">Manage Preferences</button>
+                <button id="reject-all-cookies" class="btn btn-outline" th:text="#{cookie.banner.rejectAll}">Reject All</button>
             </div>
         </div>
     </div>
@@ -242,7 +242,7 @@
     <div id="cookie-settings-modal" class="cookie-modal" style="display: none;">
         <div class="cookie-modal-content">
             <div class="cookie-modal-header">
-                <h3>Cookie Preference Settings</h3>
+                <h3 th:text="#{cookie.modal.title}">Cookie Preference Settings</h3>
                 <button id="close-cookie-modal" class="close-btn">&times;</button>
             </div>
             <div class="cookie-modal-body">
@@ -253,8 +253,8 @@
                             <span class="slider"></span>
                         </label>
                         <div class="cookie-category-info">
-                            <h4>Necessary Cookies</h4>
-                            <p>These cookies are essential for the basic functionality of the website and cannot be disabled.</p>
+                            <h4 th:text="#{cookie.category.necessary.title}">Necessary Cookies</h4>
+                            <p th:text="#{cookie.category.necessary.description}">These cookies are essential for the basic functionality of the website and cannot be disabled.</p>
                         </div>
                     </div>
                 </div>
@@ -266,8 +266,8 @@
                             <span class="slider"></span>
                         </label>
                         <div class="cookie-category-info">
-                            <h4>Analytics Cookies (Required for GA4)</h4>
-                            <p>These cookies help us understand how visitors interact with our website using Google Analytics 4. This is required for our site analytics and cannot be disabled.</p>
+                            <h4 th:text="#{cookie.category.analytics.title}">Analytics Cookies (Required for GA4)</h4>
+                            <p th:text="#{cookie.category.analytics.description}">These cookies help us understand how visitors interact with our website using Google Analytics 4. This is required for our site analytics and cannot be disabled.</p>
                         </div>
                     </div>
                 </div>
@@ -279,8 +279,8 @@
                             <span class="slider"></span>
                         </label>
                         <div class="cookie-category-info">
-                            <h4>Marketing Cookies</h4>
-                            <p>These cookies track visitors across websites to provide relevant advertising content and measure campaign effectiveness.</p>
+                            <h4 th:text="#{cookie.category.marketing.title}">Marketing Cookies</h4>
+                            <p th:text="#{cookie.category.marketing.description}">These cookies track visitors across websites to provide relevant advertising content and measure campaign effectiveness.</p>
                         </div>
                     </div>
                 </div>
@@ -292,15 +292,15 @@
                             <span class="slider"></span>
                         </label>
                         <div class="cookie-category-info">
-                            <h4>Preference Cookies</h4>
-                            <p>These cookies allow the website to remember choices that change the way the website behaves or looks.</p>
+                            <h4 th:text="#{cookie.category.preferences.title}">Preference Cookies</h4>
+                            <p th:text="#{cookie.category.preferences.description}">These cookies allow the website to remember choices that change the way the website behaves or looks.</p>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="cookie-modal-footer">
-                <button id="save-cookie-preferences" class="btn btn-primary">Save Preferences</button>
-                <button id="accept-all-modal" class="btn btn-secondary">Accept All</button>
+                <button id="save-cookie-preferences" class="btn btn-primary" th:text="#{cookie.modal.savePreferences}">Save Preferences</button>
+                <button id="accept-all-modal" class="btn btn-secondary" th:text="#{cookie.modal.acceptAll}">Accept All</button>
             </div>
         </div>
     </div>

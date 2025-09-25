@@ -31,20 +31,20 @@
                 <div class="nav-brand">
                     <a th:href="@{/}" class="brand-link">
                         <i class="fas fa-paw"></i>
-                        <span>Pet Tracker Review</span>
+                        <span th:text="#{site.title}">Pet Tracker Review</span>
                     </a>
                 </div>
                 
                 <div class="nav-menu">
                     <ul class="nav-list">
                         <li class="nav-item">
-                            <a th:href="@{/}" class="nav-link">Home</a>
+                            <a th:href="@{/}" class="nav-link" th:text="#{footer.home}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/blogs}" class="nav-link active">Blogs</a>
+                            <a th:href="@{/blogs}" class="nav-link active" th:text="#{footer.blogs}">Blogs</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/reviews}" class="nav-link">Reviews</a>
+                            <a th:href="@{/reviews}" class="nav-link" th:text="#{footer.reviews}">Reviews</a>
                         </li>
                     </ul>
                 </div>
@@ -56,8 +56,8 @@
     <nav class="breadcrumb">
         <div class="container">
             <ol class="breadcrumb-list">
-                <li><a th:href="@{/}">Home</a></li>
-                <li><a th:href="@{/blogs}">Blogs</a></li>
+                <li><a th:href="@{/}" th:text="#{footer.home}">Home</a></li>
+                <li><a th:href="@{/blogs}" th:text="#{footer.blogs}">Blogs</a></li>
                 <li th:text="${blogPost.title}">Current Post</li>
             </ol>
         </div>
@@ -95,7 +95,7 @@
                     
                     <footer class="article-footer">
                         <div class="share-buttons">
-                            <h4>Share this article:</h4>
+                            <h4 th:text="#{search.results.readMore}">Share this article:</h4>
                             <a href="#" class="share-btn facebook" onclick="shareOnFacebook()">
                                 <i class="fab fa-facebook"></i> Facebook
                             </a>
@@ -110,7 +110,7 @@
                 <aside class="article-sidebar">
                     <!-- Related Posts -->
                     <div class="sidebar-section" th:if="${relatedPosts != null and !relatedPosts.isEmpty()}">
-                        <h3>Related Articles</h3>
+                        <h3 th:text="#{search.noResults.browseBlogs}">Related Articles</h3>
                         <div class="related-posts">
                             <div class="related-post" th:each="post : ${relatedPosts}">
                                 <h4>
@@ -125,11 +125,11 @@
                     
                     <!-- Newsletter Signup -->
                     <div class="sidebar-section">
-                        <h3>Stay Updated</h3>
-                        <p>Get the latest pet tracker reviews and guides delivered to your inbox.</p>
+                        <h3 th:text="#{home.popularTopics.title}">Stay Updated</h3>
+                        <p th:text="#{home.latestArticles.description}">Get the latest pet tracker reviews and guides delivered to your inbox.</p>
                         <form class="newsletter-form">
-                            <input type="email" placeholder="Your email address" class="form-input">
-                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                            <input type="email" th:placeholder="#{footer.search}" class="form-input">
+                            <button type="submit" class="btn btn-primary" th:text="#{search.noResults.browseBlogs}">Subscribe</button>
                         </form>
                     </div>
                 </aside>
@@ -142,7 +142,7 @@
         <div class="container">
             <div class="nav-buttons">
                 <a th:href="@{/blogs}" class="btn btn-outline">
-                    <i class="fas fa-arrow-left"></i> Back to Blog
+                    <i class="fas fa-arrow-left"></i> <span th:text="#{search.noResults.browseBlogs}">Back to Blog</span>
                 </a>
             </div>
         </div>

@@ -22,27 +22,27 @@
                 <div class="nav-brand">
                     <a th:href="@{/}" class="brand-link">
                         <i class="fas fa-paw"></i>
-                        <span>Pet Tracker Review</span>
+                        <span th:text="#{site.title}">Pet Tracker Review</span>
                     </a>
                 </div>
                 
                 <div class="nav-menu">
                     <ul class="nav-list">
                         <li class="nav-item">
-                            <a th:href="@{/}" class="nav-link">Home</a>
+                            <a th:href="@{/}" class="nav-link" th:text="#{footer.home}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/blogs}" class="nav-link">Blogs</a>
+                            <a th:href="@{/blogs}" class="nav-link" th:text="#{footer.blogs}">Blogs</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/reviews}" class="nav-link">Reviews</a>
+                            <a th:href="@{/reviews}" class="nav-link" th:text="#{footer.reviews}">Reviews</a>
                         </li>
                     </ul>
                 </div>
                 
                 <div class="nav-search">
                     <form th:action="@{/search}" method="get" class="search-form">
-                        <input type="text" name="q" th:value="${query}" placeholder="Search..." class="search-input">
+                        <input type="text" name="q" th:value="${query}" th:placeholder="#{footer.search}" class="search-input">
                         <button type="submit" class="search-btn">
                             <i class="fas fa-search"></i>
                         </button>
@@ -55,9 +55,9 @@
     <!-- Page Header -->
     <section class="page-header">
         <div class="container">
-            <h1>Search Results</h1>
+            <h1 th:text="#{search.results.title}">Search Results</h1>
             <p th:if="${query != null and !query.isEmpty()}">
-                Results for "<span th:text="${query}"></span>"
+                <span th:text="#{search.results.for}">Results for</span> "<span th:text="${query}"></span>"
             </p>
         </div>
     </section>
@@ -67,7 +67,7 @@
         <div class="container">
             <!-- Blog Results -->
             <div th:if="${blogResults != null and !blogResults.isEmpty()}">
-                <h2>Blog Posts</h2>
+                <h2 th:text="#{search.results.blogs}">Blog Posts</h2>
                 <div class="blog-grid">
                     <div class="blog-card" th:each="blog : ${blogResults}">
                         <div class="blog-header">
@@ -95,7 +95,7 @@
                         
                         <div class="blog-footer">
                             <a th:href="@{'/blogs/' + ${blog.slug}}" class="read-more">
-                                Read More <i class="fas fa-arrow-right"></i>
+                                <span th:text="#{search.results.readMore}">Read More</span> <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -105,7 +105,7 @@
             <!-- Review Results -->
             <div th:if="${reviewResults != null and !reviewResults.isEmpty()}" 
                  th:style="${blogResults != null and !blogResults.isEmpty() ? 'margin-top: 3rem;' : ''}">
-                <h2>Reviews</h2>
+                <h2 th:text="#{search.results.reviews}">Reviews</h2>
                 <div class="reviews-grid">
                     <div class="review-card" th:each="review : ${reviewResults}">
                         <div class="review-header">
@@ -148,7 +148,7 @@
                         
                         <div class="review-footer">
                             <a th:href="@{'/reviews/' + ${review.slug}}" class="read-more">
-                                Read Full Review <i class="fas fa-arrow-right"></i>
+                                <span th:text="#{search.results.readFullReview}">Read Full Review</span> <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -159,16 +159,17 @@
             <div th:if="${(blogResults == null or blogResults.isEmpty()) and (reviewResults == null or reviewResults.isEmpty())}" 
                  class="no-results">
                 <i class="fas fa-search"></i>
-                <h3>No results found</h3>
+                <h3 th:text="#{search.noResults.title}">No results found</h3>
                 <p th:if="${query != null and !query.isEmpty()}">
-                    No content found for "<span th:text="${query}"></span>". Try different keywords or browse our categories.
+                    <span th:text="#{search.noResults.description}">No content found for</span> "<span th:text="${query}"></span>". 
+                    <span th:text="#{search.noResults.suggestion}">Try different keywords or browse our categories.</span>
                 </p>
                 <p th:if="${query == null or query.isEmpty()}">
-                    Please enter a search term to find content.
+                    <span th:text="#{search.noResults.emptyQuery}">Please enter a search term to find content.</span>
                 </p>
                 <div style="margin-top: 2rem;">
-                    <a th:href="@{/blogs}" class="btn btn-primary">Browse Blogs</a>
-                    <a th:href="@{/reviews}" class="btn btn-secondary">Browse Reviews</a>
+                    <a th:href="@{/blogs}" class="btn btn-primary" th:text="#{search.noResults.browseBlogs}">Browse Blogs</a>
+                    <a th:href="@{/reviews}" class="btn btn-secondary" th:text="#{search.noResults.browseReviews}">Browse Reviews</a>
                 </div>
             </div>
         </div>

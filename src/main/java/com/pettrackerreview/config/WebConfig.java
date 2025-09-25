@@ -2,8 +2,10 @@ package com.pettrackerreview.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,6 +15,12 @@ import java.nio.file.Paths;
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+    
+    private final LocaleChangeInterceptor localeChangeInterceptor;
+
+    public WebConfig(LocaleChangeInterceptor localeChangeInterceptor) {
+        this.localeChangeInterceptor = localeChangeInterceptor;
+    }
     
     @Value("${app.image.upload.dir:uploads/images}")
     private String uploadDir;
@@ -44,5 +52,10 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/css/**", "/js/**", "/images/**", "/favicon.ico")
                 .addResourceLocations("classpath:/static/css/", "classpath:/static/js/", 
                                     "classpath:/static/images/", "classpath:/static/");
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(localeChangeInterceptor);
     }
 }

@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${pageTitle}">Pet Tracker Reviews</title>
     <meta name="description" th:content="${metaDescription}">
-    <meta name="keywords" th:content="${keywords}">
+    
+    <!-- hreflang tags for SEO -->
+    <link rel="alternate" hreflang="en" th:href="@{/(lang='en')}">
+    <link rel="alternate" hreflang="de" th:href="@{/(lang='de')}">
+    <link rel="alternate" hreflang="fr" th:href="@{/(lang='fr')}">
+    <link rel="alternate" hreflang="es" th:href="@{/(lang='es')}">
+    <link rel="alternate" hreflang="ja" th:href="@{/(lang='ja')}">
+    <link rel="alternate" hreflang="x-default" th:href="@{/(lang='en')}">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -47,27 +54,27 @@
                 <div class="nav-brand">
                     <a th:href="@{/}" class="brand-link">
                         <i class="fas fa-paw"></i>
-                        <span>Pet Tracker Review</span>
+                        <span th:text="#{site.title}">Pet Tracker Review</span>
                     </a>
                 </div>
                 
                 <div class="nav-menu" id="nav-menu">
                     <ul class="nav-list">
                         <li class="nav-item">
-                            <a th:href="@{/}" class="nav-link">Home</a>
+                            <a th:href="@{/}" class="nav-link" th:text="#{footer.home}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/blogs}" class="nav-link">Blogs</a>
+                            <a th:href="@{/blogs}" class="nav-link" th:text="#{footer.blogs}">Blogs</a>
                         </li>
                         <li class="nav-item">
-                            <a th:href="@{/reviews}" class="nav-link">Reviews</a>
+                            <a th:href="@{/reviews}" class="nav-link" th:text="#{footer.reviews}">Reviews</a>
                         </li>
                     </ul>
                 </div>
                 
                 <div class="nav-search">
                     <form th:action="@{/search}" method="get" class="search-form">
-                        <input type="text" name="q" placeholder="Search..." class="search-input">
+                        <input type="text" name="q" th:placeholder="#{footer.search}" class="search-input">
                         <button type="submit" class="search-btn">
                             <i class="fas fa-search"></i>
                         </button>

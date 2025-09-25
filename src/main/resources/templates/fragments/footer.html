@@ -6,44 +6,69 @@
     <div class="container">
       <div class="footer-content">
         <div class="footer-section">
-          <h3>Pet Tracker Review</h3>
-          <p>Your trusted source for pet tracker reviews, guides, and comparisons. Keeping your furry friends safe with the latest GPS technology.</p>
+          <h3 th:text="#{site.title}">Pet Tracker Review</h3>
+          <p th:text="#{site.description}">Your trusted source for pet tracker reviews, guides, and comparisons. Keeping your furry friends safe with the latest GPS technology.</p>
         </div>
         
         <div class="footer-section">
-          <h4>Quick Links</h4>
+          <h4 th:text="#{footer.quickLinks}">Quick Links</h4>
           <ul class="footer-links">
-            <li><a th:href="@{/}">Home</a></li>
-            <li><a th:href="@{/blogs}">Blogs</a></li>
-            <li><a th:href="@{/reviews}">Reviews</a></li>
-            <li><a th:href="@{/search}">Search</a></li>
+            <li><a th:href="@{/}" th:text="#{footer.home}">Home</a></li>
+            <li><a th:href="@{/blogs}" th:text="#{footer.blogs}">Blogs</a></li>
+            <li><a th:href="@{/reviews}" th:text="#{footer.reviews}">Reviews</a></li>
+            <li><a th:href="@{/search}" th:text="#{footer.search}">Search</a></li>
           </ul>
         </div>
         
         <div class="footer-section">
-          <h4>Categories</h4>
+          <h4 th:text="#{footer.categories}">Categories</h4>
           <ul class="footer-links">
-            <li><a th:href="@{/blogs(tag='GPS')}">GPS Trackers</a></li>
-            <li><a th:href="@{/blogs(tag='dogs')}">Dog Trackers</a></li>
-            <li><a th:href="@{/blogs(tag='cats')}">Cat Trackers</a></li>
-            <li><a th:href="@{/blogs(tag='buying guide')}">Buying Guides</a></li>
+            <li><a th:href="@{/blogs(tag='GPS')}" th:text="#{footer.gpsTrackers}">GPS Trackers</a></li>
+            <li><a th:href="@{/blogs(tag='dogs')}" th:text="#{footer.dogTrackers}">Dog Trackers</a></li>
+            <li><a th:href="@{/blogs(tag='cats')}" th:text="#{footer.catTrackers}">Cat Trackers</a></li>
+            <li><a th:href="@{/blogs(tag='buying guide')}" th:text="#{footer.buyingGuides}">Buying Guides</a></li>
           </ul>
         </div>
         
         <div class="footer-section">
-          <h4>Resources</h4>
+          <h4 th:text="#{footer.resources}">Resources</h4>
           <ul class="footer-links">
-            <li><a th:href="@{/affiliate-disclosure}">Affiliate Disclosure</a></li>
-            <li><a th:href="@{/subscription}">Subscription Plans</a></li>
-            <li><a th:href="@{/about-us}">About Us</a></li>
+            <li><a th:href="@{/affiliate-disclosure}" th:text="#{footer.affiliateDisclosure}">Affiliate Disclosure</a></li>
+            <li><a th:href="@{/subscription}" th:text="#{footer.subscription}">Subscription Plans</a></li>
+            <li><a th:href="@{/about-us}" th:text="#{footer.aboutUs}">About Us</a></li>
           </ul>
+        </div>
+        
+        <!-- Language Switcher Dropdown -->
+        <div class="footer-section language-switcher">
+          <h4>Languages</h4>
+          <div class="language-dropdown">
+            <select id="language-selector" class="language-select" onchange="changeLanguage(this.value)">
+              <option value="en" th:selected="${#locale.language == 'en'}" th:text="#{language.english}">English</option>
+              <option value="de" th:selected="${#locale.language == 'de'}" th:text="#{language.german}">German</option>
+              <option value="fr" th:selected="${#locale.language == 'fr'}" th:text="#{language.french}">French</option>
+              <option value="es" th:selected="${#locale.language == 'es'}" th:text="#{language.spanish}">Spanish</option>
+              <option value="ja" th:selected="${#locale.language == 'ja'}" th:text="#{language.japanese}">Japanese</option>
+            </select>
+          </div>
         </div>
       </div>
       
       <div class="footer-bottom">
-        <p>&copy; 2025 Pet Tracker Review. All rights reserved.</p>
+        <p th:text="#{footer.copyright}">&copy; 2025 Pet Tracker Review. All rights reserved.</p>
       </div>
     </div>
+    
+    <script>
+      function changeLanguage(lang) {
+        // Get current URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        // Set the language parameter
+        urlParams.set('lang', lang);
+        // Update the URL and reload the page
+        window.location.search = urlParams.toString();
+      }
+    </script>
   </footer>
 </body>
 </html>
