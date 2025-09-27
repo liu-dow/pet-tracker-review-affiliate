@@ -133,13 +133,13 @@
                             <div class="review-highlights">
                                 <div class="pros-cons">
                                     <div class="pros" th:if="${review.pros != null and !review.pros.isEmpty()}">
-                                        <h4><i class="fas fa-check text-green"></i> <span th:text="#{about.ourApproach.thoroughTesting.title}">Pros</span></h4>
+                                        <h4><i class="fas fa-check text-green"></i> <span th:text="#{review.section.pros}">Pros</span></h4>
                                         <div class="highlight-text" th:utext="${review.pros}">
                                             Pros content...
                                         </div>
                                     </div>
                                     <div class="cons" th:if="${review.cons != null and !review.cons.isEmpty()}">
-                                        <h4><i class="fas fa-times text-red"></i> <span th:text="#{about.ourStory.title}">Cons</span></h4>
+                                        <h4><i class="fas fa-times text-red"></i> <span th:text="#{review.section.cons}">Cons</span></h4>
                                         <div class="highlight-text" th:utext="${review.cons}">
                                             Cons content...
                                         </div>
