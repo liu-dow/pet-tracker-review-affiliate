@@ -180,22 +180,22 @@
                         <p th:text="#{home.latestReviews.description}">Get the latest pet tracker reviews delivered to your inbox.</p>
                         <form class="newsletter-form">
                             <input type="email" th:placeholder="#{footer.search}" class="form-input">
-                            <button type="submit" class="btn btn-primary" th:text="#{search.noResults.browseReviews}">Subscribe</button>
+                            <button type="submit" class="btn btn-primary" th:text="#{newsletter.subscribe}">Subscribe</button>
                         </form>
                     </div>
                     
                     <!-- Product Summary - Hidden on mobile -->
                     <div class="sidebar-section hide-on-mobile">
-                        <h3 th:text="#{about.ourTeam.title}">Product Summary</h3>
+                        <h3 th:text="#{review.product.summary}">Product Summary</h3>
                         <div class="product-summary">
                             <div class="summary-item">
-                                <strong th:text="#{about.ourTeam.sarah.role}">Brand:</strong> <span th:text="${review.productBrand}">Brand</span>
+                                <strong th:text="#{review.product.brand}">Brand:</strong> <span th:text="${review.productBrand}">Brand</span>
                             </div>
                             <div class="summary-item">
-                                <strong th:text="#{about.ourTeam.michael.role}">Product:</strong> <span th:text="${review.productName}">Product</span>
+                                <strong th:text="#{review.product.name}">Product:</strong> <span th:text="${review.productName}">Product</span>
                             </div>
                             <div class="summary-item">
-                                <strong th:text="#{footer.reviews}">Rating:</strong> 
+                                <strong th:text="#{review.product.rating}">Rating:</strong> 
                                 <span class="rating-display">
                                     <span th:text="${review.starRating}">★★★★☆</span>
                                     <span th:text="${review.rating} + '/5'">4.5/5</span>

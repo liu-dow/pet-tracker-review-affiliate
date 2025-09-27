@@ -118,7 +118,7 @@
                 <aside class="article-sidebar">
                     <!-- Related Posts -->
                     <div class="sidebar-section" th:if="${relatedPosts != null and !relatedPosts.isEmpty()}">
-                        <h3 th:text="#{search.noResults.browseBlogs}">Related Articles</h3>
+                        <h3 th:text="#{blog.related.articles}">Related Articles</h3>
                         <div class="related-posts">
                             <div class="related-post" th:each="post : ${relatedPosts}">
                                 <h4>
@@ -137,7 +137,7 @@
                         <p th:text="#{home.latestArticles.description}">Get the latest pet tracker reviews and guides delivered to your inbox.</p>
                         <form class="newsletter-form">
                             <input type="email" th:placeholder="#{footer.search}" class="form-input">
-                            <button type="submit" class="btn btn-primary" th:text="#{search.noResults.browseBlogs}">Subscribe</button>
+                            <button type="submit" class="btn btn-primary" th:text="#{newsletter.subscribe}">Subscribe</button>
                         </form>
                     </div>
                 </aside>
