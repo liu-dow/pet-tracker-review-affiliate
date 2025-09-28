@@ -233,7 +233,7 @@
     
     .article-sidebar,
     .review-sidebar {
-        order: -1;
+        order: 0;
     }
 }
 
