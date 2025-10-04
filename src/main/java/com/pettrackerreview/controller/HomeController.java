@@ -58,7 +58,7 @@ public class HomeController {
         if (tag != null && !tag.trim().isEmpty()) {
             blogPosts = contentService.getBlogPostsByTag(tag);
             
-            // If no matching content for this tag in blogs, redirect to reviews page
+            // 如果该标签在博客中没有匹配的内容，重定向到评测页面
             if (blogPosts.isEmpty()) {
                 return "redirect:/reviews?tag=" + tag;
             }
@@ -71,10 +71,10 @@ public class HomeController {
             metaDescription = "Stay updated with the latest pet tracker news, guides, and tips. Learn how to keep your pets safe with GPS technology.";
         }
         
-        Set<String> blogTags = contentService.getBlogTags(); // Use blog tags
+        Set<String> blogTags = contentService.getBlogTags(); // 使用博客标签
         
         model.addAttribute("blogPosts", blogPosts);
-        model.addAttribute("allTags", blogTags); // Use blog tags
+        model.addAttribute("allTags", blogTags); // 使用博客标签
         model.addAttribute("selectedTag", tag);
         model.addAttribute("pageTitle", pageTitle);
         model.addAttribute("metaDescription", metaDescription);
@@ -126,10 +126,10 @@ public class HomeController {
             metaDescription = "Comprehensive reviews of the best pet trackers and GPS collars. Find the perfect tracking device for your dog or cat.";
         }
         
-        Set<String> reviewTags = contentService.getReviewTags(); // Use review tags
+        Set<String> reviewTags = contentService.getReviewTags(); // 使用评测标签
         
         model.addAttribute("reviews", reviews);
-        model.addAttribute("allTags", reviewTags); // Use review tags
+        model.addAttribute("allTags", reviewTags); // 使用评测标签
         model.addAttribute("selectedTag", tag);
         model.addAttribute("pageTitle", pageTitle);
         model.addAttribute("metaDescription", metaDescription);

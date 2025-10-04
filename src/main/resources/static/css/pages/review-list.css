@@ -217,7 +217,7 @@
     line-height: 1.5;
 }
 
-/* Optimize Pros and Cons list styles */
+/* 优化 Pros 和 Cons 中的列表样式 */
 .pros .highlight-text ul,
 .cons .highlight-text ul {
     padding-left: 1.2rem;
@@ -238,7 +238,7 @@
     color: #c53030;
 }
 
-/* Add custom bullet points for Pros and Cons */
+/* 为 Pros 和 Cons 添加自定义项目符号 */
 .pros .highlight-text li::before,
 .cons .highlight-text li::before {
     content: "•";

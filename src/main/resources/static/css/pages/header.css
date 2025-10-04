@@ -11,7 +11,7 @@
     padding: 1rem 0;
 }
 
-/* Mobile navbar optimization */
+/* 移动端导航栏优化 */
 @media (max-width: 768px) {
     .navbar {
         padding: 0.75rem 0;
@@ -129,7 +129,7 @@
         width: 120px;
     }
     
-    /* Mobile navbar optimization */
+    /* 移动端导航栏优化 */
     .navbar .container {
         padding: 0 12px;
     }

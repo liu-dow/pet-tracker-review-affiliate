@@ -53,7 +53,7 @@ h4 {
     font-size: 1.25rem;
 }
 
-/* Mobile typography optimization */
+/* 移动端排版优化 */
 @media (max-width: 768px) {
     h1 {
         font-size: 2.2rem;
@@ -180,7 +180,7 @@ a:hover {
     border-color: #cbd5e0;
 }
 
-/* Mobile scrolling optimization */
+/* 移动端滚动优化 */
 @media (max-width: 768px) {
     html, body {
         overflow-x: auto;

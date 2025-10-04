@@ -21,11 +21,11 @@ public class CacheConfig {
     public CacheManager cacheManager() {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
         
-        // Create caches with expiration time
+        // 创建具有过期时间的缓存
         Collection<Cache> caches = Arrays.asList(
-            new ExpiringConcurrentMapCache("blogPosts", 3600000), // 1 hour expiration
-            new ExpiringConcurrentMapCache("reviews", 3600000),   // 1 hour expiration
-            new ExpiringConcurrentMapCache("tags", 3600000)       // 1 hour expiration
+            new ExpiringConcurrentMapCache("blogPosts", 3600000), // 1小时过期
+            new ExpiringConcurrentMapCache("reviews", 3600000),   // 1小时过期
+            new ExpiringConcurrentMapCache("tags", 3600000)       // 1小时过期
         );
         
         cacheManager.setCaches(caches);
@@ -33,7 +33,7 @@ public class CacheConfig {
     }
     
     /**
-     * Custom cache implementation with expiration support
+     * 自定义支持过期时间的缓存实现
      */
     public static class ExpiringConcurrentMapCache extends ConcurrentMapCache {
         private final long expirationTime;
@@ -52,10 +52,10 @@ public class CacheConfig {
         
         @Override
         public ValueWrapper get(Object key) {
-            // Check if expired
+            // 检查是否过期
             Long expiration = expirationMap.get(key);
             if (expiration != null && System.currentTimeMillis() > expiration) {
-                // Remove if expired
+                // 过期则删除
                 super.evict(key);
                 expirationMap.remove(key);
                 return null;
