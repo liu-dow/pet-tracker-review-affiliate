@@ -44,7 +44,7 @@ h4 {
     font-size: 1.25rem;
 }
 
-/* Mobile typography optimization */
+/* 移动端排版优化 */
 @media (max-width: 768px) {
     h1 {
         font-size: 2.2rem;
@@ -180,7 +180,7 @@ a:hover {
     padding: 1rem 0;
 }
 
-/* Mobile navbar optimization */
+/* 移动端导航栏优化 */
 @media (max-width: 768px) {
     .navbar {
         padding: 0.75rem 0;
@@ -1049,7 +1049,7 @@ a:hover {
 
 
 
-/* Mobile Hero optimization */
+/* 移动端 Hero 优化 */
 @media (max-width: 768px) {
     .hero {
         padding: 2.5rem 0;
@@ -1088,7 +1088,7 @@ a:hover {
     flex-wrap: wrap;
 }
 
-/* Mobile Hero content optimization */
+/* 移动端 Hero 内容优化 */
 @media (max-width: 768px) {
     .hero-content h1 {
         font-size: 2.2rem;
@@ -1152,7 +1152,7 @@ a:hover {
     background-color: #f7fafc;
 }
 
-/* Mobile section optimization */
+/* 移动端区域优化 */
 @media (max-width: 768px) {
     .section {
         padding: 2.5rem 0;
@@ -1200,7 +1200,7 @@ a:hover {
     margin-bottom: 2rem;
 }
 
-/* Mobile grid optimization */
+/* 移动端网格优化 */
 @media (max-width: 768px) {
     .reviews-grid,
     .blog-grid {
@@ -1234,7 +1234,7 @@ a:hover {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Mobile card optimization */
+/* 移动端卡片优化 */
 @media (max-width: 768px) {
     .review-card,
     .blog-card {
@@ -1244,7 +1244,7 @@ a:hover {
     
     .review-card:hover,
     .blog-card:hover {
-        transform: none; /* Remove hover animation on mobile */
+        transform: none; /* 移动端去除悬停动画 */
     }
 }
 
@@ -1351,7 +1351,7 @@ a:hover {
     text-align: center;
 }
 
-/* Mobile page header optimization */
+/* 移动端页面头部优化 */
 @media (max-width: 768px) {
     .page-header {
         padding: 2rem 0;
@@ -1407,7 +1407,7 @@ a:hover {
     top: 100px;
 }
 
-/* Mobile sidebar optimization */
+/* 移动端侧边栏优化 */
 @media (max-width: 768px) {
     .sidebar {
         position: static;
@@ -1474,7 +1474,7 @@ a:hover {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Mobile main content optimization */
+/* 移动端主内容优化 */
 @media (max-width: 768px) {
     .main-content {
         padding: 1.5rem;
@@ -2531,7 +2531,7 @@ input:disabled + .slider:before {
     color: #a0aec0;
 }
 
-/* Mobile scrolling optimization */
+/* 移动端滚动优化 */
 @media (max-width: 768px) {
     html, body {
         overflow-x: auto;
@@ -2617,7 +2617,7 @@ input:disabled + .slider:before {
         gap: 1rem;
     }
     
-    /* Mobile width percentage increase */
+    /* 移动端增加宽度占比 */
     .container {
         padding: 0 12px;
         max-width: 100%;
@@ -2628,7 +2628,7 @@ input:disabled + .slider:before {
         padding: 1.5rem;
     }
     
-    /* Mobile navbar optimization */
+    /* 移动端导航栏优化 */
     .navbar .container {
         padding: 0 12px;
     }
@@ -2669,7 +2669,7 @@ input:disabled + .slider:before {
         padding: 1.2rem;
     }
     
-    /* Further width optimization for small screen devices */
+    /* 小屏幕设备进一步优化宽度 */
     .container {
         padding: 0 8px;
         max-width: 100%;
@@ -2707,7 +2707,7 @@ input:disabled + .slider:before {
     }
 }
 
-/* Mobile landscape optimization */
+/* 移动端横屏优化 */
 @media (max-width: 768px) and (orientation: landscape) {
     .container {
         padding: 0 15px;
@@ -2722,7 +2722,7 @@ input:disabled + .slider:before {
     }
 }
 
-/* Ultra-small screen device optimization */
+/* 超小屏幕设备优化 */
 @media (max-width: 360px) {
     .container {
         padding: 0 5px;

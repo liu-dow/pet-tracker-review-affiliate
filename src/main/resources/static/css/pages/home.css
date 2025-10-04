@@ -221,7 +221,7 @@ body {
     background-color: #f7fafc;
 }
 
-/* Mobile section optimization */
+/* 移动端区域优化 */
 @media (max-width: 768px) {
     .section {
         padding: 2.5rem 0;
@@ -269,7 +269,7 @@ body {
     margin-bottom: 2rem;
 }
 
-/* Mobile grid optimization */
+/* 移动端网格优化 */
 @media (max-width: 768px) {
     .reviews-grid,
     .blog-grid {
@@ -303,7 +303,7 @@ body {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Mobile card optimization */
+/* 移动端卡片优化 */
 @media (max-width: 768px) {
     .review-card,
     .blog-card {
@@ -313,7 +313,7 @@ body {
     
     .review-card:hover,
     .blog-card:hover {
-        transform: none; /* Remove hover animation on mobile */
+        transform: none; /* 移动端去除悬停动画 */
     }
 }
 

@@ -38,7 +38,7 @@ public class YamlContentService {
     private final String BLOGS_DIR = "blogs";
     private final String REVIEWS_DIR = "reviews";
     
-    // Get content directory path from configuration file
+    // 从配置文件中获取内容目录路径
     @Value("${app.content.dir:src/main/resources}")
     private String contentDir;
     
@@ -60,7 +60,7 @@ public class YamlContentService {
     
     private void ensureDirectoryExists(String dir) throws IOException {
         try {
-            // Check if folder exists in content directory
+            // 检查内容目录下的文件夹是否存在
             File directory = new File(contentDir + "/" + dir);
             if (!directory.exists()) {
                 directory.mkdirs();
@@ -70,7 +70,7 @@ public class YamlContentService {
         }
     }
     
-    // Get content directory path
+    // 获取内容目录路径
     private String getContentDir() {
         return contentDir;
     }
@@ -248,8 +248,8 @@ public class YamlContentService {
     }
     
     /**
-     * Get blog tag collection
-     * @return Blog tag collection
+     * 获取博客标签集合
+     * @return 博客标签集合
      */
     @Cacheable(value = "tags", key = "'blogTags'")
     public Set<String> getBlogTags() {
@@ -261,7 +261,7 @@ public class YamlContentService {
             }
         });
         
-        // Filter out tags with actual blog posts
+        // 过滤出有实际博客文章的标签
         Set<String> validBlogTags = new HashSet<>();
         for (String tag : blogTags) {
             List<BlogPost> blogPostsWithTag = getBlogPostsByTag(tag);
@@ -274,8 +274,8 @@ public class YamlContentService {
     }
     
     /**
-     * Get review tag collection
-     * @return Review tag collection
+     * 获取评测标签集合
+     * @return 评测标签集合
      */
     @Cacheable(value = "tags", key = "'reviewTags'")
     public Set<String> getReviewTags() {
@@ -287,7 +287,7 @@ public class YamlContentService {
             }
         });
         
-        // Filter out tags with actual reviews
+        // 过滤出有实际评测的标签
         Set<String> validReviewTags = new HashSet<>();
         for (String tag : reviewTags) {
             List<Review> reviewsWithTag = getReviewsByTag(tag);
@@ -300,22 +300,22 @@ public class YamlContentService {
     }
     
     /**
-     * Get valid tag collection (tags with matching content in search)
-     * @return Valid tag collection
+     * 获取有效的标签集合（在搜索中有匹配内容的标签）
+     * @return 有效标签集合
      */
     @Cacheable(value = "tags", key = "'validTags'")
     public Set<String> getValidTags() {
         Set<String> validTags = new HashSet<>();
         Set<String> allTags = getAllTags();
         
-        // Filter test for each tag, only keep tags with actual filtering effect
+        // 对每个标签进行过滤测试，只保留有实际过滤效果的标签
         for (String tag : allTags) {
-            // Check if there are blog posts matching this tag
+            // 检查是否有博客文章匹配此标签
             List<BlogPost> blogPostsWithTag = getBlogPostsByTag(tag);
-            // Check if there are reviews matching this tag
+            // 检查是否有评测匹配此标签
             List<Review> reviewsWithTag = getReviewsByTag(tag);
             
-            // If there is matching content, consider it a valid tag
+            // 如果有匹配的内容，则认为是有效标签
             if (!blogPostsWithTag.isEmpty() || !reviewsWithTag.isEmpty()) {
                 validTags.add(tag);
             }

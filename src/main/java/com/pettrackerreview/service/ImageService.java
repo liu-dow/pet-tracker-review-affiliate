@@ -202,12 +202,12 @@ public class ImageService {
             
             Path compressedPath = Paths.get(absoluteUploadDir, compressedFilename);
             
-            // For WebP format, use ImageIO for conversion processing
+            // 对于WebP格式，使用ImageIO进行转换处理
             if ("webp".equals(extension)) {
-                // Read WebP image
+                // 读取WebP图片
                 BufferedImage bufferedImage = ImageIO.read(originalFile);
                 if (bufferedImage != null) {
-                    // Convert to JPEG format for compression
+                    // 转换为JPEG格式进行压缩
                     String jpegCompressedFilename = FilenameUtils.getBaseName(image.getFilename()) + 
                                                   "_compressed.jpg";
                     Path jpegCompressedPath = Paths.get(absoluteUploadDir, jpegCompressedFilename);
@@ -218,7 +218,7 @@ public class ImageService {
                             .outputFormat("JPEG")
                             .toFile(jpegCompressedPath.toFile());
                     
-                    // Replace original file if compressed file is smaller
+                    // 替换原文件如果压缩后的文件更小
                     if (Files.size(jpegCompressedPath) < Files.size(originalFile.toPath())) {
                         Files.delete(originalFile.toPath());
                         Files.move(jpegCompressedPath, originalFile.toPath());
@@ -226,7 +226,7 @@ public class ImageService {
                         image.setFilename(FilenameUtils.getBaseName(image.getFilename()) + ".jpg");
                         image.setMimeType("image/jpeg");
                         
-                        // Update file path
+                        // 更新文件路径
                         if (uploadDir.startsWith("/")) {
                             image.setFilePath("uploads/images/" + FilenameUtils.getBaseName(image.getFilename()) + ".jpg");
                         } else {
@@ -236,11 +236,11 @@ public class ImageService {
                         Files.deleteIfExists(jpegCompressedPath);
                     }
                 } else {
-                    // Skip compression if unable to read
-                    System.out.println("Unable to read WebP image for compression: " + originalFile.getName());
+                    // 如果无法读取，跳过压缩
+                    System.out.println("无法读取WebP图片进行压缩: " + originalFile.getName());
                 }
             } else {
-                // Use original processing method for other formats
+                // 其他格式使用原有处理方式
                 Thumbnails.of(originalFile)
                         .scale(1.0)
                         .outputQuality(compressionQuality)
@@ -268,12 +268,12 @@ public class ImageService {
         
         Path thumbnailPath = Paths.get(absoluteUploadDir, "thumbnails", thumbnailFilename);
         
-        // For WebP format, use ImageIO for conversion
+        // 对于WebP格式，使用ImageIO进行转换
         if ("webp".equals(extension)) {
-            // Read WebP image
+            // 读取WebP图片
             BufferedImage bufferedImage = ImageIO.read(originalFile);
             if (bufferedImage != null) {
-                // Convert to PNG format to save thumbnail
+                // 转换为PNG格式保存缩略图
                 String pngThumbnailFilename = FilenameUtils.getBaseName(image.getFilename()) + 
                                             "_thumb.png";
                 Path pngThumbnailPath = Paths.get(absoluteUploadDir, "thumbnails", pngThumbnailFilename);
@@ -284,14 +284,14 @@ public class ImageService {
                         .outputFormat("PNG")
                         .toFile(pngThumbnailPath.toFile());
                 
-                // Set thumbnail path
+                // 设置缩略图路径
                 if (uploadDir.startsWith("/")) {
                     image.setThumbnailPath("uploads/images/thumbnails/" + pngThumbnailFilename);
                 } else {
                     image.setThumbnailPath("uploads/images/thumbnails/" + pngThumbnailFilename);
                 }
             } else {
-                // Use default processing method if unable to read
+                // 如果无法读取，使用默认处理方式
                 Thumbnails.of(originalFile)
                         .size(thumbnailSize, thumbnailSize)
                         .outputQuality(0.8)
@@ -305,7 +305,7 @@ public class ImageService {
                 }
             }
         } else {
-            // Use original processing method for other formats
+            // 其他格式使用原有处理方式
             Thumbnails.of(originalFile)
                     .size(thumbnailSize, thumbnailSize)
                     .outputQuality(0.8)

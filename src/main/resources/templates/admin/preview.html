@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{admin.preview.pageTitle}">YAML Content Preview - Pet Tracker Review</title>
+    <title th:text="${lang == 'zh' ? 'YAML内容预览 - Pet Tracker Review' : 'YAML Content Preview - Pet Tracker Review'}">YAML Content Preview - Pet Tracker Review</title>
     <link rel="stylesheet" th:href="@{/css/pages/admin-dashboard.css}">
     <th:block th:replace="~{fragments/admin-panel :: admin-styles}"></th:block>
     <style>
@@ -100,11 +100,11 @@
             <div class="preview-container">
                 <div class="language-switcher">
                     <button type="button" onclick="switchLanguage('en')" id="btnEn" class="active">English</button>
-                    <button type="button" onclick="switchLanguage('ja')" id="btnJa">日本語</button>
+                    <button type="button" onclick="switchLanguage('zh')" id="btnZh">中文</button>
                 </div>
                 
-                <h1><i class="fas fa-eye"></i> <span th:text="#{admin.preview.title}">YAML Content Preview</span></h1>
-                <p th:text="#{admin.preview.description}">Preview the content before importing it into the system</p>
+                <h1><i class="fas fa-eye"></i> <span class="page-title" data-en="YAML Content Preview" data-zh="YAML内容预览">YAML Content Preview</span></h1>
+                <p class="page-desc" data-en="Preview the content before importing it into the system" data-zh="在将内容导入系统之前预览">Preview the content before importing it into the system</p>
                 
                 <!-- Error Message -->
                 <div th:if="${errorMessage}" class="alert alert-error">
@@ -126,26 +126,26 @@
                     <!-- Metadata -->
                     <div class="preview-metadata">
                         <div class="metadata-item">
-                            <span class="metadata-label" th:text="#{admin.preview.author}">Author</span>
+                            <span class="metadata-label" data-en="Author" data-zh="作者">Author</span>
                             <span class="metadata-value" th:text="${content.author ?: 'Admin'}">Author</span>
                         </div>
                         <div class="metadata-item" th:if="${contentType == 'reviews'}">
-                            <span class="metadata-label" th:text="#{admin.preview.productBrand}">Product Brand</span>
+                            <span class="metadata-label" data-en="Product Brand" data-zh="产品品牌">Product Brand</span>
                             <span class="metadata-value" th:text="${content.productBrand}">Brand</span>
                         </div>
                         <div class="metadata-item" th:if="${contentType == 'reviews'}">
-                            <span class="metadata-label" th:text="#{admin.preview.productName}">Product Name</span>
+                            <span class="metadata-label" data-en="Product Name" data-zh="产品名称">Product Name</span>
                             <span class="metadata-value" th:text="${content.productName}">Product Name</span>
                         </div>
                         <div class="metadata-item" th:if="${contentType == 'reviews'}">
-                            <span class="metadata-label" th:text="#{admin.preview.rating}">Rating</span>
+                            <span class="metadata-label" data-en="Rating" data-zh="评分">Rating</span>
                             <div class="metadata-value rating-display">
                                 <span class="stars" th:text="${content.starRating}">★★★★☆</span>
                                 <span th:text="${content.rating} + '/5'">4.5/5</span>
                             </div>
                         </div>
                         <div class="metadata-item" th:if="${content.tags != null and !content.tags.isEmpty()}">
-                            <span class="metadata-label" th:text="#{admin.preview.tags}">Tags</span>
+                            <span class="metadata-label" data-en="Tags" data-zh="标签">Tags</span>
                             <span class="metadata-value" th:text="${String.join(', ', content.tags)}">Tags</span>
                         </div>
                     </div>
@@ -158,12 +158,12 @@
                     <!-- Action Buttons -->
                     <div class="action-buttons">
                         <a href="/admin/import" class="btn btn-outline">
-                            <i class="fas fa-arrow-left"></i> <span class="back-btn-text" th:text="#{admin.preview.backToImport}">Back to Import</span>
+                            <i class="fas fa-arrow-left"></i> <span class="back-btn-text" data-en="Back to Import" data-zh="返回导入">Back to Import</span>
                         </a>
                         <form method="post" th:action="@{/admin/import}" style="display: inline;">
                             <input type="hidden" name="contentType" th:value="${contentType}">
                             <button type="submit" class="btn btn-success">
-                                <i class="fas fa-upload"></i> <span class="import-btn-text" th:text="#{admin.preview.importContent}">Import Content</span>
+                                <i class="fas fa-upload"></i> <span class="import-btn-text" data-en="Import Content" data-zh="导入内容">Import Content</span>
                             </button>
                         </form>
                     </div>
@@ -173,10 +173,10 @@
                 <div class="preview-card" th:if="${content == null and errorMessage == null}">
                     <div style="text-align: center; padding: 3rem; color: #718096;">
                         <i class="fas fa-file-alt" style="font-size: 3rem; margin-bottom: 1rem; color: #cbd5e0;"></i>
-                        <h3 th:text="#{admin.preview.noContent}">No content to preview</h3>
-                        <p th:text="#{admin.preview.noContentMessage}">Please go back to the import page and select a YAML file to preview.</p>
+                        <h3 data-en="No content to preview" data-zh="没有内容可预览">No content to preview</h3>
+                        <p data-en="Please go back to the import page and select a YAML file to preview." data-zh="请返回导入页面并选择一个YAML文件进行预览。">Please go back to the import page and select a YAML file to preview.</p>
                         <a href="/admin/import" class="btn btn-primary" style="margin-top: 1rem;">
-                            <i class="fas fa-arrow-left"></i> <span th:text="#{admin.preview.backToImport}">Back to Import</span>
+                            <i class="fas fa-arrow-left"></i> <span data-en="Back to Import" data-zh="返回导入">Back to Import</span>
                         </a>
                     </div>
                 </div>
@@ -196,13 +196,13 @@
             
             // Update active button
             document.getElementById('btnEn').classList.toggle('active', lang === 'en');
-            document.getElementById('btnJa').classList.toggle('active', lang === 'ja');
+            document.getElementById('btnZh').classList.toggle('active', lang === 'zh');
         }
         
         function updateLanguageDisplay() {
-            const elements = document.querySelectorAll('[data-en][data-ja]');
+            const elements = document.querySelectorAll('[data-en][data-zh]');
             elements.forEach(element => {
-                const text = currentLang === 'ja' ? element.getAttribute('data-ja') : element.getAttribute('data-en');
+                const text = currentLang === 'zh' ? element.getAttribute('data-zh') : element.getAttribute('data-en');
                 if (text) {
                     element.textContent = text;
                 }
