@@ -109,6 +109,13 @@
                         </div>
                     </header>
                     
+                    <!-- Review Content -->
+                    <section class="review-body">
+                        <div th:utext="${review.content}">
+                            Detailed review content goes here...
+                        </div>
+                    </section>
+                    
                     <!-- Pros and Cons Summary -->
                     <section class="pros-cons-section">
                         <div class="pros-cons-grid">
@@ -125,13 +132,6 @@
                                     Cons content...
                                 </div>
                             </div>
-                        </div>
-                    </section>
-                    
-                    <!-- Review Content -->
-                    <section class="review-body">
-                        <div th:utext="${review.content}">
-                            Detailed review content goes here...
                         </div>
                     </section>
                     
