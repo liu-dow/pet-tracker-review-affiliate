@@ -5,47 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${lang == 'zh' ? 'YAML内容预览 - Pet Tracker Review' : 'YAML Content Preview - Pet Tracker Review'}">YAML Content Preview - Pet Tracker Review</title>
     <link rel="stylesheet" th:href="@{/css/pages/admin-dashboard.css}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <th:block th:replace="~{fragments/admin-panel :: admin-styles}"></th:block>
     <style>
-        .admin-layout {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            min-height: 100vh;
-        }
-        .admin-sidebar {
-            background-color: #2d3748;
-            color: white;
-            padding: 2rem 0;
-        }
-        .admin-content {
-            padding: 2rem;
-            background-color: #f7fafc;
-        }
-        .sidebar-header {
-            padding: 0 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .sidebar-nav {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        .sidebar-nav li a {
-            display: block;
-            padding: 1rem 1.5rem;
-            color: #a0aec0;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        .sidebar-nav li a:hover {
-            background-color: #4a5568;
-            color: white;
-        }
-        .sidebar-nav li a i {
-            margin-right: 0.5rem;
-            width: 16px;
-        }
         .preview-container {
             max-width: 1000px;
             margin: 0 auto;
@@ -122,47 +83,6 @@
         .stars {
             color: #f6ad55;
         }
-        .btn {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background-color: #3182ce;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.2s;
-            margin-right: 1rem;
-        }
-        .btn:hover {
-            background-color: #2c5aa0;
-        }
-        .btn-success {
-            background-color: #38a169;
-        }
-        .btn-success:hover {
-            background-color: #2f855a;
-        }
-        .btn-outline {
-            background-color: transparent;
-            color: #3182ce;
-            border: 1px solid #3182ce;
-        }
-        .btn-outline:hover {
-            background-color: #3182ce;
-            color: white;
-        }
-        .alert {
-            padding: 1rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-        }
-        .alert-error {
-            background-color: #fed7d7;
-            color: #742a2a;
-            border: 1px solid #f56565;
-        }
         .action-buttons {
             text-align: center;
             margin-top: 2rem;
@@ -175,172 +95,101 @@
     </style>
 </head>
 <body>
-    <div class="admin-layout">
-        <!-- Sidebar -->
-        <aside class="admin-sidebar">
-            <div class="sidebar-header">
-                <h3><i class="fas fa-paw"></i> Admin Panel</h3>
-            </div>
-            <nav>
-                <ul class="sidebar-nav">
-                    <li><a href="/admin/dashboard"><i class="fas fa-home"></i> <span class="nav-text" data-en="Dashboard" data-zh="仪表板">Dashboard</span></a></li>
-                    <li><a href="/admin/blogs"><i class="fas fa-blog"></i> <span class="nav-text" data-en="Blogs" data-zh="博客">Blogs</span></a></li>
-                    <li><a href="/admin/reviews"><i class="fas fa-star"></i> <span class="nav-text" data-en="Reviews" data-zh="评测">Reviews</span></a></li>
-                    <li><a href="/admin/images"><i class="fas fa-images"></i> <span class="nav-text" data-en="Images" data-zh="图片">Images</span></a></li>
-                    <li><a href="/admin/ai-content-generator"><i class="fas fa-robot"></i> <span class="nav-text" data-en="AI Content Generator" data-zh="AI内容生成器">AI Content Generator</span></a></li>
-                    <li><a href="/admin/import"><i class="fas fa-upload"></i> <span class="nav-text" data-en="Import Data" data-zh="导入数据">Import Data</span></a></li>
-                    <li><a href="#" onclick="exportContent()"><i class="fas fa-download"></i> <span class="nav-text" data-en="Export Data" data-zh="导出数据">Export Data</span></a></li>
-                    <li><a href="/"><i class="fas fa-external-link-alt"></i> <span class="nav-text" data-en="View Site" data-zh="查看网站">View Site</span></a></li>
-                    <li><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> <span class="nav-text" data-en="Logout" data-zh="登出">Logout</span></a></li>
-                </ul>
-            </nav>
-        </aside>
-        
-        <!-- Main Content -->
-        <main class="admin-content">
-            <div class="language-switcher">
-                <button type="button" onclick="switchLanguage('en')" id="btnEn" th:class="${lang == 'en' ? 'active' : ''}">English</button>
-                <button type="button" onclick="switchLanguage('zh')" id="btnZh" th:class="${lang == 'zh' ? 'active' : ''}">中文</button>
-            </div>
-            
-            <h1><i class="fas fa-eye"></i> <span class="title-text" data-en="YAML Content Preview" data-zh="YAML内容预览">YAML Content Preview</span></h1>
-            
+    <th:block th:replace="~{fragments/admin-panel :: admin-layout('preview', 'YAML Content Preview')}">
+        <th:block th:fragment="content">
             <div class="preview-container">
+                <div class="language-switcher">
+                    <button type="button" onclick="switchLanguage('en')" id="btnEn" class="active">English</button>
+                    <button type="button" onclick="switchLanguage('zh')" id="btnZh">中文</button>
+                </div>
+                
+                <h1><i class="fas fa-eye"></i> <span class="page-title" data-en="YAML Content Preview" data-zh="YAML内容预览">YAML Content Preview</span></h1>
+                <p class="page-desc" data-en="Preview the content before importing it into the system" data-zh="在将内容导入系统之前预览">Preview the content before importing it into the system</p>
+                
                 <!-- Error Message -->
                 <div th:if="${errorMessage}" class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
                 </div>
                 
-                <!-- Success Preview -->
-                <div th:if="${previewResult != null and previewResult.success}">
-                    <div class="preview-card">
-                        <div class="preview-header">
-                            <h2>
-                                <i th:class="${contentType == 'blogs' ? 'fas fa-blog' : 'fas fa-star'}"></i>
-                                <span class="content-type-text" th:attr="data-en=${contentType == 'blogs' ? 'Blog Post Preview' : 'Review Preview'}, data-zh=${contentType == 'blogs' ? '博客文章预览' : '评测文章预览'}" th:text="${contentType == 'blogs' ? 'Blog Post Preview' : 'Review Preview'}">Content Preview</span>
-                            </h2>
-                            <p class="file-info-text" th:attr="data-en=${'File: ' + previewResult.fileName}, data-zh=${'文件：' + previewResult.fileName}">
-                                <span class="file-label" data-en="File:" data-zh="文件：">File:</span> <span th:text="${previewResult.fileName}"></span>
-                            </p>
+                <!-- Preview Card -->
+                <div class="preview-card" th:if="${content != null}">
+                    <div class="preview-header">
+                        <h2 th:text="${content.title}">Content Title</h2>
+                        <div style="color: #718096; margin-top: 0.5rem;">
+                            <i class="fas fa-file-alt"></i> 
+                            <span th:text="${contentType == 'blogs' ? 'Blog Post' : 'Product Review'}">Content Type</span> • 
+                            <i class="fas fa-calendar"></i> 
+                            <span th:text="${#temporals.format(content.date, 'MMM dd, yyyy HH:mm')}" th:if="${content.date}">Date</span>
                         </div>
-                        
-                        <!-- Blog Post Preview -->
-                        <div th:if="${contentType == 'blogs' and blogPost != null}">
-                            <div class="preview-metadata">
-                                <div class="metadata-item">
-                                    <span class="metadata-label" data-en="Title" data-zh="标题">Title</span>
-                                    <span class="metadata-value" th:text="${blogPost.title}"></span>
-                                </div>
-                                <div class="metadata-item">
-                                    <span class="metadata-label" data-en="Author" data-zh="作者">Author</span>
-                                    <span class="metadata-value" th:text="${blogPost.author}"></span>
-                                </div>
-                                <div class="metadata-item">
-                                    <span class="metadata-label" data-en="Date" data-zh="日期">Date</span>
-                                    <span class="metadata-value" th:text="${#temporals.format(blogPost.date, 'yyyy-MM-dd HH:mm')}"></span>
-                                </div>
-                                <div class="metadata-item">
-                                    <span class="metadata-label" data-en="Slug" data-zh="链接标识">Slug</span>
-                                    <span class="metadata-value" th:text="${blogPost.slug}"></span>
-                                </div>
-                                <div class="metadata-item" th:if="${blogPost.tags != null and !blogPost.tags.isEmpty()}">
-                                    <span class="metadata-label" data-en="Tags" data-zh="标签">Tags</span>
-                                    <span class="metadata-value" th:text="${#strings.listJoin(blogPost.tags, ', ')}"></span>
-                                </div>
-                                <div class="metadata-item" th:if="${blogPost.metaDescription != null and !blogPost.metaDescription.isEmpty()}">
-                                    <span class="metadata-label" data-en="Meta Description" data-zh="SEO描述">Meta Description</span>
-                                    <span class="metadata-value" th:text="${blogPost.metaDescription}"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="content-preview">
-                                <div th:utext="${#strings.replace(#strings.replace(blogPost.content, '
-', '<br>'), '##', '<h2>').replaceAll('\\*\\*([^*]+)\\*\\*', '<strong>$1</strong>')}"></div>
+                    </div>
+                    
+                    <!-- Metadata -->
+                    <div class="preview-metadata">
+                        <div class="metadata-item">
+                            <span class="metadata-label" data-en="Author" data-zh="作者">Author</span>
+                            <span class="metadata-value" th:text="${content.author ?: 'Admin'}">Author</span>
+                        </div>
+                        <div class="metadata-item" th:if="${contentType == 'reviews'}">
+                            <span class="metadata-label" data-en="Product Brand" data-zh="产品品牌">Product Brand</span>
+                            <span class="metadata-value" th:text="${content.productBrand}">Brand</span>
+                        </div>
+                        <div class="metadata-item" th:if="${contentType == 'reviews'}">
+                            <span class="metadata-label" data-en="Product Name" data-zh="产品名称">Product Name</span>
+                            <span class="metadata-value" th:text="${content.productName}">Product Name</span>
+                        </div>
+                        <div class="metadata-item" th:if="${contentType == 'reviews'}">
+                            <span class="metadata-label" data-en="Rating" data-zh="评分">Rating</span>
+                            <div class="metadata-value rating-display">
+                                <span class="stars" th:text="${content.starRating}">★★★★☆</span>
+                                <span th:text="${content.rating} + '/5'">4.5/5</span>
                             </div>
                         </div>
-                        
-                        <!-- Review Preview -->
-                        <div th:if="${contentType == 'reviews' and review != null}">
-                            <div class="preview-metadata">
-                                <div class="metadata-item">
-                                    <span class="metadata-label" data-en="Title" data-zh="标题">Title</span>
-                                    <span class="metadata-value" th:text="${review.title}"></span>
-                                </div>
-                                <div class="metadata-item">
-                                    <span class="metadata-label" data-en="Product Brand" data-zh="产品品牌">Product Brand</span>
-                                    <span class="metadata-value" th:text="${review.productBrand}"></span>
-                                </div>
-                                <div class="metadata-item" th:if="${review.productName != null and !review.productName.isEmpty()}">
-                                    <span class="metadata-label" data-en="Product Name" data-zh="产品名称">Product Name</span>
-                                    <span class="metadata-value" th:text="${review.productName}"></span>
-                                </div>
-                                <div class="metadata-item">
-                                    <span class="metadata-label" data-en="Rating" data-zh="评分">Rating</span>
-                                    <div class="rating-display">
-                                        <span class="stars" th:text="${review.starRating}"></span>
-                                        <span th:text="'(' + review.rating + '/5)'"></span>
-                                    </div>
-                                </div>
-                                <div class="metadata-item">
-                                    <span class="metadata-label" data-en="Date" data-zh="日期">Date</span>
-                                    <span class="metadata-value" th:text="${#temporals.format(review.date, 'yyyy-MM-dd HH:mm')}"></span>
-                                </div>
-                                <div class="metadata-item">
-                                    <span class="metadata-label" data-en="Slug" data-zh="链接标识">Slug</span>
-                                    <span class="metadata-value" th:text="${review.slug}"></span>
-                                </div>
-                                <div class="metadata-item" th:if="${review.tags != null and !review.tags.isEmpty()}">
-                                    <span class="metadata-label" data-en="Tags" data-zh="标签">Tags</span>
-                                    <span class="metadata-value" th:text="${#strings.listJoin(review.tags, ', ')}"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="content-preview">
-                                <div th:utext="${#strings.replace(#strings.replace(review.content, '
-', '<br>'), '##', '<h2>').replaceAll('\\*\\*([^*]+)\\*\\*', '<strong>$1</strong>')}"></div>
-                                
-                                <div th:if="${review.pros != null and !review.pros.isEmpty()}" style="margin-top: 2rem;">
-                                    <h3 class="pros-title" data-en="Pros" data-zh="优点">Pros</h3>
-                                    <div th:utext="${#strings.replace(review.pros, '
-', '<br>')}"></div>
-                                </div>
-                                
-                                <div th:if="${review.cons != null and !review.cons.isEmpty()}" style="margin-top: 1.5rem;">
-                                    <h3 class="cons-title" data-en="Cons" data-zh="缺点">Cons</h3>
-                                    <div th:utext="${#strings.replace(review.cons, '
-', '<br>')}"></div>
-                                </div>
-                                
-                                <div th:if="${review.conclusion != null and !review.conclusion.isEmpty()}" style="margin-top: 1.5rem;">
-                                    <h3 class="conclusion-title" data-en="Conclusion" data-zh="总结">Conclusion</h3>
-                                    <div th:utext="${#strings.replace(review.conclusion, '
-', '<br>')}"></div>
-                                </div>
-                            </div>
+                        <div class="metadata-item" th:if="${content.tags != null and !content.tags.isEmpty()}">
+                            <span class="metadata-label" data-en="Tags" data-zh="标签">Tags</span>
+                            <span class="metadata-value" th:text="${String.join(', ', content.tags)}">Tags</span>
                         </div>
-                        
-                        <div class="action-buttons">
-                            <form method="post" th:action="@{/admin/import-from-preview}" style="display: inline;" onsubmit="return confirmImport()">
-                                <input type="hidden" name="contentType" th:value="${contentType}">
-                                <input type="hidden" name="lang" th:value="${lang}">
-                                <input type="hidden" name="previewData" th:value="${previewResult.rawContent}">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fas fa-check"></i> <span class="import-btn-text" data-en="Confirm Import" data-zh="确认导入">Confirm Import</span>
-                                </button>
-                            </form>
-                            <a href="/admin/import" class="btn btn-outline">
-                                <i class="fas fa-arrow-left"></i> <span class="back-btn-text" data-en="Back to Import" data-zh="返回导入页面">Back to Import</span>
-                            </a>
-                        </div>
+                    </div>
+                    
+                    <!-- Content Preview -->
+                    <div class="content-preview">
+                        <div th:utext="${content.renderedContent}">Content Preview</div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <a href="/admin/import" class="btn btn-outline">
+                            <i class="fas fa-arrow-left"></i> <span class="back-btn-text" data-en="Back to Import" data-zh="返回导入">Back to Import</span>
+                        </a>
+                        <form method="post" th:action="@{/admin/import}" style="display: inline;">
+                            <input type="hidden" name="contentType" th:value="${contentType}">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-upload"></i> <span class="import-btn-text" data-en="Import Content" data-zh="导入内容">Import Content</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- No Content Message -->
+                <div class="preview-card" th:if="${content == null and errorMessage == null}">
+                    <div style="text-align: center; padding: 3rem; color: #718096;">
+                        <i class="fas fa-file-alt" style="font-size: 3rem; margin-bottom: 1rem; color: #cbd5e0;"></i>
+                        <h3 data-en="No content to preview" data-zh="没有内容可预览">No content to preview</h3>
+                        <p data-en="Please go back to the import page and select a YAML file to preview." data-zh="请返回导入页面并选择一个YAML文件进行预览。">Please go back to the import page and select a YAML file to preview.</p>
+                        <a href="/admin/import" class="btn btn-primary" style="margin-top: 1rem;">
+                            <i class="fas fa-arrow-left"></i> <span data-en="Back to Import" data-zh="返回导入">Back to Import</span>
+                        </a>
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
+        </th:block>
+    </th:block>
     
-    <script th:inline="javascript">
-        let currentLang = /*[[${lang != null ? lang : 'en'}]]*/ 'en';
+    <th:block th:replace="~{fragments/admin-panel :: admin-scripts}"></th:block>
+    
+    <script>
+        let currentLang = 'en';
         
+        // Language switching functionality
         function switchLanguage(lang) {
             currentLang = lang;
             updateLanguageDisplay();
@@ -358,23 +207,6 @@
                     element.textContent = text;
                 }
             });
-        }
-        
-        function confirmImport() {
-            const message = currentLang === 'zh' ? 
-                '确定要将这个YAML文件导入到系统中吗？' : 
-                'Are you sure you want to import this YAML file into the system?';
-            return confirm(message);
-        }
-        
-        function exportContent() {
-            // Create a temporary link and trigger download
-            const link = document.createElement('a');
-            link.href = '/admin/export';
-            link.download = '';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
         }
         
         // Initialize language display

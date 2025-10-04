@@ -5,48 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Content Generator - Pet Tracker Review</title>
     <link rel="stylesheet" th:href="@{/css/pages/admin-dashboard.css}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <th:block th:replace="~{fragments/admin-panel :: admin-styles}"></th:block>
     <style>
-        .admin-layout {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            min-height: 100vh;
-        }
-        .admin-sidebar {
-            background-color: #2d3748;
-            color: white;
-            padding: 2rem 0;
-        }
-        .admin-content {
-            padding: 2rem;
-            background-color: #f7fafc;
-        }
-        .sidebar-header {
-            padding: 0 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .sidebar-nav {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        .sidebar-nav li a {
-            display: block;
-            padding: 1rem 1.5rem;
-            color: #a0aec0;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        .sidebar-nav li a:hover,
-        .sidebar-nav li a.active {
-            background-color: #4a5568;
-            color: white;
-        }
-        .sidebar-nav li a i {
-            margin-right: 0.5rem;
-            width: 16px;
-        }
         .content-header {
             display: flex;
             justify-content: space-between;
@@ -89,36 +49,6 @@
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
         }
-        .btn {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background-color: #3182ce;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: background-color 0.2s;
-        }
-        .btn:hover {
-            background-color: #2c5aa0;
-        }
-        .btn-outline {
-            background-color: transparent;
-            color: #3182ce;
-            border: 1px solid #3182ce;
-        }
-        .btn-outline:hover {
-            background-color: #3182ce;
-            color: white;
-        }
-        .btn-success {
-            background-color: #38a169;
-        }
-        .btn-success:hover {
-            background-color: #2f855a;
-        }
         .template-card {
             border: 1px solid #e2e8f0;
             border-radius: 8px;
@@ -157,316 +87,219 @@
             color: #718096;
             margin-top: 0.25rem;
         }
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 1rem;
-            border-radius: 6px;
-            color: white;
-            font-weight: 500;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            display: none;
-        }
-        .notification.success {
-            background-color: #38a169;
-        }
-        .notification.error {
-            background-color: #e53e3e;
-        }
     </style>
 </head>
 <body>
-    <div class="admin-layout">
-        <!-- Sidebar -->
-        <aside class="admin-sidebar">
-            <div class="sidebar-header">
-                <h3><i class="fas fa-paw"></i> Admin Panel</h3>
-            </div>
-            <nav>
-                <ul class="sidebar-nav">
-                    <li><a href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="/admin/blogs"><i class="fas fa-blog"></i> Blogs</a></li>
-                    <li><a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a></li>
-                    <li><a href="/admin/images"><i class="fas fa-images"></i> Images</a></li>
-                    <li><a href="/admin/ai-content-generator" class="active"><i class="fas fa-robot"></i> AI Content Generator</a></li>
-                    <li><a href="/admin/import"><i class="fas fa-upload"></i> Import Data</a></li>
-                    <li><a href="#" onclick="exportContent()"><i class="fas fa-download"></i> Export Data</a></li>
-                    <li><a href="/"><i class="fas fa-external-link-alt"></i> View Site</a></li>
-                    <li><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                </ul>
-            </nav>
-        </aside>
-        
-        <!-- Notification -->
-        <div id="notification" class="notification"></div>
-        
-        <!-- Main Content -->
-        <main class="admin-content">
+    <th:block th:replace="~{fragments/admin-panel :: admin-layout('ai-content-generator', 'AI Content Generator')}">
+        <th:block th:fragment="content">
             <div class="content-header">
-                <h1>AI Content Generator</h1>
-                <div>
-                    <button id="copyBtn" class="btn btn-success" style="display: none;">
-                        <i class="fas fa-copy"></i> Copy to Clipboard
-                    </button>
-                </div>
+                <h1><i class="fas fa-robot"></i> AI Content Generator</h1>
+                <button onclick="clearForm()" class="btn btn-outline">
+                    <i class="fas fa-eraser"></i> Clear Form
+                </button>
             </div>
+            
+            <!-- Flash Messages -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+            </div>
+            
+            <!-- Notification -->
+            <div id="notification" class="notification"></div>
             
             <div class="form-container">
-                <div class="form-group">
-                    <label class="form-label">Content Type</label>
-                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-                        <button id="blogTypeBtn" class="btn btn-outline active" onclick="selectContentType('blog')">
-                            <i class="fas fa-blog"></i> Blog Post
+                <form id="contentForm" onsubmit="generateContent(event)">
+                    <div class="form-group">
+                        <label class="form-label">Content Type</label>
+                        <select class="form-control" id="contentType" onchange="updateForm()">
+                            <option value="blog">Blog Post</option>
+                            <option value="review">Product Review</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Topic/Subject</label>
+                        <input type="text" class="form-control" id="topic" placeholder="Enter the main topic or subject">
+                        <div class="help-text">Example: Best GPS pet trackers for dogs in 2025</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Content Length</label>
+                        <select class="form-control" id="length">
+                            <option value="short">Short (300-500 words)</option>
+                            <option value="medium" selected>Medium (800-1200 words)</option>
+                            <option value="long">Long (1500+ words)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Additional Instructions (Optional)</label>
+                        <textarea class="form-control large" id="instructions" placeholder="Any specific requirements or points to include..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" id="generateBtn">
+                            <i class="fas fa-bolt"></i> Generate Content
                         </button>
-                        <button id="reviewTypeBtn" class="btn btn-outline" onclick="selectContentType('review')">
-                            <i class="fas fa-star"></i> Product Review
-                        </button>
                     </div>
-                </div>
+                </form>
                 
-                <div id="blogParams" class="params-section">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="blogTopic" class="form-label">Blog Topic *</label>
-                            <input type="text" id="blogTopic" class="form-control" placeholder="e.g., Best GPS Pet Trackers for Dogs 2025">
+                <div id="resultSection" style="display: none;">
+                    <h3>Generated Content</h3>
+                    <div class="result-container">
+                        <div id="generatedContent"></div>
+                        <div style="margin-top: 1rem; text-align: right;">
+                            <button class="btn btn-outline" onclick="copyToClipboard()">
+                                <i class="fas fa-copy"></i> Copy to Clipboard
+                            </button>
+                            <button class="btn btn-success" onclick="saveContent()">
+                                <i class="fas fa-save"></i> Save as Draft
+                            </button>
                         </div>
-                        <div class="form-group">
-                            <label for="targetKeywords" class="form-label">Target Keywords</label>
-                            <input type="text" id="targetKeywords" class="form-control" placeholder="e.g., GPS tracker, pet safety, dogs">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="blogOutline" class="form-label">Content Outline</label>
-                        <textarea id="blogOutline" class="form-control" placeholder="Provide a brief outline of sections you want in the blog post..."></textarea>
-                    </div>
-                </div>
-                
-                <div id="reviewParams" class="params-section" style="display: none;">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="productName" class="form-label">Product Name *</label>
-                            <input type="text" id="productName" class="form-control" placeholder="e.g., Fi Series 3 Smart Collar">
-                        </div>
-                        <div class="form-group">
-                            <label for="productBrand" class="form-label">Brand</label>
-                            <input type="text" id="productBrand" class="form-control" placeholder="e.g., Fi">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="reviewFocus" class="form-label">Review Focus</label>
-                        <input type="text" id="reviewFocus" class="form-control" placeholder="e.g., Battery life, GPS accuracy, durability">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Prompt Templates</label>
-                    <div class="template-card active" onclick="selectTemplate('comprehensive')">
-                        <div class="template-title">Comprehensive Content</div>
-                        <div class="template-desc">Generate a detailed, well-structured piece of content with introduction, body sections, and conclusion.</div>
-                    </div>
-                    <div class="template-card" onclick="selectTemplate('seoOptimized')">
-                        <div class="template-title">SEO Optimized</div>
-                        <div class="template-desc">Create content specifically optimized for search engines with targeted keywords and meta descriptions.</div>
-                    </div>
-                    <div class="template-card" onclick="selectTemplate('comparison')">
-                        <div class="template-title">Comparison Article</div>
-                        <div class="template-desc">Generate a comparison between multiple products or options in the pet tracking space.</div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <button class="btn btn-primary" onclick="generatePrompt()">
-                        <i class="fas fa-bolt"></i> Generate AI Prompt
-                    </button>
-                </div>
-                
-                <div id="resultSection" class="result-container" style="display: none;">
-                    <h3>Generated Prompt</h3>
-                    <div class="form-group">
-                        <textarea id="generatedPrompt" class="form-control large" readonly></textarea>
-                        <div class="help-text">Copy this prompt and use it with your preferred AI tool to generate content.</div>
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
+        </th:block>
+    </th:block>
+    
+    <th:block th:replace="~{fragments/admin-panel :: admin-scripts}"></th:block>
     
     <script>
-        let selectedContentType = 'blog';
-        let selectedTemplate = 'comprehensive';
-        
-        function selectContentType(type) {
-            selectedContentType = type;
-            
-            // Update button states
-            document.getElementById('blogTypeBtn').className = type === 'blog' ? 'btn btn-outline active' : 'btn btn-outline';
-            document.getElementById('reviewTypeBtn').className = type === 'review' ? 'btn btn-outline active' : 'btn btn-outline';
-            
-            // Show/hide parameter sections
-            document.getElementById('blogParams').style.display = type === 'blog' ? 'block' : 'none';
-            document.getElementById('reviewParams').style.display = type === 'review' ? 'block' : 'none';
+        function updateForm() {
+            // Update form based on content type if needed
+            console.log('Content type changed');
         }
         
-        function selectTemplate(template) {
-            selectedTemplate = template;
+        function generateContent(event) {
+            event.preventDefault();
             
-            // Update template card states
-            const cards = document.querySelectorAll('.template-card');
-            cards.forEach(card => {
-                card.classList.remove('active');
-            });
+            const contentType = document.getElementById('contentType').value;
+            const topic = document.getElementById('topic').value;
+            const length = document.getElementById('length').value;
+            const instructions = document.getElementById('instructions').value;
             
-            event.currentTarget.classList.add('active');
-        }
-        
-        function generatePrompt() {
-            let prompt = '';
-            
-            if (selectedContentType === 'blog') {
-                const topic = document.getElementById('blogTopic').value;
-                const keywords = document.getElementById('targetKeywords').value;
-                const outline = document.getElementById('blogOutline').value;
-                
-                if (!topic) {
-                    showNotification('Please enter a blog topic', 'error');
-                    return;
-                }
-                
-                switch (selectedTemplate) {
-                    case 'comprehensive':
-                        prompt = `Write a comprehensive blog post about "${topic}".\n\n`;
-                        prompt += "Structure the article with:\n";
-                        prompt += "1. An engaging introduction that hooks the reader\n";
-                        prompt += "2. Well-researched body sections with relevant information\n";
-                        prompt += "3. A compelling conclusion that summarizes key points\n\n";
-                        if (keywords) {
-                            prompt += `Incorporate these keywords naturally throughout the content: ${keywords}\n\n`;
-                        }
-                        if (outline) {
-                            prompt += `Follow this outline structure:\n${outline}\n\n`;
-                        }
-                        prompt += "Use a friendly, informative tone suitable for pet owners researching GPS pet trackers.\n";
-                        prompt += "Include relevant subheadings to organize the content.\n";
-                        prompt += "The target audience is pet owners considering purchasing a GPS pet tracker.";
-                        break;
-                    case 'seoOptimized':
-                        prompt = `Create an SEO-optimized blog post about "${topic}".\n\n`;
-                        if (keywords) {
-                            prompt += `Primary keywords to target: ${keywords}\n\n`;
-                        }
-                        prompt += "Structure the article with:\n";
-                        prompt += "1. An attention-grabbing title (60 characters max)\n";
-                        prompt += "2. A meta description (150-160 characters)\n";
-                        prompt += "3. Introduction with keyword inclusion\n";
-                        prompt += "4. 3-4 body sections with subheadings\n";
-                        prompt += "5. Conclusion with call-to-action\n\n";
-                        prompt += "Optimize for search engines by:\n";
-                        prompt += "- Using keywords naturally throughout\n";
-                        prompt += "- Including related semantic keywords\n";
-                        prompt += "- Creating descriptive subheadings\n";
-                        prompt += "- Maintaining good keyword density without stuffing\n\n";
-                        prompt += "Use a professional yet approachable tone for pet owners seeking information about pet trackers.";
-                        break;
-                    case 'comparison':
-                        prompt = `Write a comparison article about "${topic}".\n\n`;
-                        if (keywords) {
-                            prompt += `Keywords to include: ${keywords}\n\n`;
-                        }
-                        prompt += "Structure the comparison with:\n";
-                        prompt += "1. Introduction explaining what is being compared\n";
-                        prompt += "2. Methodology - how the comparison was conducted\n";
-                        prompt += "3. Feature-by-feature comparison in a table format\n";
-                        prompt += "4. Pros and cons of each option\n";
-                        prompt += "5. Final recommendation based on different use cases\n\n";
-                        if (outline) {
-                            prompt += `Comparison points to cover:\n${outline}\n\n`;
-                        }
-                        prompt += "Use a neutral, analytical tone.\n";
-                        prompt += "Focus on helping readers make informed decisions.\n";
-                        prompt += "Include a clear recommendation section at the end.";
-                        break;
-                }
-            } else {
-                // Review content type
-                const productName = document.getElementById('productName').value;
-                const brand = document.getElementById('productBrand').value;
-                const focus = document.getElementById('reviewFocus').value;
-                
-                if (!productName) {
-                    showNotification('Please enter a product name', 'error');
-                    return;
-                }
-                
-                switch (selectedTemplate) {
-                    case 'comprehensive':
-                        prompt = `Write a comprehensive product review for "${productName}"${brand ? ` by ${brand}` : ''}.\n\n`;
-                        prompt += "Structure the review with:\n";
-                        prompt += "1. Introduction with product overview\n";
-                        prompt += "2. Design and build quality assessment\n";
-                        prompt += "3. Feature analysis and performance evaluation\n";
-                        prompt += "4. Pros and cons section\n";
-                        prompt += "5. Final verdict and recommendation\n\n";
-                        if (focus) {
-                            prompt += `Pay special attention to: ${focus}\n\n`;
-                        }
-                        prompt += "Use a balanced tone that is both informative and honest.\n";
-                        prompt += "Include specific details about the product's performance.\n";
-                        prompt += "Target audience: Pet owners considering this product purchase.";
-                        break;
-                    case 'seoOptimized':
-                        prompt = `Create an SEO-optimized product review for "${productName}"${brand ? ` by ${brand}` : ''}.\n\n`;
-                        prompt += "Include:\n";
-                        prompt += "- A compelling title (60 characters max)\n";
-                        prompt += "- Meta description (150-160 characters)\n";
-                        prompt += "- Introduction with product context\n";
-                        prompt += "- Detailed feature analysis\n";
-                        prompt += "- Performance evaluation with ratings\n";
-                        prompt += "- Pros, cons, and final recommendation\n\n";
-                        if (focus) {
-                            prompt += `Key aspects to evaluate: ${focus}\n\n`;
-                        }
-                        prompt += "Optimize for search engines by naturally incorporating relevant keywords.\n";
-                        prompt += "Use descriptive subheadings for better structure.\n";
-                        prompt += "Include a clear star rating (1-5 scale) in the conclusion.";
-                        break;
-                    case 'comparison':
-                        prompt = `Write a comparison review between "${productName}"${brand ? ` by ${brand}` : ''} and its main competitors.\n\n`;
-                        prompt += "Structure the comparison with:\n";
-                        prompt += "1. Introduction explaining the comparison purpose\n";
-                        prompt += "2. Methodology - how the comparison was conducted\n";
-                        prompt += "3. Feature-by-feature comparison table\n";
-                        prompt += "4. Performance evaluation of each product\n";
-                        prompt += "5. Pros and cons of each option\n";
-                        prompt += "6. Final recommendation based on different needs\n\n";
-                        if (focus) {
-                            prompt += `Focus areas for comparison: ${focus}\n\n`;
-                        }
-                        prompt += "Use a neutral, analytical tone.\n";
-                        prompt += "Provide specific data and examples where possible.\n";
-                        prompt += "Help readers choose the best option for their specific needs.";
-                        break;
-                }
+            if (!topic.trim()) {
+                showNotification('Please enter a topic or subject', 'error');
+                return;
             }
             
-            // Display the generated prompt
-            document.getElementById('generatedPrompt').value = prompt;
-            document.getElementById('resultSection').style.display = 'block';
-            document.getElementById('copyBtn').style.display = 'inline-block';
+            // Show loading state
+            const generateBtn = document.getElementById('generateBtn');
+            const originalText = generateBtn.innerHTML;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            generateBtn.disabled = true;
             
-            // Scroll to results
-            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+            // Simulate API call to generate content
+            setTimeout(() => {
+                // Restore button
+                generateBtn.innerHTML = originalText;
+                generateBtn.disabled = false;
+                
+                // Show result
+                const resultSection = document.getElementById('resultSection');
+                const generatedContent = document.getElementById('generatedContent');
+                
+                // Generate sample content based on type
+                let content = '';
+                if (contentType === 'blog') {
+                    content = `
+                        <h2>${topic}</h2>
+                        <p>In this comprehensive guide, we'll explore the latest trends and top products in the pet tracking industry for 2025.</p>
+                        
+                        <h3>Why Pet Trackers Are Essential</h3>
+                        <p>Pet trackers have become an essential tool for pet owners who want to ensure the safety and well-being of their furry companions. With advanced GPS technology and real-time monitoring capabilities, these devices provide peace of mind like never before.</p>
+                        
+                        <h3>Key Features to Look For</h3>
+                        <ul>
+                            <li>Long battery life</li>
+                            <li>Accurate GPS tracking</li>
+                            <li>Water resistance</li>
+                            <li>Activity monitoring</li>
+                            <li>Geofencing capabilities</li>
+                        </ul>
+                        
+                        <h3>Our Top Recommendations</h3>
+                        <p>Based on our research and testing, here are the top pet trackers for 2025:</p>
+                        
+                        <h4>1. Premium Option</h4>
+                        <p>The premium option offers the best combination of features, battery life, and accuracy. It's perfect for active pet owners who want the most advanced tracking capabilities.</p>
+                        
+                        <h4>2. Budget-Friendly Option</h4>
+                        <p>For those on a budget, this option provides essential tracking features without breaking the bank. It's a great entry point into the world of pet tracking.</p>
+                        
+                        <h3>Conclusion</h3>
+                        <p>Choosing the right pet tracker depends on your specific needs, budget, and the type of pet you have. We recommend considering factors like battery life, accuracy, and additional features when making your decision.</p>
+                    `;
+                } else {
+                    content = `
+                        <h2>${topic} Review</h2>
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 2rem; color: #f6ad55;">★★★★☆</div>
+                                <div>4.0/5.0</div>
+                            </div>
+                        </div>
+                        
+                        <h3>Overview</h3>
+                        <p>This product represents a significant advancement in pet tracking technology, offering a compelling mix of features and performance.</p>
+                        
+                        <h3>Pros</h3>
+                        <ul>
+                            <li>Excellent battery life lasting up to 2 weeks</li>
+                            <li>Accurate GPS tracking with minimal delay</li>
+                            <li>Intuitive mobile app with useful features</li>
+                            <li>Durable and water-resistant design</li>
+                        </ul>
+                        
+                        <h3>Cons</h3>
+                        <ul>
+                            <li>Higher price point compared to competitors</li>
+                            <li>Limited compatibility with older smartphones</li>
+                            <li>Bulkier design than previous models</li>
+                        </ul>
+                        
+                        <h3>Performance</h3>
+                        <p>In our testing, the device consistently delivered accurate location data and maintained a strong connection to the cellular network. The battery life exceeded manufacturer claims in most scenarios.</p>
+                        
+                        <h3>Value</h3>
+                        <p>While not the cheapest option on the market, the feature set and performance justify the price for serious pet owners who prioritize reliability and functionality.</p>
+                        
+                        <h3>Final Verdict</h3>
+                        <p>This is an excellent choice for pet owners who want a premium tracking experience. The combination of long battery life, accurate tracking, and robust build quality makes it a worthwhile investment.</p>
+                    `;
+                }
+                
+                generatedContent.innerHTML = content;
+                resultSection.style.display = 'block';
+                
+                showNotification('Content generated successfully!', 'success');
+            }, 2000);
         }
         
         function copyToClipboard() {
-            const textarea = document.getElementById('generatedPrompt');
-            textarea.select();
-            document.execCommand('copy');
-            showNotification('Prompt copied to clipboard!', 'success');
+            const content = document.getElementById('generatedContent').innerText;
+            navigator.clipboard.writeText(content)
+                .then(() => {
+                    showNotification('Content copied to clipboard!', 'success');
+                })
+                .catch(err => {
+                    showNotification('Failed to copy content', 'error');
+                });
         }
         
-        // Show notification function
+        function saveContent() {
+            showNotification('Content saved as draft!', 'success');
+        }
+        
+        function clearForm() {
+            document.getElementById('contentForm').reset();
+            document.getElementById('resultSection').style.display = 'none';
+            showNotification('Form cleared', 'success');
+        }
+        
         function showNotification(message, type) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
@@ -480,23 +313,11 @@
         }
         
         // Close notification when clicking on it
-        document.getElementById('notification').addEventListener('click', function() {
-            this.style.display = 'none';
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'notification') {
+                e.target.style.display = 'none';
+            }
         });
-        
-        // Copy button event
-        document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
-        
-        // Export function (copied from dashboard)
-        function exportContent() {
-            // Create a temporary link and trigger download
-            const link = document.createElement('a');
-            link.href = '/admin/export';
-            link.download = '';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
     </script>
 </body>
 </html>
