@@ -59,12 +59,12 @@
         header h1{margin:0;font-size:28px;color:#0f172a;font-weight:700}
         p.lead{margin:8px 0 24px;color:var(--muted);font-size:16px;line-height:1.6}
 
-        /* SEO优化：确保标题和段落有良好的层次结构 */
+        /* SEO optimization: Ensure proper heading and paragraph hierarchy */
         h1 { font-size: 2.5rem; margin-bottom: 1rem; }
         h2 { font-size: 2rem; margin-top: 2rem; margin-bottom: 1rem; }
         h3 { font-size: 1.5rem; margin-top: 1.5rem; margin-bottom: 0.75rem; }
         
-        /* SEO优化：确保FAQ部分对搜索引擎友好 */
+        /* SEO optimization: Ensure FAQ section is search engine friendly */
         .faq-section { margin-top: 2rem; }
         .faq-item { margin-bottom: 1.5rem; }
         .faq-item h3 { margin-top: 0; }
@@ -334,7 +334,7 @@
             top: 1px;
         }
 
-        /* 移动端适配 */
+        /* Mobile adaptation */
         @media (max-width: 768px) {
             .modal-content {
                 width: 95%;
@@ -420,7 +420,7 @@
             }
         }
 
-        /* 超小屏幕适配 */
+        /* Ultra-small screen adaptation */
         @media (max-width: 360px) {
             .modal-header h2 {
                 font-size: 16px;
@@ -1122,7 +1122,7 @@
             subBtn.addEventListener('click', () => {
                 showSubscriptionModal(b);
 
-                // 为SEO添加历史记录
+                // Add history for SEO
                 if (window.history && window.history.pushState) {
                     const brandName = b.name.replace(/\s+/g, '-').toLowerCase();
                     window.history.pushState({}, '', `#${brandName}-subscription-plans`);

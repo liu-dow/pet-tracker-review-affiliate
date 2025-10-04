@@ -6,7 +6,7 @@
     text-align: center;
 }
 
-/* 移动端页面头部优化 */
+/* Mobile page header optimization */
 @media (max-width: 768px) {
     .page-header {
         padding: 2rem 0;
@@ -62,7 +62,7 @@
     top: 100px;
 }
 
-/* 移动端侧边栏优化 */
+/* Mobile sidebar optimization */
 @media (max-width: 768px) {
     .sidebar {
         position: static;
@@ -129,7 +129,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* 移动端主内容优化 */
+/* Mobile main content optimization */
 @media (max-width: 768px) {
     .main-content {
         padding: 1.5rem;
@@ -226,7 +226,7 @@
         grid-template-columns: 1fr;
     }
     
-    /* 移动端增加宽度占比 */
+    /* Mobile width percentage increase */
     .container {
         padding: 0 12px;
         max-width: 100%;
@@ -257,14 +257,14 @@
         padding: 1.2rem;
     }
     
-    /* 小屏幕设备进一步优化宽度 */
+    /* Further width optimization for small screen devices */
     .container {
         padding: 0 8px;
         max-width: 100%;
     }
 }
 
-/* 移动端横屏优化 */
+/* Mobile landscape optimization */
 @media (max-width: 768px) and (orientation: landscape) {
     .container {
         padding: 0 15px;
@@ -275,7 +275,7 @@
     }
 }
 
-/* 超小屏幕设备优化 */
+/* Ultra-small screen device optimization */
 @media (max-width: 360px) {
     .container {
         padding: 0 5px;

@@ -153,11 +153,11 @@
         <th:block th:fragment="content">
             <div class="language-switcher" style="float: right; margin-bottom: 1rem;">
                 <button type="button" onclick="switchLanguage('en')" id="btnEn" class="active">English</button>
-                <button type="button" onclick="switchLanguage('zh')" id="btnZh">中文</button>
+                <button type="button" onclick="switchLanguage('ja')" id="btnJa">日本語</button>
             </div>
             
-            <h1><i class="fas fa-upload"></i> <span class="page-title" data-en="Import Content" data-zh="导入内容">Import Content</span></h1>
-            <p class="page-desc" data-en="Upload YAML files to import blog posts or reviews into the system." data-zh="上传YAML文件以将博客文章或评测导入系统。">Upload YAML files to import blog posts or reviews into the system.</p>
+            <h1><i class="fas fa-upload"></i> <span th:text="#{admin.import.title}">Import Content</span></h1>
+            <p th:text="#{admin.import.description}">Upload YAML files to import blog posts or reviews into the system.</p>
             
             <!-- Alert Messages -->
             <div th:if="${successMessage}" class="alert alert-success">
@@ -280,14 +280,14 @@ conclusion: |
                         <div class="radio-group">
                             <div class="radio-option">
                                 <input type="radio" id="blogs" name="contentType" value="blogs" checked>
-                                <label for="blogs"><i class="fas fa-blog"></i> <span data-en="Blog Posts" data-zh="博客文章">Blog Posts</span></label>
+                                <label for="blogs"><i class="fas fa-blog"></i> <span th:text="#{admin.import.blogPosts}">Blog Posts</span></label>
                             </div>
                             <div class="radio-option">
                                 <input type="radio" id="reviews" name="contentType" value="reviews">
-                                <label for="reviews"><i class="fas fa-star"></i> <span data-en="Product Reviews" data-zh="产品评测">Product Reviews</span></label>
+                                <label for="reviews"><i class="fas fa-star"></i> <span th:text="#{admin.import.productReviews}">Product Reviews</span></label>
                             </div>
                         </div>
-                        <div class="help-text" data-en="Select the type of content to import" data-zh="选择要导入的内容类型">Select the type of content to import</div>
+                        <div class="help-text" th:text="#{admin.import.selectContentType}">Select the type of content to import</div>
                     </div>
                     
                     <!-- File Upload -->
@@ -305,13 +305,13 @@ conclusion: |
                     <!-- Action Buttons -->
                     <div style="text-align: right; margin-top: 2rem;">
                         <a href="/admin/dashboard" class="btn btn-outline" style="margin-right: 1rem;">
-                            <i class="fas fa-times"></i> <span class="cancel-btn-text" data-en="Cancel" data-zh="取消">Cancel</span>
+                            <i class="fas fa-times"></i> <span class="cancel-btn-text" th:text="#{admin.import.cancel}">Cancel</span>
                         </a>
                         <button type="button" class="btn btn-outline" onclick="previewFile()" style="margin-right: 1rem;">
-                            <i class="fas fa-eye"></i> <span class="preview-btn-text" data-en="Preview" data-zh="预览">Preview</span>
+                            <i class="fas fa-eye"></i> <span class="preview-btn-text" th:text="#{admin.import.preview}">Preview</span>
                         </button>
                         <button type="submit" class="btn">
-                            <i class="fas fa-upload"></i> <span class="import-btn-text" data-en="Import File" data-zh="导入文件">Import File</span>
+                            <i class="fas fa-upload"></i> <span class="import-btn-text" th:text="#{admin.import.importFile}">Import File</span>
                         </button>
                     </div>
                 </form>
@@ -331,13 +331,13 @@ conclusion: |
             
             // Update active button
             document.getElementById('btnEn').classList.toggle('active', lang === 'en');
-            document.getElementById('btnZh').classList.toggle('active', lang === 'zh');
+            document.getElementById('btnJa').classList.toggle('active', lang === 'ja');
         }
         
         function updateLanguageDisplay() {
-            const elements = document.querySelectorAll('[data-en][data-zh]');
+            const elements = document.querySelectorAll('[data-en][data-ja]');
             elements.forEach(element => {
-                const text = currentLang === 'zh' ? element.getAttribute('data-zh') : element.getAttribute('data-en');
+                const text = currentLang === 'ja' ? element.getAttribute('data-ja') : element.getAttribute('data-en');
                 if (text) {
                     element.textContent = text;
                 }
@@ -350,14 +350,14 @@ conclusion: |
             const contentType = document.querySelector('input[name="contentType"]:checked').value;
             
             if (!fileInput.files || fileInput.files.length === 0) {
-                const message = currentLang === 'zh' ? '请先选择要预览的YAML文件' : 'Please select a YAML file to preview first';
+                const message = currentLang === 'ja' ? 'プレビューするYAMLファイルを選択してください' : 'Please select a YAML file to preview first';
                 alert(message);
                 return;
             }
             
             const file = fileInput.files[0];
             if (!file.name.endsWith('.yaml') && !file.name.endsWith('.yml')) {
-                const message = currentLang === 'zh' ? '请选择一个YAML文件（.yaml或.yml）' : 'Please select a YAML file (.yaml or .yml)';
+                const message = currentLang === 'ja' ? 'YAMLファイル（.yamlまたは.yml）を選択してください' : 'Please select a YAML file (.yaml or .yml)';
                 alert(message);
                 return;
             }
@@ -403,7 +403,7 @@ conclusion: |
         fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
-                const text = currentLang === 'zh' ? '已选择文件：' : 'Selected file: ';
+                const text = currentLang === 'ja' ? '選択されたファイル：' : 'Selected file: ';
                 fileName.textContent = text + file.name;
                 fileName.style.display = 'block';
             }
@@ -429,11 +429,11 @@ conclusion: |
                 const file = files[0];
                 if (file.name.endsWith('.yaml') || file.name.endsWith('.yml')) {
                     fileInput.files = files;
-                    const text = currentLang === 'zh' ? '已选择文件：' : 'Selected file: ';
+                    const text = currentLang === 'ja' ? '選択されたファイル：' : 'Selected file: ';
                     fileName.textContent = text + file.name;
                     fileName.style.display = 'block';
                 } else {
-                    const message = currentLang === 'zh' ? '请选择一个YAML文件（.yaml或.yml）' : 'Please select a YAML file (.yaml or .yml)';
+                    const message = currentLang === 'ja' ? 'YAMLファイル（.yamlまたは.yml）を選択してください' : 'Please select a YAML file (.yaml or .yml)';
                     alert(message);
                 }
             }
