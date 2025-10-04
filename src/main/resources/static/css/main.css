@@ -2018,7 +2018,6 @@ a:hover {
 .close-btn:hover {
     background-color: #f1f5f9;
     color: #4a5568;
-    transform: scale(1.1);
 }
 
 .cookie-modal-body {
@@ -2173,8 +2172,9 @@ input:disabled + .slider:before {
 
 .cookie-settings-btn:hover {
     background-color: #2c5aa0;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    /* 移除了可能导致闪烁的变换效果 */
+    /* transform: translateY(-2px); */
+    /* box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); */
 }
 
 .cookie-settings-btn:active {
@@ -2237,7 +2237,8 @@ input:disabled + .slider:before {
     }
     
     .slider:hover {
-        box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        /* 移除了可能导致闪烁的box-shadow效果 */
+        /* box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1); */
     }
 }
 
