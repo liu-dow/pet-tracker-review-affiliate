@@ -69,6 +69,30 @@
         window.location.search = urlParams.toString();
       }
     </script>
+    <!-- Google Analytics 4 (GA4) - Required -->
+    <script async th:src="@{'https://www.googletagmanager.com/gtag/js?id=' + ${@environment.getProperty('ga4.measurement.id')}}"></script>
+    <script th:inline="javascript">
+      // GA4 Configuration from application.properties
+      var GA4_ID = /*[[${@environment.getProperty('ga4.measurement.id')}]]*/ 'G-XXXXXXXXXX';
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      // Initial consent state - deny until user makes choice
+      gtag('consent', 'default', {
+        'analytics_storage': 'denied',
+        'ad_storage': 'denied',
+        'functionality_storage': 'granted',
+        'personalization_storage': 'denied',
+        'security_storage': 'granted'
+      });
+
+      gtag('config', GA4_ID, {
+        cookie_flags: 'SameSite=None;Secure',
+        anonymize_ip: true
+      });
+    </script>
   </footer>
 </body>
 </html>
