@@ -70,10 +70,10 @@
       }
     </script>
     <!-- Google Analytics 4 (GA4) - Required -->
-    <script async th:src="@{'https://www.googletagmanager.com/gtag/js?id=' + ${@environment.getProperty('ga4.measurement.id')}}"></script>
+    <script async th:src="@{'https://www.googletagmanager.com/gtag/js?id=G-0YXVVTJYBR'"></script>
     <script th:inline="javascript">
       // GA4 Configuration from application.properties
-      var GA4_ID = /*[[${@environment.getProperty('ga4.measurement.id')}]]*/ 'G-XXXXXXXXXX';
+      var GA4_ID = 'G-0YXVVTJYBR';
 
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -88,7 +88,7 @@
         'security_storage': 'granted'
       });
 
-      gtag('config', GA4_ID, {
+      gtag('config', 'G-0YXVVTJYBR', {
         cookie_flags: 'SameSite=None;Secure',
         anonymize_ip: true
       });
