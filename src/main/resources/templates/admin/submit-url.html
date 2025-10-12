@@ -5,8 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit URL for Indexing - Pet Tracker Review</title>
     <link rel="stylesheet" th:href="@{/css/pages/admin-dashboard.css}">
-    <th:block th:replace="~{fragments/admin-panel :: admin-styles}"></th:block>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        .admin-sidebar {
+            background-color: #2d3748;
+            color: white;
+            padding: 2rem 0;
+        }
+        .admin-content {
+            padding: 2rem;
+            background-color: #f7fafc;
+        }
+        .sidebar-header {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .sidebar-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .sidebar-nav li a {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #a0aec0;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .sidebar-nav li a:hover {
+            background-color: #4a5568;
+            color: white;
+        }
+        .sidebar-nav li a i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
         .submit-container {
             max-width: 800px;
             margin: 0 auto;
@@ -55,6 +94,30 @@
             align-items: center;
             gap: 0.5rem;
             margin-top: 0.5rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: #3182ce;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background-color: #2c5aa0;
+        }
+        .btn-outline {
+            background-color: transparent;
+            color: #3182ce;
+            border: 1px solid #3182ce;
+        }
+        .btn-outline:hover {
+            background-color: #3182ce;
+            color: white;
         }
         .alert {
             padding: 1rem;
@@ -135,158 +198,357 @@
         .url-item:hover {
             background-color: #f7fafc;
         }
+        .url-item input {
+            margin-right: 0.5rem;
+            margin-top: 0.25rem;
+        }
+        .url-item label {
+            flex: 1;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .url-item-url {
+            word-break: break-all;
+            color: #4a5568;
+        }
+        .select-all-container {
+            margin-bottom: 0.5rem;
+        }
+        .loading {
+            text-align: center;
+            padding: 1rem;
+            color: #718096;
+        }
+        .url-count {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 0.5rem;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        .tab.active {
+            border-bottom: 3px solid #3182ce;
+            color: #3182ce;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
-    <th:block th:replace="~{fragments/admin-panel :: admin-layout('submit-url', 'Submit URL for Indexing')}">
-        <th:block th:fragment="content">
-            <h1><i class="fas fa-link"></i> Submit URL for Indexing</h1>
-            <p>Submit your URLs to search engines for faster indexing and improved SEO performance.</p>
-            
-            <!-- Alert Messages -->
-            <div th:if="${successMessage}" class="alert alert-success">
-                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+<div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-paw"></i> Admin Panel</h3>
+        </div>
+        <nav>
+            <ul class="sidebar-nav">
+                <li><a href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="/admin/blogs"><i class="fas fa-blog"></i> Blogs</a></li>
+                <li><a href="/admin/reviews"><i class="fas fa-star"></i> Reviews</a></li>
+                <li><a href="/admin/images"><i class="fas fa-images"></i> Images</a></li>
+                <li><a href="/admin/ai-content-generator"><i class="fas fa-robot"></i> AI Content Generator</a></li>
+                <li><a href="/admin/import"><i class="fas fa-upload"></i> Import Data</a></li>
+                <li><a href="/admin/submit-url" class="active"><i class="fas fa-link"></i> Submit URL</a></li>
+                <li><a href="#" onclick="exportContent()"><i class="fas fa-download"></i> Export Data</a></li>
+                <li><a href="/"><i class="fas fa-external-link-alt"></i> View Site</a></li>
+                <li><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-content">
+        <h1><i class="fas fa-link"></i> Submit URL for Indexing</h1>
+        <p>Submit URLs to Bing search engine to request indexing of your content.</p>
+
+        <!-- Alert Messages -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+        </div>
+        <div th:if="${warningMessage}" class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> <span th:text="${warningMessage}"></span>
+        </div>
+
+        <div class="submit-container">
+            <!-- Requirements -->
+            <div class="requirements">
+                <h4><i class="fas fa-info-circle"></i> Submit URL Information</h4>
+                <ul>
+                    <li>You can submit URLs to Bing for indexing using IndexNow API</li>
+                    <li>Submitting a URL requests that Bing crawls and indexes the page</li>
+                    <li>This does not guarantee immediate indexing, but it speeds up the process</li>
+                    <li>Only submit URLs that are publicly accessible and contain valuable content</li>
+                    <li>Bing supports submitting multiple URLs at once using IndexNow API</li>
+                    <li>URLs must start with http:// or https://</li>
+                </ul>
             </div>
-            <div th:if="${errorMessage}" class="alert alert-error">
-                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
-            </div>
-            <div th:if="${warningMessage}" class="alert alert-warning">
-                <i class="fas fa-exclamation-triangle"></i> <span th:text="${warningMessage}"></span>
-            </div>
-            
-            <div class="submit-container">
-                <!-- Requirements -->
-                <div class="requirements">
-                    <h4><i class="fas fa-info-circle"></i> Submission Requirements</h4>
-                    <ul>
-                        <li>URLs must be publicly accessible and not blocked by robots.txt</li>
-                        <li>Content should be unique and valuable to users</li>
-                        <li>Avoid submitting the same URLs repeatedly in a short timeframe</li>
-                        <li>Google allows up to 100 URLs per day for free accounts</li>
-                        <li>Ensure your sitemap.xml is properly configured for best results</li>
-                    </ul>
+
+            <!-- Submit URL Form -->
+            <form method="post" th:action="@{/admin/submit-url}" id="submitUrlForm">
+                <!-- Tabs -->
+                <div class="tabs">
+                    <div class="tab active" data-tab="sitemap">Sitemap URLs</div>
+                    <div class="tab" data-tab="manual">Manual Entry</div>
                 </div>
-                
-                <!-- Submission Form -->
-                <form method="post" th:action="@{/admin/submit-url}">
-                    <!-- Submission Type -->
+
+                <!-- Sitemap URLs Tab -->
+                <div class="tab-content active" id="sitemap-tab">
                     <div class="form-group">
-                        <label class="form-label"><i class="fas fa-list"></i> Submission Type</label>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="single" name="submissionType" value="single" checked onchange="toggleUrlInput()">
-                                <label for="single"><i class="fas fa-link"></i> Single URL</label>
+                        <div class="select-all-container">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="loadSitemapUrls()">
+                                <i class="fas fa-sync"></i> Refresh Sitemap URLs
+                            </button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="selectAllUrls()" style="margin-left: 0.5rem;">
+                                <i class="fas fa-check-square"></i> Select All
+                            </button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="deselectAllUrls()" style="margin-left: 0.5rem;">
+                                <i class="fas fa-square"></i> Deselect All
+                            </button>
+                        </div>
+                        <div class="help-text">Select the URLs you want to submit to Bing for indexing</div>
+                        <div class="url-count">Loaded <span id="urlCount">0</span> URLs</div>
+                        <div class="url-list" id="urlListContainer">
+                            <div class="loading" id="loadingIndicator">
+                                <i class="fas fa-spinner fa-spin"></i> Loading sitemap URLs...
                             </div>
-                            <div class="radio-option">
-                                <input type="radio" id="batch" name="submissionType" value="batch" onchange="toggleUrlInput()">
-                                <label for="batch"><i class="fas fa-list"></i> Batch URLs</label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="sitemap" name="submissionType" value="sitemap" onchange="toggleUrlInput()">
-                                <label for="sitemap"><i class="fas fa-sitemap"></i> Sitemap URL</label>
-                            </div>
+                            <!-- URLs will be loaded here by JavaScript -->
                         </div>
                     </div>
-                    
-                    <!-- URL Input -->
+
+                    <!-- Hidden input to indicate selected URLs submission -->
+                    <input type="hidden" name="submitType" value="selected">
+                </div>
+
+                <!-- Manual Entry Tab -->
+                <div class="tab-content" id="manual-tab">
+                    <!-- URL Input Type Toggle -->
                     <div class="form-group">
-                        <label class="form-label" id="urlLabel"><i class="fas fa-link"></i> URL</label>
-                        <input type="url" class="form-control" id="singleUrl" name="url" placeholder="https://example.com/page" required>
-                        <textarea class="form-control textarea hidden" id="batchUrls" name="urls" placeholder="Enter one URL per line&#10;https://example.com/page1&#10;https://example.com/page2" style="display: none;"></textarea>
-                        <input type="url" class="form-control hidden" id="sitemapUrl" name="sitemapUrl" placeholder="https://example.com/sitemap.xml" style="display: none;">
-                        <div class="help-text" id="urlHelp">Enter the complete URL including http:// or https://</div>
-                    </div>
-                    
-                    <!-- Search Engines -->
-                    <div class="form-group">
-                        <label class="form-label"><i class="fas fa-search"></i> Search Engines</label>
                         <div class="checkbox-option">
-                            <input type="checkbox" id="google" name="searchEngines" value="google" checked>
-                            <label for="google">Google</label>
+                            <input type="checkbox" id="multipleUrls" name="multipleUrls" value="true" onchange="toggleUrlInput()">
+                            <label for="multipleUrls">Submit multiple URLs</label>
                         </div>
-                        <div class="checkbox-option">
-                            <input type="checkbox" id="bing" name="searchEngines" value="bing" checked>
-                            <label for="bing">Bing</label>
+                        <div class="help-text">Check this box to submit multiple URLs (one per line)</div>
+                    </div>
+
+                    <!-- Single URL Input -->
+                    <div class="form-group" id="singleUrlGroup">
+                        <label class="form-label"><i class="fas fa-link"></i> URL to Submit</label>
+                        <input type="url" class="form-control" name="url" placeholder="https://example.com/page-to-index">
+                        <div class="help-text">Enter the full URL you want Bing to index (must start with http:// or https://)</div>
+                    </div>
+
+                    <!-- Multiple URLs Input -->
+                    <div class="form-group hidden" id="multipleUrlsGroup">
+                        <label class="form-label"><i class="fas fa-link"></i> URLs to Submit</label>
+                        <textarea class="form-control textarea" name="url" id="manualUrlList" placeholder="https://example.com/page1&#10;https://example.com/page2&#10;https://example.com/page3"></textarea>
+                        <div class="help-text">Enter multiple URLs, one per line (must start with http:// or https://)</div>
+                        <div style="margin-top: 0.5rem;">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="loadSitemapUrlsToManual()">
+                                <i class="fas fa-sitemap"></i> Load Latest 20 URLs from Sitemap
+                            </button>
                         </div>
-                        <div class="help-text">Select which search engines to submit your URLs to</div>
                     </div>
-                    
-                    <!-- Action Buttons -->
-                    <div style="text-align: right; margin-top: 2rem;">
-                        <a href="/admin/dashboard" class="btn btn-outline" style="margin-right: 1rem;">
-                            <i class="fas fa-times"></i> Cancel
-                        </a>
-                        <button type="submit" class="btn">
-                            <i class="fas fa-paper-plane"></i> Submit URLs
-                        </button>
-                    </div>
-                </form>
-                
-                <!-- Recent Submissions -->
-                <div th:if="${recentSubmissions != null and !recentSubmissions.isEmpty()}" style="margin-top: 2rem;">
-                    <h3><i class="fas fa-history"></i> Recent Submissions</h3>
-                    <div class="url-list">
-                        <div class="url-item" th:each="submission : ${recentSubmissions}">
-                            <div style="flex: 1;">
-                                <div style="font-weight: 500;" th:text="${submission.url}">URL</div>
-                                <div style="font-size: 0.9rem; color: #718096;">
-                                    Submitted to: <span th:text="${submission.searchEngines}">Search Engines</span> • 
-                                    <span th:text="${#temporals.format(submission.submissionDate, 'MMM dd, yyyy HH:mm')}">Date</span>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="text-align: right; margin-top: 2rem;">
+                    <a href="/admin/dashboard" class="btn btn-outline" style="margin-right: 1rem;">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i> Submit Selected URLs to Bing
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<script>
+    // Initialize the form state
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load sitemap URLs on page load
+        loadSitemapUrls();
+
+        // Set up tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                // Add active class to clicked tab
+                this.classList.add('active');
+
+                // Show corresponding content
+                const tabName = this.getAttribute('data-tab');
+                document.getElementById(tabName + '-tab').classList.add('active');
+
+                // Update submit button text
+                const submitBtn = document.getElementById('submitBtn');
+                if (tabName === 'sitemap') {
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Selected URLs to Bing';
+                    submitBtn.querySelector('input[name="submitType"]').value = 'selected';
+                } else {
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit URL(s) to Bing';
+                }
+            });
+        });
+    });
+
+    function loadSitemapUrls() {
+        const container = document.getElementById('urlListContainer');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const urlCount = document.getElementById('urlCount');
+
+        // Show loading indicator
+        container.innerHTML = '<div class="loading" id="loadingIndicator"><i class="fas fa-spinner fa-spin"></i> Loading sitemap URLs...</div>';
+
+        // Fetch the sitemap and extract URLs
+        fetch('/sitemap.xml')
+            .then(response => response.text())
+            .then(data => {
+                // Parse the XML
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(data, "text/xml");
+
+                // Extract all loc elements
+                const locElements = xmlDoc.getElementsByTagName('loc');
+                let urls = [];
+
+                // Get all URLs
+                for (let i = 0; i < locElements.length; i++) {
+                    urls.push(locElements[i].textContent);
+                }
+
+                // Update URL count
+                urlCount.textContent = urls.length;
+
+                // Generate HTML for URL list
+                if (urls.length > 0) {
+                    let html = '';
+                    urls.forEach((url, index) => {
+                        html += `
+                                <div class="url-item">
+                                    <input type="checkbox" id="url-${index}" name="selectedUrls" value="${url}">
+                                    <label for="url-${index}" class="url-item-url">${url}</label>
                                 </div>
-                            </div>
-                            <div style="color: #38a169; font-size: 0.9rem;" th:if="${submission.status == 'SUCCESS'}">
-                                <i class="fas fa-check-circle"></i> Success
-                            </div>
-                            <div style="color: #e53e3e; font-size: 0.9rem;" th:if="${submission.status == 'FAILED'}">
-                                <i class="fas fa-exclamation-circle"></i> Failed
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </th:block>
-    </th:block>
-    
-    <th:block th:replace="~{fragments/admin-panel :: admin-scripts}"></th:block>
-    
-    <script>
-        function toggleUrlInput() {
-            const submissionType = document.querySelector('input[name="submissionType"]:checked').value;
-            const singleUrl = document.getElementById('singleUrl');
-            const batchUrls = document.getElementById('batchUrls');
-            const sitemapUrl = document.getElementById('sitemapUrl');
-            const urlLabel = document.getElementById('urlLabel');
-            const urlHelp = document.getElementById('urlHelp');
-            
-            // Hide all inputs
-            singleUrl.style.display = 'none';
-            batchUrls.style.display = 'none';
-            sitemapUrl.style.display = 'none';
-            
-            // Show the relevant input
-            if (submissionType === 'single') {
-                singleUrl.style.display = 'block';
-                singleUrl.required = true;
-                batchUrls.required = false;
-                sitemapUrl.required = false;
-                urlLabel.innerHTML = '<i class="fas fa-link"></i> URL';
-                urlHelp.textContent = 'Enter the complete URL including http:// or https://';
-            } else if (submissionType === 'batch') {
-                batchUrls.style.display = 'block';
-                batchUrls.required = true;
-                singleUrl.required = false;
-                sitemapUrl.required = false;
-                urlLabel.innerHTML = '<i class="fas fa-list"></i> URLs';
-                urlHelp.textContent = 'Enter one URL per line';
-            } else {
-                sitemapUrl.style.display = 'block';
-                sitemapUrl.required = true;
-                singleUrl.required = false;
-                batchUrls.required = false;
-                urlLabel.innerHTML = '<i class="fas fa-sitemap"></i> Sitemap URL';
-                urlHelp.textContent = 'Enter the complete sitemap URL including http:// or https://';
+                            `;
+                    });
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<div class="loading">No URLs found in sitemap</div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading sitemap:', error);
+                container.innerHTML = '<div class="loading">Error loading sitemap. Please try again.</div>';
+            });
+    }
+
+    function loadSitemapUrlsToManual() {
+        const textarea = document.getElementById('manualUrlList');
+
+        // Fetch the sitemap and extract the latest 20 URLs
+        fetch('/sitemap.xml')
+            .then(response => response.text())
+            .then(data => {
+                // Parse the XML
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(data, "text/xml");
+
+                // Extract all loc elements
+                const locElements = xmlDoc.getElementsByTagName('loc');
+                let urls = [];
+
+                // Get up to 20 URLs
+                for (let i = 0; i < Math.min(locElements.length, 20); i++) {
+                    urls.push(locElements[i].textContent);
+                }
+
+                // Populate the textarea
+                textarea.value = urls.join('\n');
+            })
+            .catch(error => {
+                console.error('Error loading sitemap:', error);
+                alert('Error loading sitemap. Please try again.');
+            });
+    }
+
+    function selectAllUrls() {
+        document.querySelectorAll('input[name="selectedUrls"]').forEach(checkbox => {
+            checkbox.checked = true;
+        });
+    }
+
+    function deselectAllUrls() {
+        document.querySelectorAll('input[name="selectedUrls"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+    }
+
+    function toggleUrlInput() {
+        const multipleUrlsCheckbox = document.getElementById('multipleUrls');
+        const singleUrlGroup = document.getElementById('singleUrlGroup');
+        const multipleUrlsGroup = document.getElementById('multipleUrlsGroup');
+        const manualUrlList = document.getElementById('manualUrlList');
+        const singleUrlInput = singleUrlGroup.querySelector('input[name="url"]');
+
+        if (multipleUrlsCheckbox.checked) {
+            // Switching to multiple URLs mode
+            singleUrlGroup.classList.add('hidden');
+            multipleUrlsGroup.classList.remove('hidden');
+            singleUrlInput.removeAttribute('required');
+            manualUrlList.setAttribute('required', 'required');
+        } else {
+            // Switching to single URL mode
+            singleUrlGroup.classList.remove('hidden');
+            multipleUrlsGroup.classList.add('hidden');
+            singleUrlInput.setAttribute('required', 'required');
+            manualUrlList.removeAttribute('required');
+        }
+    }
+
+    function exportContent() {
+        // Create a temporary link and trigger download
+        const link = document.createElement('a');
+        link.href = '/admin/export';
+        link.download = '';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Form submission validation
+    document.getElementById('submitUrlForm').addEventListener('submit', function(e) {
+        // Check if we're in sitemap tab and no URLs are selected
+        const activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+        if (activeTab === 'sitemap') {
+            const selectedUrls = document.querySelectorAll('input[name="selectedUrls"]:checked');
+            if (selectedUrls.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one URL to submit.');
+                return false;
             }
         }
-    </script>
+    });
+</script>
 </body>
 </html>
