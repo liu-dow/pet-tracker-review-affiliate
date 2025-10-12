@@ -351,14 +351,18 @@ slug: "how-pet-trackers-work"
 ─────────────────────────────
 所有字段说明如下：
 
-- **title**：评测标题（必填）  
-- **content**：评测正文（必填，HTML 格式）  
-- **productBrand**：品牌名称（必填）  
-- **productName**：产品名称（可选）  
-- **rating**：评分，1~5（可选，默认 5.0）  
-- **pros**：优点列表，使用纯 HTML 格式 &lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;（不可包含任何 CSS 样式）  
-- **cons**：缺点列表，使用纯 HTML 格式 &lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;（不可包含任何 CSS 样式）  
-- **conclusion**：结论段落（可选）
+- **title**：评测标题（必填）
+- **content**：评测正文（必填，HTML 格式）
+- **productBrand**：品牌名称（必填）
+- `author`：作者名（⚙️ 每次随机生成英文姓名，如 “Alice Smith”）
+- **productName**：产品名称（可选）
+- **rating**：评分，1~5（可选，默认 5.0）
+- **pros**：优点列表，使用纯 HTML 格式 &lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;（不可包含任何 CSS 样式）
+- **cons**：缺点列表，使用纯 HTML 格式 &lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;（不可包含任何 CSS 样式）
+- **conclusion**：结论段落
+- `metaDescription`：SEO 描述（80–160 字符）
+- `metaTitle`：SEO 标题
+- `slug`：URL slug，例如 `how-pet-trackers-work`
 
 ─────────────────────────────
 🧱 3. 写作与格式要求
@@ -371,21 +375,18 @@ slug: "how-pet-trackers-work"
 - 所有输出必须是英文内容。
 - 写作风格：专业、客观、易懂，适合评测类网站（类似 Wirecutter / TechRadar / pettrackerreview.com）。
 
+
 ─────────────────────────────
 ⭐ 4. 内容逻辑建议
 ─────────────────────────────
 文章应包含以下逻辑层次：
-1. 产品介绍（定义、品牌背景）
+1. 产品介绍（定义、品牌背景）,详细的参数
 2. 核心功能与使用体验
 3. 性能评估与特点（定位精度、电池寿命、连接稳定性等）
 4. 优缺点分析（pros / cons）
 5. 最终结论（总结推荐理由）
 
 ─────────────────────────────
-🧩 5. 作者与日期规则
-─────────────────────────────
-- 不需要单独的 author 字段。
-- 可以在正文开头或结尾提及 “Reviewed by {{RANDOM_ENGLISH_NAME}}”，随机生成英文人名。
 
 ─────────────────────────────
 🧾 6. 输出格式示例（参考）
