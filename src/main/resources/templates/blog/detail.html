@@ -7,18 +7,18 @@
     <meta name="description" th:content="${metaDescription}">
     <meta name="keywords" th:content="${keywords}">
     <meta name="title" th:content="${blogPost.metaTitle ?: blogPost.title}">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
     <meta property="og:title" th:content="${blogPost.metaTitle ?: blogPost.title}">
     <meta property="og:description" th:content="${blogPost.metaDescription}">
     <meta property="article:author" th:content="${blogPost.author}">
     <meta property="article:published_time" th:content="${blogPost.date}">
-    
+
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    
+
     <!-- CSS -->
     <link rel="stylesheet" th:href="@{/css/pages/base.css(v=${cssVersion})}">
     <link rel="stylesheet" th:href="@{/css/pages/header.css(v=${cssVersion})}">
@@ -46,7 +46,7 @@
                         <span th:text="#{site.title}">Pet Tracker Review</span>
                     </a>
                 </div>
-                
+
                 <div class="nav-menu">
                     <ul class="nav-list">
                         <li class="nav-item">
@@ -83,7 +83,7 @@
                 <main class="article-content">
                     <header class="article-header">
                         <h1 th:text="${blogPost.title}">Article Title</h1>
-                        
+
                         <div class="article-meta">
                             <span class="article-author">
                                 <i class="fas fa-user"></i>
@@ -94,17 +94,17 @@
                                 <span th:text="${#temporals.format(blogPost.date, 'MMMM dd, yyyy')}">Date</span>
                             </span>
                         </div>
-                        
+
                         <div class="article-tags" th:if="${blogPost.tags != null and !blogPost.tags.isEmpty()}">
                             <span class="tag" th:each="tag : ${blogPost.tags}" th:text="${tag}">tag</span>
                         </div>
                     </header>
-                    
+
                     <div class="article-body" th:utext="${blogPost.content}">
 
                         Article content goes here...
                     </div>
-                    
+
                     <footer class="article-footer">
                         <div class="share-buttons">
                             <h4 th:text="#{search.results.readMore}">Share this article:</h4>
@@ -117,7 +117,7 @@
                         </div>
                     </footer>
                 </main>
-                
+
                 <!-- Sidebar -->
                 <aside class="article-sidebar">
                     <!-- Related Posts -->
@@ -134,7 +134,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Newsletter Signup -->
                     <div class="sidebar-section">
                         <h3 th:text="#{home.popularTopics.title}">Stay Updated</h3>
@@ -169,13 +169,13 @@
             const url = window.location.href;
             window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
         }
-        
+
         function shareOnTwitter() {
             const url = window.location.href;
             const title = document.title;
             window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
         }
-        
+
         function shareOnLinkedIn() {
             const url = window.location.href;
             window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
