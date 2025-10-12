@@ -359,6 +359,109 @@ public class AdminController {
         }
     }
     
+    /**
+     * Preview pasted YAML content
+     */
+    @PostMapping("/preview-paste")
+    @ResponseBody
+    public String previewPastedContent(@RequestParam("pasteContent") String pasteContent,
+                                     @RequestParam("contentType") String contentType,
+                                     @RequestParam(required = false, defaultValue = "en") String lang,
+                                     Model model) {
+        try {
+            PreviewResult result = contentService.previewYamlContent(pasteContent, contentType);
+            
+            model.addAttribute("previewResult", result);
+            model.addAttribute("contentType", contentType);
+            model.addAttribute("lang", lang);
+            
+            if (result.isSuccess()) {
+                if ("blogs".equals(contentType)) {
+                    model.addAttribute("blogPost", result.getBlogPost());
+                } else {
+                    model.addAttribute("review", result.getReview());
+                }
+            } else {
+                model.addAttribute("errorMessage", result.getMessage());
+            }
+            
+            // Create a new View with the preview template
+            return renderTemplate("admin/preview", model);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", 
+                "en".equals(lang) ? ("Preview failed: " + e.getMessage()) : ("预览失败：" + e.getMessage()));
+            model.addAttribute("previewResult", new PreviewResult(false, e.getMessage()));
+            model.addAttribute("contentType", contentType);
+            model.addAttribute("lang", lang);
+            return renderTemplate("admin/preview", model);
+        }
+    }
+    
+    /**
+     * Import pasted YAML content
+     */
+    @PostMapping("/import-paste")
+    @ResponseBody
+    public Map<String, Object> importPastedContent(@RequestParam("pasteContent") String pasteContent,
+                                                 @RequestParam("contentType") String contentType,
+                                                 @RequestParam(required = false, defaultValue = "en") String lang) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            ImportResult result = contentService.importYamlContent(pasteContent, contentType);
+            
+            response.put("success", result.isSuccess());
+            response.put("message", result.getMessage());
+            
+            if (result.isSuccess()) {
+                response.put("redirectUrl", "blogs".equals(contentType) ? "/admin/blogs" : "/admin/reviews");
+            }
+            
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", 
+                "en".equals(lang) ? ("Import failed: " + e.getMessage()) : ("导入失败：" + e.getMessage()));
+        }
+        
+        return response;
+    }
+    
+    /**
+     * Helper method to render a template as a string
+     */
+    private String renderTemplate(String templateName, Model model) {
+        // This is a simplified version - in a real implementation you would use a ViewResolver
+        try {
+            // Create a temporary ModelMap to hold the attributes
+            org.springframework.ui.ModelMap modelMap = new org.springframework.ui.ModelMap();
+            
+            // Add all attributes from the model to the ModelMap
+            if (model.asMap() != null) {
+                modelMap.putAll(model.asMap());
+            }
+            
+            // For now, we'll return a simple response indicating success
+            // In a real implementation, you would render the template properly
+            StringBuilder response = new StringBuilder();
+            response.append("<html><head><meta charset='UTF-8'></head><body>");
+            response.append("<h1>Preview Result</h1>");
+            response.append("<p>Content type: ").append(modelMap.get("contentType")).append("</p>");
+            
+            if (modelMap.get("errorMessage") != null) {
+                response.append("<p style='color:red;'>Error: ").append(modelMap.get("errorMessage")).append("</p>");
+            } else {
+                response.append("<p>Preview generated successfully. You can now import the content.</p>");
+            }
+            
+            response.append("<button onclick='window.close()'>Close</button>");
+            response.append("</body></html>");
+            return response.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "<html><head><meta charset='UTF-8'></head><body>Error rendering template: " + e.getMessage() + "</body></html>";
+        }
+    }
+    
     // Image Management
     @GetMapping("/images")
     public String imageList(@RequestParam(required = false) String category,

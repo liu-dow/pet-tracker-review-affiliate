@@ -616,13 +616,12 @@ public class YamlContentService {
     }
     
     /**
-     * Preview YAML file content without saving
-     * @param file Uploaded file
+     * Preview YAML content without saving
+     * @param content YAML content as string
      * @param contentType Content type ("blogs" or "reviews")
      * @return Preview result with parsed content
-     * @throws IOException If IO error occurs during preview
      */
-    public PreviewResult previewYamlFile(MultipartFile file, String contentType) throws IOException {
+    public PreviewResult previewYamlContent(String content, String contentType) {
         PreviewResult result = new PreviewResult();
         
         // Validate content type
@@ -632,27 +631,15 @@ public class YamlContentService {
             return result;
         }
         
-        // Validate file name
-        String originalFileName = file.getOriginalFilename();
-        if (originalFileName == null || (!originalFileName.endsWith(".yaml") && !originalFileName.endsWith(".yml"))) {
-            result.setSuccess(false);
-            result.setMessage("File must be in YAML format (.yaml or .yml)");
-            return result;
-        }
-        
         try {
-            // Read file content
-            String content = new String(file.getBytes(), StandardCharsets.UTF_8);
-            
             // Validate YAML syntax first
             if (content.trim().isEmpty()) {
                 result.setSuccess(false);
-                result.setMessage("File is empty or contains no content");
+                result.setMessage("Content is empty or contains no content");
                 return result;
             }
             
             result.setContentType(contentType);
-            result.setFileName(originalFileName);
             result.setRawContent(content);
             
             // Parse and validate YAML content
@@ -687,6 +674,75 @@ public class YamlContentService {
         } catch (Exception e) {
             result.setSuccess(false);
             result.setMessage("Preview failed: " + e.getMessage());
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Import YAML content to specified content type directory
+     * @param content YAML content as string
+     * @param contentType Content type ("blogs" or "reviews")
+     * @return Import result information
+     * @throws IOException If IO error occurs during import
+     */
+    @Caching(evict = {
+        @CacheEvict(value = "blogPosts", key = "'allBlogPosts'", condition = "#contentType == 'blogs'"),
+        @CacheEvict(value = "reviews", key = "'allReviews'", condition = "#contentType == 'reviews'"),
+        @CacheEvict(value = "tags", allEntries = true)
+    })
+    public ImportResult importYamlContent(String content, String contentType) throws IOException {
+        ImportResult result = new ImportResult();
+        
+        // Validate content type
+        if (!"blogs".equals(contentType) && !"reviews".equals(contentType)) {
+            result.setSuccess(false);
+            result.setMessage("Unsupported content type: " + contentType);
+            return result;
+        }
+        
+        try {
+            // Validate content
+            if (content.trim().isEmpty()) {
+                result.setSuccess(false);
+                result.setMessage("Content is empty or contains no content");
+                return result;
+            }
+            
+            // Validate and parse YAML content
+            if ("blogs".equals(contentType)) {
+                try {
+                    BlogPost blogPost = validateAndParseBlogPost(content);
+                    saveBlogPost(blogPost);
+                    result.setSuccess(true);
+                    result.setMessage("Blog post imported successfully: " + blogPost.getTitle());
+                    result.setImportedFileName(blogPost.getSlug() + ".yaml");
+                } catch (IllegalArgumentException e) {
+                    result.setSuccess(false);
+                    result.setMessage(e.getMessage());
+                } catch (RuntimeException e) {
+                    result.setSuccess(false);
+                    result.setMessage(e.getMessage());
+                }
+            } else {
+                try {
+                    Review review = validateAndParseReview(content);
+                    saveReview(review);
+                    result.setSuccess(true);
+                    result.setMessage("Review imported successfully: " + review.getTitle());
+                    result.setImportedFileName(review.getSlug() + ".yaml");
+                } catch (IllegalArgumentException e) {
+                    result.setSuccess(false);
+                    result.setMessage(e.getMessage());
+                } catch (RuntimeException e) {
+                    result.setSuccess(false);
+                    result.setMessage(e.getMessage());
+                }
+            }
+            
+        } catch (Exception e) {
+            result.setSuccess(false);
+            result.setMessage("Import failed: " + e.getMessage());
         }
         
         return result;

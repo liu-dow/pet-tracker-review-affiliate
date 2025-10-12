@@ -146,6 +146,47 @@
         .language-switcher button.active {
             background: #1a365d;
         }
+        /* Tab styles */
+        .tab-container {
+            margin-bottom: 1.5rem;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab.active {
+            border-bottom: 3px solid #3182ce;
+            color: #3182ce;
+            font-weight: 500;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* Textarea for paste content */
+        .paste-textarea {
+            width: 100%;
+            min-height: 200px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            resize: vertical;
+        }
+        .paste-textarea:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -176,11 +217,13 @@
                         <li><strong>Blog posts must contain:</strong>
                             <ul style="margin-top: 0.5rem; margin-left: 1rem;">
                                 <li><code>title</code> - Blog post title (required)</li>
-                                <li><code>content</code> - Blog post content (required)</li>
+                                <li><code>content</code> - Blog post content in HTML format (required)</li>
                                 <li><code>author</code> - Author name (optional, defaults to "Admin")</li>
-                                <li><code>date</code> - Publication date (optional, defaults to current time)</li>
+                                <li><code>date</code> - Publication date in format "yyyy-MM-dd HH:mm:ss" (optional, defaults to current time)</li>
                                 <li><code>tags</code> - List of tags (optional)</li>
                                 <li><code>metaDescription</code> - SEO meta description (optional)</li>
+                                <li><code>metaTitle</code> - SEO meta title (optional)</li>
+                                <li><code>slug</code> - URL slug (optional, auto-generated from title if not provided)</li>
                             </ul>
                         </li>
                         <li><strong>Reviews must contain:</strong>
@@ -272,49 +315,100 @@ conclusion: |
                     </div>
                 </div>
                 
-                <!-- Import Form -->
-                <form method="post" enctype="multipart/form-data" th:action="@{/admin/import}">
-                    <!-- Content Type Selection -->
-                    <div class="form-group">
-                        <label class="form-label"><i class="fas fa-list"></i> Content Type</label>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" id="blogs" name="contentType" value="blogs" checked>
-                                <label for="blogs"><i class="fas fa-blog"></i> <span data-en="Blog Posts" data-zh="博客文章">Blog Posts</span></label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" id="reviews" name="contentType" value="reviews">
-                                <label for="reviews"><i class="fas fa-star"></i> <span data-en="Product Reviews" data-zh="产品评测">Product Reviews</span></label>
-                            </div>
-                        </div>
-                        <div class="help-text" data-en="Select the type of content to import" data-zh="选择要导入的内容类型">Select the type of content to import</div>
+                <!-- Tab Container -->
+                <div class="tab-container">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="file">File Upload</div>
+                        <div class="tab" data-tab="paste">Paste Content</div>
                     </div>
                     
-                    <!-- File Upload -->
-                    <div class="form-group">
-                        <label class="form-label"><i class="fas fa-file-upload"></i> Select File</label>
-                        <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
-                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #3182ce; margin-bottom: 1rem;"></i>
-                            <p>Click to select file or drag and drop here</p>
-                            <p style="font-size: 0.9rem; color: #718096;">Supports .yaml and .yml files</p>
-                            <input type="file" id="fileInput" name="file" accept=".yaml,.yml" style="display: none;" required>
-                        </div>
-                        <div id="fileName" class="help-text" style="margin-top: 1rem; display: none;"></div>
+                    <!-- File Upload Tab -->
+                    <div class="tab-content active" id="file-tab">
+                        <form method="post" enctype="multipart/form-data" th:action="@{/admin/import}">
+                            <!-- Content Type Selection -->
+                            <div class="form-group">
+                                <label class="form-label"><i class="fas fa-list"></i> Content Type</label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="blogs" name="contentType" value="blogs" checked>
+                                        <label for="blogs"><i class="fas fa-blog"></i> <span data-en="Blog Posts" data-zh="博客文章">Blog Posts</span></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="reviews" name="contentType" value="reviews">
+                                        <label for="reviews"><i class="fas fa-star"></i> <span data-en="Product Reviews" data-zh="产品评测">Product Reviews</span></label>
+                                    </div>
+                                </div>
+                                <div class="help-text" data-en="Select the type of content to import" data-zh="选择要导入的内容类型">Select the type of content to import</div>
+                            </div>
+                            
+                            <!-- File Upload -->
+                            <div class="form-group">
+                                <label class="form-label"><i class="fas fa-file-upload"></i> Select File</label>
+                                <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #3182ce; margin-bottom: 1rem;"></i>
+                                    <p>Click to select file or drag and drop here</p>
+                                    <p style="font-size: 0.9rem; color: #718096;">Supports .yaml and .yml files</p>
+                                    <input type="file" id="fileInput" name="file" accept=".yaml,.yml" style="display: none;" required>
+                                </div>
+                                <div id="fileName" class="help-text" style="margin-top: 1rem; display: none;"></div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div style="text-align: right; margin-top: 2rem;">
+                                <a href="/admin/dashboard" class="btn btn-outline" style="margin-right: 1rem;">
+                                    <i class="fas fa-times"></i> <span class="cancel-btn-text" data-en="Cancel" data-zh="取消">Cancel</span>
+                                </a>
+                                <button type="button" class="btn btn-outline" onclick="previewFile()" style="margin-right: 1rem;">
+                                    <i class="fas fa-eye"></i> <span class="preview-btn-text" data-en="Preview" data-zh="预览">Preview</span>
+                                </button>
+                                <button type="submit" class="btn">
+                                    <i class="fas fa-upload"></i> <span class="import-btn-text" data-en="Import File" data-zh="导入文件">Import File</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                     
-                    <!-- Action Buttons -->
-                    <div style="text-align: right; margin-top: 2rem;">
-                        <a href="/admin/dashboard" class="btn btn-outline" style="margin-right: 1rem;">
-                            <i class="fas fa-times"></i> <span class="cancel-btn-text" data-en="Cancel" data-zh="取消">Cancel</span>
-                        </a>
-                        <button type="button" class="btn btn-outline" onclick="previewFile()" style="margin-right: 1rem;">
-                            <i class="fas fa-eye"></i> <span class="preview-btn-text" data-en="Preview" data-zh="预览">Preview</span>
-                        </button>
-                        <button type="submit" class="btn">
-                            <i class="fas fa-upload"></i> <span class="import-btn-text" data-en="Import File" data-zh="导入文件">Import File</span>
-                        </button>
+                    <!-- Paste Content Tab -->
+                    <div class="tab-content" id="paste-tab">
+                        <form method="post" id="pasteForm">
+                            <!-- Content Type Selection -->
+                            <div class="form-group">
+                                <label class="form-label"><i class="fas fa-list"></i> Content Type</label>
+                                <div class="radio-group">
+                                    <div class="radio-option">
+                                        <input type="radio" id="paste-blogs" name="pasteContentType" value="blogs" checked>
+                                        <label for="paste-blogs"><i class="fas fa-blog"></i> <span data-en="Blog Posts" data-zh="博客文章">Blog Posts</span></label>
+                                    </div>
+                                    <div class="radio-option">
+                                        <input type="radio" id="paste-reviews" name="pasteContentType" value="reviews">
+                                        <label for="paste-reviews"><i class="fas fa-star"></i> <span data-en="Product Reviews" data-zh="产品评测">Product Reviews</span></label>
+                                    </div>
+                                </div>
+                                <div class="help-text" data-en="Select the type of content to import" data-zh="选择要导入的内容类型">Select the type of content to import</div>
+                            </div>
+                            
+                            <!-- Paste Content Textarea -->
+                            <div class="form-group">
+                                <label class="form-label"><i class="fas fa-paste"></i> Paste YAML Content</label>
+                                <textarea class="paste-textarea" id="pasteContent" name="pasteContent" placeholder="Paste your YAML content here..."></textarea>
+                                <div class="help-text" data-en="Paste your YAML content directly into this text area" data-zh="将YAML内容直接粘贴到此文本区域">Paste your YAML content directly into this text area</div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div style="text-align: right; margin-top: 2rem;">
+                                <a href="/admin/dashboard" class="btn btn-outline" style="margin-right: 1rem;">
+                                    <i class="fas fa-times"></i> <span class="cancel-btn-text" data-en="Cancel" data-zh="取消">Cancel</span>
+                                </a>
+                                <button type="button" class="btn btn-outline" onclick="previewPasteContent()" style="margin-right: 1rem;">
+                                    <i class="fas fa-eye"></i> <span class="preview-btn-text" data-en="Preview" data-zh="预览">Preview</span>
+                                </button>
+                                <button type="button" class="btn" onclick="importPasteContent()">
+                                    <i class="fas fa-upload"></i> <span class="import-btn-text" data-en="Import Content" data-zh="导入内容">Import Content</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
         </th:block>
     </th:block>
@@ -344,7 +438,23 @@ conclusion: |
             });
         }
         
-        // Preview functionality
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId + '-tab').classList.add('active');
+            });
+        });
+        
+        // Preview functionality for file upload
         function previewFile() {
             const fileInput = document.getElementById('fileInput');
             const contentType = document.querySelector('input[name="contentType"]:checked').value;
@@ -393,6 +503,87 @@ conclusion: |
             document.body.appendChild(form);
             form.submit();
             document.body.removeChild(form);
+        }
+        
+        // Preview functionality for paste content
+        function previewPasteContent() {
+            const contentType = document.querySelector('input[name="pasteContentType"]:checked').value;
+            const content = document.getElementById('pasteContent').value.trim();
+            
+            if (!content) {
+                const message = currentLang === 'zh' ? '请先粘贴YAML内容' : 'Please paste YAML content first';
+                alert(message);
+                return;
+            }
+            
+            // Send content to preview endpoint via AJAX
+            fetch('/admin/preview-paste', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'contentType': contentType,
+                    'pasteContent': content,
+                    'lang': currentLang
+                })
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Open preview in new window
+                const newWindow = window.open('', '_blank');
+                newWindow.document.write(html);
+                newWindow.document.close();
+            })
+            .catch(error => {
+                const message = currentLang === 'zh' ? '预览失败: ' + error.message : 'Preview failed: ' + error.message;
+                alert(message);
+            });
+        }
+        
+        // Import functionality for paste content
+        function importPasteContent() {
+            const contentType = document.querySelector('input[name="pasteContentType"]:checked').value;
+            const content = document.getElementById('pasteContent').value.trim();
+            
+            if (!content) {
+                const message = currentLang === 'zh' ? '请先粘贴YAML内容' : 'Please paste YAML content first';
+                alert(message);
+                return;
+            }
+            
+            // Send content to import endpoint via AJAX
+            fetch('/admin/import-paste', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'contentType': contentType,
+                    'pasteContent': content,
+                    'lang': currentLang
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const message = currentLang === 'zh' ? '内容导入成功: ' + data.message : 'Content imported successfully: ' + data.message;
+                    alert(message);
+                    // Redirect to appropriate management page
+                    if (contentType === 'blogs') {
+                        window.location.href = '/admin/blogs';
+                    } else {
+                        window.location.href = '/admin/reviews';
+                    }
+                } else {
+                    const message = currentLang === 'zh' ? '导入失败: ' + data.message : 'Import failed: ' + data.message;
+                    alert(message);
+                }
+            })
+            .catch(error => {
+                const message = currentLang === 'zh' ? '导入失败: ' + error.message : 'Import failed: ' + error.message;
+                alert(message);
+            });
         }
         
         // File input handling
