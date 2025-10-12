@@ -510,6 +510,74 @@ public class YamlContentService {
     }
     
     /**
+     * Preview YAML file without saving
+     * @param file Uploaded YAML file
+     * @param contentType Content type ("blogs" or "reviews")
+     * @return Preview result with parsed content
+     */
+    public PreviewResult previewYamlFile(MultipartFile file, String contentType) {
+        PreviewResult result = new PreviewResult();
+        
+        // Validate content type
+        if (!"blogs".equals(contentType) && !"reviews".equals(contentType)) {
+            result.setSuccess(false);
+            result.setMessage("Unsupported content type: " + contentType);
+            return result;
+        }
+        
+        try {
+            // Validate if file is empty
+            if (file.isEmpty()) {
+                result.setSuccess(false);
+                result.setMessage("File is empty or contains no content");
+                return result;
+            }
+            
+            // Read file content
+            String content = new String(file.getBytes(), StandardCharsets.UTF_8);
+            
+            result.setContentType(contentType);
+            result.setFileName(file.getOriginalFilename());
+            result.setRawContent(content);
+            
+            // Parse and validate YAML content
+            if ("blogs".equals(contentType)) {
+                try {
+                    BlogPost blogPost = validateAndParseBlogPost(content);
+                    result.setBlogPost(blogPost);
+                    result.setSuccess(true);
+                    result.setMessage("Blog post preview generated successfully");
+                } catch (IllegalArgumentException e) {
+                    result.setSuccess(false);
+                    result.setMessage(e.getMessage());
+                } catch (RuntimeException e) {
+                    result.setSuccess(false);
+                    result.setMessage(e.getMessage());
+                }
+            } else {
+                try {
+                    Review review = validateAndParseReview(content);
+                    result.setReview(review);
+                    result.setSuccess(true);
+                    result.setMessage("Review preview generated successfully");
+                } catch (IllegalArgumentException e) {
+                    result.setSuccess(false);
+                    result.setMessage(e.getMessage());
+                } catch (RuntimeException e) {
+                    result.setSuccess(false);
+                    result.setMessage(e.getMessage());
+                }
+            }
+            
+        } catch (Exception e) {
+            result.setSuccess(false);
+            result.setMessage("Preview failed: " + e.getMessage());
+        }
+        
+        return result;
+    }
+    
+    /**
      * Validate and parse blog post YAML content
      */
     public BlogPost validateAndParseBlogPost(String yamlContent) {
