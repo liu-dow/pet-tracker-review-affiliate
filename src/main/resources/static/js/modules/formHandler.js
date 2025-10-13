@@ -20,15 +20,34 @@ function initializeFormHandlers() {
                 submitButton.disabled = true;
                 submitButton.textContent = 'Subscribing...';
                 
+                // Send to backend API using absolute HTTPS URL
+                const baseUrl = window.location.origin;
+                const fetchUrl = `${baseUrl}/newsletter/subscribe`;
+                
+                // Create URL-encoded data
+                const formData = new URLSearchParams();
+                formData.append('email', email);
+                
                 // Send to backend API
-                fetch('/newsletter/subscribe', {
+                fetch(fetchUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: 'email=' + encodeURIComponent(email)
+                    body: formData
                 })
-                .then(response => response.json())
+                .then(response => {
+                    // Check if the response is ok (status 200-299)
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    // Check content type to ensure it's JSON
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error('Received non-JSON response from server');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         showNotification(data.message, 'success');

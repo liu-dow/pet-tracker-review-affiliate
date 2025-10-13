@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico", "/favicon-*.ico", "/favicon-*.svg").permitAll()
                 .antMatchers("/uploads/**").permitAll() // Allow uploaded files access
-                .antMatchers("/", "/blogs/**", "/reviews/**", "/search","/subscription", "/affiliate-disclosure", "/sitemap*.xml", "/robots.txt", "/llmx.txt", "/site.webmanifest","/about-us").permitAll()
+                .antMatchers("/", "/blogs/**", "/reviews/**", "/search","/subscription", "/affiliate-disclosure", "/sitemap*.xml", "/robots.txt", "/llmx.txt", "/site.webmanifest","/about-us", "/newsletter/subscribe").permitAll()
                 .antMatchers("/0a1530a2305041dbaa781156c2ce4c64.txt").permitAll() // Allow access to Bing verification file
                 .anyRequest().authenticated()
             .and()
