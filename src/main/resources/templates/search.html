@@ -6,6 +6,9 @@
     <title th:text="${pageTitle}">Search Results - Pet Tracker Reviews</title>
     <meta name="description" th:content="${metaDescription}">
     
+    <!-- Canonical URL -->
+    <link rel="canonical" th:href="@{'https://pettrackerreview.com/search?q=' + ${query}}" href="https://pettrackerreview.com/search?q=tracker" />
+    
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">

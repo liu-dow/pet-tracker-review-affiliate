@@ -8,6 +8,9 @@
     <meta name="keywords" th:content="${keywords}">
     <meta name="title" th:content="${review.metaTitle ?: review.title}">
     
+    <!-- Canonical URL -->
+    <link rel="canonical" th:href="@{'https://pettrackerreview.com/reviews/' + ${review.slug}}" href="https://pettrackerreview.com/reviews/sample-review" />
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
     <meta property="og:title" th:content="${review.metaTitle ?: review.title}">

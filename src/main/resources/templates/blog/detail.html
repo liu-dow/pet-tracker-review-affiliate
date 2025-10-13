@@ -8,6 +8,9 @@
     <meta name="keywords" th:content="${keywords}">
     <meta name="title" th:content="${blogPost.metaTitle ?: blogPost.title}">
 
+    <!-- Canonical URL -->
+    <link rel="canonical" th:href="@{'https://pettrackerreview.com/blogs/' + ${blogPost.slug}}" href="https://pettrackerreview.com/blogs/sample-post" />
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
     <meta property="og:title" th:content="${blogPost.metaTitle ?: blogPost.title}">
