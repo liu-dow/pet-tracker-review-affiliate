@@ -24,6 +24,9 @@ public class BlogPost {
     private String content;
     private String slug;
     
+    // Changed from showOnHomepage to sortOrder for better control
+    private int sortOrder = 0; // 0 means not displayed on homepage, positive values determine display order
+    
     // Constructors
     public BlogPost() {}
     
@@ -37,6 +40,7 @@ public class BlogPost {
         this.metaTitle = metaTitle;
         this.content = content;
         this.slug = slug;
+        this.sortOrder = 0; // Default to not displayed
     }
     
     // Getters and Setters
@@ -104,6 +108,20 @@ public class BlogPost {
         this.slug = slug;
     }
     
+    // Getter and setter for sortOrder
+    public int getSortOrder() {
+        return sortOrder;
+    }
+    
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+    
+    // Helper method to check if post should be displayed on homepage
+    public boolean isShowOnHomepage() {
+        return sortOrder > 0;
+    }
+    
     // Helper method to generate slug from title if not provided
     public String generateSlug() {
         if (this.slug != null && !this.slug.trim().isEmpty()) {
@@ -129,6 +147,7 @@ public class BlogPost {
                 ", metaDescription='" + metaDescription + '\'' +
                 ", metaTitle='" + metaTitle + '\'' +
                 ", slug='" + slug + '\'' +
+                ", sortOrder=" + sortOrder +
                 '}';
     }
 }

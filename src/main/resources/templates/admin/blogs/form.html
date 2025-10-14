@@ -185,6 +185,13 @@
                         <div class="help-text">Full blog post content (HTML supported)</div>
                     </div>
                     
+                    <div class="form-group">
+                        <label for="sortOrder" class="form-label">Homepage Display Order</label>
+                        <input type="number" id="sortOrder" name="sortOrder" class="form-control" 
+                               th:field="*{sortOrder}" min="0" step="1">
+                        <div class="help-text">Set order for homepage display (0 = not displayed, higher values = higher priority)</div>
+                    </div>
+                    
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Save Blog Post

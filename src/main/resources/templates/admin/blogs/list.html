@@ -82,6 +82,7 @@
                             <th>Author</th>
                             <th>Date</th>
                             <th>Tags</th>
+                            <th>Homepage Order</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -98,6 +99,10 @@
                                     <span class="tag-small" th:each="tag : ${blog.tags}" th:text="${tag}">tag</span>
                                 </div>
                                 <span th:if="${blog.tags == null or blog.tags.isEmpty()}" style="color: #a0aec0;">No tags</span>
+                            </td>
+                            <td>
+                                <span th:if="${blog.sortOrder > 0}" th:text="${blog.sortOrder}" style="font-weight: 500; color: #38a169;">Order</span>
+                                <span th:if="${blog.sortOrder <= 0}" style="color: #a0aec0;">Not displayed</span>
                             </td>
                             <td>
                                 <div class="actions">

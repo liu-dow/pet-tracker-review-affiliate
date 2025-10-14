@@ -91,6 +91,7 @@
                             <th>Rating</th>
                             <th>Author</th>
                             <th>Date</th>
+                            <th>Homepage Order</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -110,6 +111,10 @@
                             </td>
                             <td th:text="${review.author}">Author</td>
                             <td th:text="${#temporals.format(review.date, 'MMM dd, yyyy')}">Date</td>
+                            <td>
+                                <span th:if="${review.sortOrder > 0}" th:text="${review.sortOrder}" style="font-weight: 500; color: #38a169;">Order</span>
+                                <span th:if="${review.sortOrder <= 0}" style="color: #a0aec0;">Not displayed</span>
+                            </td>
                             <td>
                                 <div class="actions">
                                     <a th:href="@{'/reviews/' + ${review.slug}}" class="btn btn-outline btn-sm" target="_blank">

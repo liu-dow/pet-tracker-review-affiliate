@@ -33,6 +33,9 @@ public class Review {
     private String cons;
     private String conclusion;
     
+    // Changed from showOnHomepage to sortOrder for better control
+    private int sortOrder = 0; // 0 means not displayed on homepage, positive values determine display order
+    
     // Constructors
     public Review() {}
     
@@ -54,6 +57,7 @@ public class Review {
         this.pros = pros;
         this.cons = cons;
         this.conclusion = conclusion;
+        this.sortOrder = 0; // Default to not displayed
     }
     
     // Getters and Setters
@@ -169,6 +173,20 @@ public class Review {
         this.conclusion = conclusion;
     }
     
+    // Getter and setter for sortOrder
+    public int getSortOrder() {
+        return sortOrder;
+    }
+    
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+    
+    // Helper method to check if review should be displayed on homepage
+    public boolean isShowOnHomepage() {
+        return sortOrder > 0;
+    }
+    
     // Helper method to generate slug from title if not provided
     public String generateSlug() {
         if (this.slug != null && !this.slug.trim().isEmpty()) {
@@ -215,6 +233,7 @@ public class Review {
                 ", rating=" + rating +
                 ", metaTitle='" + metaTitle + '\'' +
                 ", slug='" + slug + '\'' +
+                ", sortOrder=" + sortOrder +
                 '}';
     }
 }

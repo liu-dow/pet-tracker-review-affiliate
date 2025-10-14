@@ -1,6 +1,7 @@
 package com.pettrackerreview.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pettrackerreview.model.BlogPost;
@@ -87,9 +88,13 @@ public class YamlContentService {
                 if (yamlFiles != null) {
                     for (File file : yamlFiles) {
                         try {
-                            BlogPost post = yamlMapper.readValue(file, BlogPost.class);
+                            // Create a custom mapper that can ignore unknown properties
+                            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+                            mapper.registerModule(new JavaTimeModule());
+                            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                            
+                            BlogPost post = mapper.readValue(file, BlogPost.class);
                             if (post.getSlug() == null || post.getSlug().trim().isEmpty()) {
-                                System.out.println(post.getSlug());
                                 post.setSlug(post.generateSlug());
                             }
                             blogPosts.add(post);
@@ -157,7 +162,12 @@ public class YamlContentService {
                 if (yamlFiles != null) {
                     for (File file : yamlFiles) {
                         try {
-                            Review review = yamlMapper.readValue(file, Review.class);
+                            // Create a custom mapper that can ignore unknown properties
+                            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+                            mapper.registerModule(new JavaTimeModule());
+                            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                            
+                            Review review = mapper.readValue(file, Review.class);
                             if (review.getSlug() == null || review.getSlug().trim().isEmpty()) {
                                 review.setSlug(review.generateSlug());
                             }
@@ -218,6 +228,8 @@ public class YamlContentService {
     @Cacheable(value = "blogPosts", key = "'latestBlogPosts-' + #limit")
     public List<BlogPost> getLatestBlogPosts(int limit) {
         return getAllBlogPosts().stream()
+                .filter(BlogPost::isShowOnHomepage) // Only show posts with sortOrder > 0
+                .sorted((a, b) -> Integer.compare(b.getSortOrder(), a.getSortOrder())) // Sort by sortOrder descending
                 .limit(limit)
                 .collect(Collectors.toList());
     }
@@ -225,6 +237,8 @@ public class YamlContentService {
     @Cacheable(value = "reviews", key = "'latestReviews-' + #limit")
     public List<Review> getLatestReviews(int limit) {
         return getAllReviews().stream()
+                .filter(Review::isShowOnHomepage) // Only show reviews with sortOrder > 0
+                .sorted((a, b) -> Integer.compare(b.getSortOrder(), a.getSortOrder())) // Sort by sortOrder descending
                 .limit(limit)
                 .collect(Collectors.toList());
     }
@@ -606,6 +620,10 @@ public class YamlContentService {
                 blogPost.setAuthor("Admin");
             }
             
+            // Handle migration from showOnHomepage to sortOrder
+            // If we're using a custom deserializer or the field is not set properly,
+            // we might need to handle this case. For now, we rely on the default value in the model.
+            
             return blogPost;
             
         } catch (IllegalArgumentException e) {
@@ -632,7 +650,12 @@ public class YamlContentService {
      */
     public Review validateAndParseReview(String yamlContent) {
         try {
-            Review review = yamlMapper.readValue(yamlContent, Review.class);
+            // Create a custom mapper that can ignore unknown properties
+            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            mapper.registerModule(new JavaTimeModule());
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            
+            Review review = mapper.readValue(yamlContent, Review.class);
             
             // Validate required fields with specific error messages
             if (review.getTitle() == null || review.getTitle().trim().isEmpty()) {
@@ -643,14 +666,12 @@ public class YamlContentService {
                 throw new IllegalArgumentException("Review validation failed: Missing required field 'content'");
             }
             
-            if (review.getProductBrand() == null || review.getProductBrand().trim().isEmpty()) {
-                throw new IllegalArgumentException("Review validation failed: Missing required field 'productBrand'");
+            if (review.getProductName() == null || review.getProductName().trim().isEmpty()) {
+                throw new IllegalArgumentException("Review validation failed: Missing required field 'productName'");
             }
             
-            // Validate rating range
-            if (review.getRating() < 1 || review.getRating() > 5) {
-                System.out.println("Warning: Rating out of range (1-5), setting to default value 5.0");
-                review.setRating(5.0); // Default rating
+            if (review.getProductBrand() == null || review.getProductBrand().trim().isEmpty()) {
+                throw new IllegalArgumentException("Review validation failed: Missing required field 'productBrand'");
             }
             
             // Set default values
@@ -661,6 +682,18 @@ public class YamlContentService {
             if (review.getSlug() == null || review.getSlug().trim().isEmpty()) {
                 review.setSlug(review.generateSlug());
             }
+            
+            if (review.getAuthor() == null || review.getAuthor().trim().isEmpty()) {
+                review.setAuthor("Admin");
+            }
+            
+            if (review.getRating() <= 0) {
+                review.setRating(5.0);
+            }
+            
+            // Handle migration from showOnHomepage to sortOrder
+            // If we're using a custom deserializer or the field is not set properly,
+            // we might need to handle this case. For now, we rely on the default value in the model.
             
             return review;
             
