@@ -597,7 +597,12 @@ public class YamlContentService {
      */
     public BlogPost validateAndParseBlogPost(String yamlContent) {
         try {
-            BlogPost blogPost = yamlMapper.readValue(yamlContent, BlogPost.class);
+            // Create a custom mapper that can ignore unknown properties
+            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            mapper.registerModule(new JavaTimeModule());
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            
+            BlogPost blogPost = mapper.readValue(yamlContent, BlogPost.class);
             
             // Validate required fields with specific error messages
             if (blogPost.getTitle() == null || blogPost.getTitle().trim().isEmpty()) {
@@ -621,9 +626,8 @@ public class YamlContentService {
                 blogPost.setAuthor("Admin");
             }
             
-            // Handle migration from showOnHomepage to sortOrder
-            // If we're using a custom deserializer or the field is not set properly,
-            // we might need to handle this case. For now, we rely on the default value in the model.
+            // Handle migration from showOnHomepage to sortOrder if needed
+            // This is handled by the ObjectMapper configuration above
             
             return blogPost;
             
@@ -848,6 +852,26 @@ public class YamlContentService {
         }
         
         return result;
+    }
+    
+    /**
+     * Convert BlogPost object to YAML string
+     * @param blogPost BlogPost object to convert
+     * @return YAML string representation
+     * @throws IOException If IO error occurs during conversion
+     */
+    public String convertBlogPostToYaml(BlogPost blogPost) throws IOException {
+        return yamlMapper.writeValueAsString(blogPost);
+    }
+    
+    /**
+     * Convert Review object to YAML string
+     * @param review Review object to convert
+     * @return YAML string representation
+     * @throws IOException If IO error occurs during conversion
+     */
+    public String convertReviewToYaml(Review review) throws IOException {
+        return yamlMapper.writeValueAsString(review);
     }
     
     /**

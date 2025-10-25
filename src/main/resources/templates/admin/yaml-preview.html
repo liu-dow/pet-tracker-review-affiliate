@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAML Preview - Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/pages/admin-dashboard.css}">
+    <th:block th:replace="~{fragments/admin-panel :: admin-styles}"></th:block>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .preview-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+        .preview-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .preview-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .preview-section h3 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+        .preview-field {
+            margin-bottom: 0.75rem;
+        }
+        .preview-label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 0.25rem;
+        }
+        .preview-value {
+            color: #2d3748;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .preview-content {
+            background-color: #f7fafc;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+        .preview-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .preview-tag {
+            background-color: #ebf8ff;
+            color: #3182ce;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+        }
+        .preview-rating {
+            color: #f6ad55;
+            font-size: 1.25rem;
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        .alert-error {
+            background-color: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #f56565;
+        }
+        .yaml-content {
+            background-color: #1a202c;
+            color: #a0aec0;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <th:block th:replace="~{fragments/admin-panel :: admin-layout('yaml-preview', ${contentType == 'blogs' ? 'Blogs' : 'Reviews'})}">
+        <th:block th:fragment="content">
+            <div class="content-header">
+                <h1><i class="fas fa-eye"></i> YAML Preview</h1>
+                <button onclick="window.close()" class="btn btn-outline">
+                    <i class="fas fa-times"></i> Close Preview
+                </button>
+            </div>
+            
+            <!-- Alert Messages -->
+            <div th:if="${errorMessage}" class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+            </div>
+            
+            <div class="preview-container">
+                <div th:if="${previewType == 'blog' and previewContent != null}">
+                    <div class="preview-section">
+                        <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
+                        <div class="preview-field">
+                            <div class="preview-label">Title</div>
+                            <div class="preview-value" th:text="${previewContent.title}">Title</div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">Author</div>
+                            <div class="preview-value" th:text="${previewContent.author}">Author</div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">Date</div>
+                            <div class="preview-value" th:text="${#temporals.format(previewContent.date, 'MMM dd, yyyy HH:mm:ss')}">Date</div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">Slug</div>
+                            <div class="preview-value" th:text="${previewContent.slug}">Slug</div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">Homepage Display Order</div>
+                            <div class="preview-value">
+                                <span th:if="${previewContent.sortOrder > 0}" th:text="${previewContent.sortOrder}" style="font-weight: 500; color: #38a169;">Order</span>
+                                <span th:if="${previewContent.sortOrder <= 0}" style="color: #a0aec0;">Not displayed</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h3><i class="fas fa-tags"></i> Tags</h3>
+                        <div class="preview-tags">
+                            <div th:each="tag : ${previewContent.tags}" class="preview-tag" th:text="${tag}">Tag</div>
+                            <div th:if="${previewContent.tags == null or previewContent.tags.isEmpty()}" class="preview-tag" style="background-color: #f7fafc; color: #a0aec0;">No tags</div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h3><i class="fas fa-search"></i> SEO Information</h3>
+                        <div class="preview-field">
+                            <div class="preview-label">Meta Title</div>
+                            <div class="preview-value" th:text="${previewContent.metaTitle ?: 'Not set'}">Meta Title</div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">Meta Description</div>
+                            <div class="preview-value" th:text="${previewContent.metaDescription ?: 'Not set'}">Meta Description</div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h3><i class="fas fa-file-alt"></i> Content</h3>
+                        <div class="preview-content">
+                            <div th:utext="${previewContent.content}">Content</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div th:if="${previewType == 'review' and previewContent != null}">
+                    <div class="preview-section">
+                        <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
+                        <div class="preview-field">
+                            <div class="preview-label">Title</div>
+                            <div class="preview-value" th:text="${previewContent.title}">Title</div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">Author</div>
+                            <div class="preview-value" th:text="${previewContent.author}">Author</div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">Date</div>
+                            <div class="preview-value" th:text="${#temporals.format(previewContent.date, 'MMM dd, yyyy HH:mm:ss')}">Date</div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">Slug</div>
+                            <div class="preview-value" th:text="${previewContent.slug}">Slug</div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">Homepage Display Order</div>
+                            <div class="preview-value">
+                                <span th:if="${previewContent.sortOrder > 0}" th:text="${previewContent.sortOrder}" style="font-weight: 500; color: #38a169;">Order</span>
+                                <span th:if="${previewContent.sortOrder <= 0}" style="color: #a0aec0;">Not displayed</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h3><i class="fas fa-box"></i> Product Information</h3>
+                        <div class="preview-field">
+                            <div class="preview-label">Product Name</div>
+                            <div class="preview-value" th:text="${previewContent.productName}">Product Name</div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">Product Brand</div>
+                            <div class="preview-value" th:text="${previewContent.productBrand}">Product Brand</div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">Rating</div>
+                            <div class="preview-value">
+                                <span class="preview-rating" th:text="${previewContent.starRating}">★★★★★</span>
+                                <span th:text="${previewContent.rating} + '/5'">5/5</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h3><i class="fas fa-tags"></i> Tags</h3>
+                        <div class="preview-tags">
+                            <div th:each="tag : ${previewContent.tags}" class="preview-tag" th:text="${tag}">Tag</div>
+                            <div th:if="${previewContent.tags == null or previewContent.tags.isEmpty()}" class="preview-tag" style="background-color: #f7fafc; color: #a0aec0;">No tags</div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h3><i class="fas fa-search"></i> SEO Information</h3>
+                        <div class="preview-field">
+                            <div class="preview-label">Meta Title</div>
+                            <div class="preview-value" th:text="${previewContent.metaTitle ?: 'Not set'}">Meta Title</div>
+                        </div>
+                        <div class="preview-field">
+                            <div class="preview-label">Meta Description</div>
+                            <div class="preview-value" th:text="${previewContent.metaDescription ?: 'Not set'}">Meta Description</div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h3><i class="fas fa-file-alt"></i> Review Content</h3>
+                        <div class="preview-content">
+                            <div th:utext="${previewContent.content}">Content</div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h3><i class="fas fa-thumbs-up"></i> Pros</h3>
+                        <div class="preview-content">
+                            <div th:utext="${previewContent.pros ?: 'Not set'}">Pros</div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h3><i class="fas fa-thumbs-down"></i> Cons</h3>
+                        <div class="preview-content">
+                            <div th:utext="${previewContent.cons ?: 'Not set'}">Cons</div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-section">
+                        <h3><i class="fas fa-comment"></i> Conclusion</h3>
+                        <div class="preview-content">
+                            <div th:utext="${previewContent.conclusion ?: 'Not set'}">Conclusion</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="preview-section">
+                    <h3><i class="fas fa-code"></i> Raw YAML Content</h3>
+                    <div class="yaml-content" th:text="${yamlContent}">YAML Content</div>
+                </div>
+                
+                <form method="post" th:action="@{/admin/yaml/save}" class="form-actions">
+                    <input type="hidden" name="contentType" th:value="${contentType}">
+                    <input type="hidden" name="yamlContent" th:value="${yamlContent}">
+                    <input type="hidden" name="action" value="create">
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Content
+                    </button>
+                    <button type="button" class="btn btn-outline" onclick="window.close()">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </form>
+            </div>
+        </th:block>
+    </th:block>
+    
+    <th:block th:replace="~{fragments/admin-panel :: admin-scripts}"></th:block>
+</body>
+</html>

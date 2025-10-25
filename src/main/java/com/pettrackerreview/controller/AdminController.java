@@ -857,4 +857,192 @@ public class AdminController {
         return "redirect:/admin/submit-url";
     }
     
+    @GetMapping("/blogs/yaml/edit/{slug}")
+    public String editBlogYaml(@PathVariable String slug, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            BlogPost blog = contentService.getBlogPostBySlug(slug);
+            if (blog == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Blog post not found");
+                return "redirect:/admin/blogs";
+            }
+            
+            // Convert blog post to YAML content
+            String yamlContent = contentService.convertBlogPostToYaml(blog);
+            model.addAttribute("yamlContent", yamlContent);
+            model.addAttribute("slug", slug);
+            model.addAttribute("contentType", "blogs");
+            model.addAttribute("action", "edit");
+            return "admin/yaml-editor";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error loading blog post: " + e.getMessage());
+            return "redirect:/admin/blogs";
+        }
+    }
+    
+    @GetMapping("/reviews/yaml/edit/{slug}")
+    public String editReviewYaml(@PathVariable String slug, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Review review = contentService.getReviewBySlug(slug);
+            if (review == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Review not found");
+                return "redirect:/admin/reviews";
+            }
+            
+            // Convert review to YAML content
+            String yamlContent = contentService.convertReviewToYaml(review);
+            model.addAttribute("yamlContent", yamlContent);
+            model.addAttribute("slug", slug);
+            model.addAttribute("contentType", "reviews");
+            model.addAttribute("action", "edit");
+            return "admin/yaml-editor";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error loading review: " + e.getMessage());
+            return "redirect:/admin/reviews";
+        }
+    }
+    
+    @GetMapping("/blogs/yaml/new")
+    public String newBlogYaml(Model model) {
+        model.addAttribute("contentType", "blogs");
+        model.addAttribute("action", "create");
+        // Provide a template YAML content for new blog posts
+        String templateYaml = "title: \"New Blog Post\"\n" +
+                             "author: \"Admin\"\n" +
+                             "date: \"" + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "\"\n" +
+                             "tags:\n" +
+                             "  - \"tag1\"\n" +
+                             "  - \"tag2\"\n" +
+                             "metaDescription: \"Meta description for the blog post\"\n" +
+                             "metaTitle: \"Meta title for the blog post\"\n" +
+                             "content: |\n" +
+                             "  <p>Blog post content goes here...</p>\n" +
+                             "sortOrder: 0\n";
+        model.addAttribute("yamlContent", templateYaml);
+        return "admin/yaml-editor";
+    }
+    
+    @GetMapping("/reviews/yaml/new")
+    public String newReviewYaml(Model model) {
+        model.addAttribute("contentType", "reviews");
+        model.addAttribute("action", "create");
+        // Provide a template YAML content for new reviews
+        String templateYaml = "title: \"New Product Review\"\n" +
+                             "author: \"Admin\"\n" +
+                             "date: \"" + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + "\"\n" +
+                             "tags:\n" +
+                             "  - \"review\"\n" +
+                             "  - \"product\"\n" +
+                             "metaDescription: \"Meta description for the review\"\n" +
+                             "metaTitle: \"Meta title for the review\"\n" +
+                             "productName: \"Product Name\"\n" +
+                             "productBrand: \"Brand Name\"\n" +
+                             "rating: 5.0\n" +
+                             "content: |\n" +
+                             "  <p>Review content goes here...</p>\n" +
+                             "pros: |\n" +
+                             "  <ul>\n" +
+                             "    <li>Pro 1</li>\n" +
+                             "    <li>Pro 2</li>\n" +
+                             "  </ul>\n" +
+                             "cons: |\n" +
+                             "  <ul>\n" +
+                             "    <li>Con 1</li>\n" +
+                             "    <li>Con 2</li>\n" +
+                             "  </ul>\n" +
+                             "conclusion: |\n" +
+                             "  <p>Review conclusion goes here...</p>\n" +
+                             "sortOrder: 0\n";
+        model.addAttribute("yamlContent", templateYaml);
+        return "admin/yaml-editor";
+    }
+    
+    @PostMapping("/yaml/save")
+    public String saveYamlContent(@RequestParam("yamlContent") String yamlContent,
+                                 @RequestParam("contentType") String contentType,
+                                 @RequestParam(value = "slug", required = false) String slug,
+                                 @RequestParam("action") String action,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            if ("blogs".equals(contentType)) {
+                BlogPost blogPost = contentService.validateAndParseBlogPost(yamlContent);
+                
+                // If editing and slug changed, delete the old file
+                if ("edit".equals(action) && slug != null && !slug.isEmpty() && 
+                    !slug.equals(blogPost.getSlug()) && !slug.equals(blogPost.generateSlug())) {
+                    contentService.deleteBlogPost(slug);
+                }
+                
+                contentService.saveBlogPost(blogPost);
+                redirectAttributes.addFlashAttribute("successMessage", "Blog post saved successfully!");
+                return "redirect:/admin/blogs";
+            } else if ("reviews".equals(contentType)) {
+                Review review = contentService.validateAndParseReview(yamlContent);
+                
+                // If editing and slug changed, delete the old file
+                if ("edit".equals(action) && slug != null && !slug.isEmpty() && 
+                    !slug.equals(review.getSlug()) && !slug.equals(review.generateSlug())) {
+                    contentService.deleteReview(slug);
+                }
+                
+                contentService.saveReview(review);
+                redirectAttributes.addFlashAttribute("successMessage", "Review saved successfully!");
+                return "redirect:/admin/reviews";
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Unsupported content type: " + contentType);
+                return "redirect:/admin/dashboard";
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error saving content: " + e.getMessage());
+            // Preserve the YAML content so user doesn't lose their work
+            redirectAttributes.addFlashAttribute("yamlContent", yamlContent);
+            redirectAttributes.addFlashAttribute("contentType", contentType);
+            redirectAttributes.addFlashAttribute("slug", slug);
+            redirectAttributes.addFlashAttribute("action", action);
+            return "redirect:/admin/yaml-editor";
+        }
+    }
+    
+    @PostMapping("/yaml/preview")
+    public String previewYamlContent(@RequestParam("yamlContent") String yamlContent,
+                                    @RequestParam("contentType") String contentType,
+                                    Model model) {
+        try {
+            model.addAttribute("yamlContent", yamlContent);
+            model.addAttribute("contentType", contentType);
+            
+            if ("blogs".equals(contentType)) {
+                BlogPost blogPost = contentService.validateAndParseBlogPost(yamlContent);
+                model.addAttribute("previewContent", blogPost);
+                model.addAttribute("previewType", "blog");
+            } else if ("reviews".equals(contentType)) {
+                Review review = contentService.validateAndParseReview(yamlContent);
+                model.addAttribute("previewContent", review);
+                model.addAttribute("previewType", "review");
+            }
+            
+            return "admin/yaml-preview";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Error previewing content: " + e.getMessage());
+            model.addAttribute("yamlContent", yamlContent);
+            model.addAttribute("contentType", contentType);
+            return "admin/yaml-editor";
+        }
+    }
+    
+    // Fallback method for yaml-editor page when redirected from error
+    @GetMapping("/yaml-editor")
+    public String yamlEditorFallback(@RequestParam(required = false) String contentType,
+                                   @RequestParam(required = false) String action,
+                                   @RequestParam(required = false) String slug,
+                                   @RequestParam(required = false) String yamlContent,
+                                   Model model) {
+        // Preserve parameters for the editor
+        if (contentType != null) model.addAttribute("contentType", contentType);
+        if (action != null) model.addAttribute("action", action);
+        if (slug != null) model.addAttribute("slug", slug);
+        if (yamlContent != null) model.addAttribute("yamlContent", yamlContent);
+        
+        return "admin/yaml-editor";
+    }
+    
 }

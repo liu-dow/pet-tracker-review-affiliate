@@ -68,9 +68,14 @@
         <th:block th:fragment="content">
             <div class="content-header">
                 <h1>Manage Reviews</h1>
-                <a href="/admin/reviews/new" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> New Review
-                </a>
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="/admin/reviews/new" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> New Review
+                    </a>
+                    <a href="/admin/reviews/yaml/new" class="btn btn-secondary">
+                        <i class="fas fa-code"></i> New YAML
+                    </a>
+                </div>
             </div>
             
             <!-- Flash Messages -->
@@ -122,6 +127,9 @@
                                     </a>
                                     <a th:href="@{'/admin/reviews/edit/' + ${review.slug}}" class="btn btn-secondary btn-sm">
                                         <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a th:href="@{'/admin/reviews/yaml/edit/' + ${review.slug}}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-code"></i> YAML
                                     </a>
                                     <form th:action="@{'/admin/reviews/delete/' + ${review.slug}}" method="post" style="display: inline;">
                                         <button type="submit" class="btn btn-outline btn-sm" style="color: #e53e3e; border-color: #e53e3e;" 
