@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${review.metaTitle ?: review.title}">Review - Pet Tracker Reviews</title>
+    <title th:text="${pageTitle}">Review - Pet Tracker Reviews</title>
     <meta name="description" th:content="${metaDescription}">
     <meta name="keywords" th:content="${keywords}">
-    <meta name="title" th:content="${review.metaTitle ?: review.title}">
+    <meta name="title" th:content="${pageTitle}">
     
     <!-- Canonical URL -->
     <link rel="canonical" th:href="@{'https://pettrackerreview.com/reviews/' + ${review.slug}}" href="https://pettrackerreview.com/reviews/sample-review" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
-    <meta property="og:title" th:content="${review.metaTitle ?: review.title}">
-    <meta property="og:description" th:content="${review.metaDescription}">
+    <meta property="og:title" th:content="${pageTitle}">
+    <meta property="og:description" th:content="${metaDescription}">
     <meta property="article:author" th:content="${review.author}">
     <meta property="article:published_time" th:content="${review.date}">
     
@@ -118,7 +118,7 @@
                     
                     <!-- Review Content -->
                     <section class="review-body">
-                        <div th:utext="${review.content}">
+                        <div th:utext="${reviewContent ?: review.content}">
                             Detailed review content goes here...
                         </div>
                     </section>
@@ -128,14 +128,14 @@
                         <div class="pros-cons-grid">
                             <div class="pros-section" th:if="${review.pros != null and !review.pros.isEmpty()}">
                                 <h3><i class="fas fa-check-circle text-green"></i> <span th:text="#{review.section.pros}">Pros</span></h3>
-                                <div class="content" th:utext="${review.pros}">
+                                <div class="content" th:utext="${reviewPros ?: review.pros}">
                                     Pros content...
                                 </div>
                             </div>
                             
                             <div class="cons-section" th:if="${review.cons != null and !review.cons.isEmpty()}">
                                 <h3><i class="fas fa-times-circle text-red"></i> <span th:text="#{review.section.cons}">Cons</span></h3>
-                                <div class="content" th:utext="${review.cons}">
+                                <div class="content" th:utext="${reviewCons ?: review.cons}">
                                     Cons content...
                                 </div>
                             </div>
@@ -145,7 +145,7 @@
                     <!-- Conclusion -->
                     <section class="review-conclusion" th:if="${review.conclusion != null and !review.conclusion.isEmpty()}">
                         <h3 th:text="#{review.section.verdict}">Final Verdict</h3>
-                        <div class="conclusion-content" th:utext="${review.conclusion}">
+                        <div class="conclusion-content" th:utext="${reviewConclusion ?: review.conclusion}">
                             Review conclusion...
                         </div>
                     </section>

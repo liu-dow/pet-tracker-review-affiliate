@@ -61,12 +61,18 @@
     
     <script>
       function changeLanguage(lang) {
-        // Get current URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        // Set the language parameter
-        urlParams.set('lang', lang);
+        // Get current URL
+        const url = new URL(window.location);
+        
+        // Remove existing lang parameter if present
+        url.searchParams.delete('lang');
+        
+        // Add new lang parameter
+        url.searchParams.set('lang', lang);
+        
+        // Preserve other parameters except lang
         // Update the URL and reload the page
-        window.location.search = urlParams.toString();
+        window.location.href = url.toString();
       }
     </script>
     <!-- Google Analytics 4 (GA4) - Required -->

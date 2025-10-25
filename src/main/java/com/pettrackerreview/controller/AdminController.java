@@ -3,6 +3,7 @@ package com.pettrackerreview.controller;
 import com.pettrackerreview.model.BlogPost;
 import com.pettrackerreview.model.Review;
 import com.pettrackerreview.model.Image;
+import com.pettrackerreview.model.LocalizedContent;
 import com.pettrackerreview.service.YamlContentService;
 import com.pettrackerreview.service.ImageService;
 import com.pettrackerreview.service.SearchEngineService; // Added import
@@ -26,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -91,6 +93,8 @@ public class AdminController {
     @PostMapping("/blogs/save")
     public String saveBlog(@ModelAttribute BlogPost blog, 
                           @RequestParam(required = false) String originalSlug,
+                          @RequestParam Map<String, String> localizedContent,
+                          @RequestParam(required = false) String tags,
                           RedirectAttributes redirectAttributes) {
         try {
             // Set current time if creating new blog
@@ -98,8 +102,47 @@ public class AdminController {
                 blog.setDate(LocalDateTime.now());
             }
             
-            // Convert tags string to list if needed
-            // This would typically be handled in the form with proper binding
+            // Process tags
+            if (tags != null && !tags.trim().isEmpty()) {
+                List<String> tagList = Arrays.asList(tags.split(","));
+                // Trim whitespace from each tag
+                tagList = tagList.stream().map(String::trim).collect(Collectors.toList());
+                blog.setTags(tagList);
+            }
+            
+            // Process localized content
+            Map<String, LocalizedContent> localizedMap = new HashMap<>();
+            String[] languages = {"de", "fr", "es", "ja"};
+            
+            for (String lang : languages) {
+                String titleKey = "localizedContent[" + lang + "].title";
+                String metaDescKey = "localizedContent[" + lang + "].metaDescription";
+                String metaTitleKey = "localizedContent[" + lang + "].metaTitle";
+                String contentKey = "localizedContent[" + lang + "].content";
+                
+                if (localizedContent.containsKey(titleKey) && 
+                    localizedContent.containsKey(metaDescKey) && 
+                    localizedContent.containsKey(contentKey)) {
+                    
+                    String title = localizedContent.get(titleKey);
+                    String metaDesc = localizedContent.get(metaDescKey);
+                    String metaTitle = localizedContent.get(metaTitleKey);
+                    String content = localizedContent.get(contentKey);
+                    
+                    // Only add if there's actual content
+                    if (title != null && !title.trim().isEmpty() &&
+                        metaDesc != null && !metaDesc.trim().isEmpty() &&
+                        content != null && !content.trim().isEmpty()) {
+                        
+                        LocalizedContent locContent = new LocalizedContent(title, metaDesc, metaTitle, content);
+                        localizedMap.put(lang, locContent);
+                    }
+                }
+            }
+            
+            if (!localizedMap.isEmpty()) {
+                blog.setLocalizedContent(localizedMap);
+            }
             
             // Delete old file if slug changed
             if (originalSlug != null && !originalSlug.isEmpty() && 
@@ -159,11 +202,61 @@ public class AdminController {
     @PostMapping("/reviews/save")
     public String saveReview(@ModelAttribute Review review, 
                            @RequestParam(required = false) String originalSlug,
+                           @RequestParam Map<String, String> localizedContent,
+                           @RequestParam(required = false) String tags,
                            RedirectAttributes redirectAttributes) {
         try {
             // Set current time if creating new review
             if (review.getDate() == null) {
                 review.setDate(LocalDateTime.now());
+            }
+            
+            // Process tags
+            if (tags != null && !tags.trim().isEmpty()) {
+                List<String> tagList = Arrays.asList(tags.split(","));
+                // Trim whitespace from each tag
+                tagList = tagList.stream().map(String::trim).collect(Collectors.toList());
+                review.setTags(tagList);
+            }
+            
+            // Process localized content
+            Map<String, LocalizedContent> localizedMap = new HashMap<>();
+            String[] languages = {"de", "fr", "es", "ja"};
+            
+            for (String lang : languages) {
+                String titleKey = "localizedContent[" + lang + "].title";
+                String metaDescKey = "localizedContent[" + lang + "].metaDescription";
+                String metaTitleKey = "localizedContent[" + lang + "].metaTitle";
+                String contentKey = "localizedContent[" + lang + "].content";
+                String prosKey = "localizedContent[" + lang + "].pros";
+                String consKey = "localizedContent[" + lang + "].cons";
+                String conclusionKey = "localizedContent[" + lang + "].conclusion";
+                
+                if (localizedContent.containsKey(titleKey) && 
+                    localizedContent.containsKey(metaDescKey) && 
+                    localizedContent.containsKey(contentKey)) {
+                    
+                    String title = localizedContent.get(titleKey);
+                    String metaDesc = localizedContent.get(metaDescKey);
+                    String metaTitle = localizedContent.get(metaTitleKey);
+                    String content = localizedContent.get(contentKey);
+                    String pros = localizedContent.get(prosKey);
+                    String cons = localizedContent.get(consKey);
+                    String conclusion = localizedContent.get(conclusionKey);
+                    
+                    // Only add if there's actual content
+                    if (title != null && !title.trim().isEmpty() &&
+                        metaDesc != null && !metaDesc.trim().isEmpty() &&
+                        content != null && !content.trim().isEmpty()) {
+                        
+                        LocalizedContent locContent = new LocalizedContent(title, metaDesc, metaTitle, content, pros, cons, conclusion);
+                        localizedMap.put(lang, locContent);
+                    }
+                }
+            }
+            
+            if (!localizedMap.isEmpty()) {
+                review.setLocalizedContent(localizedMap);
             }
             
             // Delete old file if slug changed

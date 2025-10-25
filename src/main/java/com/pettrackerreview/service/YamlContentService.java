@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pettrackerreview.model.BlogPost;
+import com.pettrackerreview.model.LocalizedContent;
 import com.pettrackerreview.model.Review;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.ClassPathResource;

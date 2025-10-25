@@ -2,6 +2,7 @@ package com.pettrackerreview.service;
 
 import com.pettrackerreview.model.BlogPost;
 import com.pettrackerreview.model.Review;
+import com.pettrackerreview.model.LocalizedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SeoService {
@@ -198,6 +200,15 @@ public class SeoService {
             String lastMod = post.getDate() != null ?
                     post.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE) : null;
             addUrl(sitemap, url, "weekly", "0.6", lastMod);
+            
+            // Add multilingual URLs if available
+            if (post.getLocalizedContent() != null) {
+                for (Map.Entry<String, LocalizedContent> entry : post.getLocalizedContent().entrySet()) {
+                    String lang = entry.getKey();
+                    String langUrl = baseUrl + "/blogs/" + post.getSlug() + "?lang=" + lang;
+                    addUrl(sitemap, langUrl, "weekly", "0.6", lastMod);
+                }
+            }
         }
     }
 
@@ -208,6 +219,15 @@ public class SeoService {
             String lastMod = review.getDate() != null ?
                     review.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE) : null;
             addUrl(sitemap, url, "weekly", "0.7", lastMod);
+            
+            // Add multilingual URLs if available
+            if (review.getLocalizedContent() != null) {
+                for (Map.Entry<String, LocalizedContent> entry : review.getLocalizedContent().entrySet()) {
+                    String lang = entry.getKey();
+                    String langUrl = baseUrl + "/reviews/" + review.getSlug() + "?lang=" + lang;
+                    addUrl(sitemap, langUrl, "weekly", "0.7", lastMod);
+                }
+            }
         }
     }
 

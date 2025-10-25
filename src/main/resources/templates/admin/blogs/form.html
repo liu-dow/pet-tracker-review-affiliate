@@ -100,6 +100,30 @@
             color: #718096;
             margin-top: 0.25rem;
         }
+        .language-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 1rem;
+        }
+        .language-tab {
+            padding: 0.5rem 1rem;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .language-tab.active {
+            background-color: #3182ce;
+            color: white;
+        }
+        .language-content {
+            display: none;
+        }
+        .language-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -133,56 +157,175 @@
             </div>
             
             <div class="form-container">
+                <div class="language-tabs">
+                    <div class="language-tab active" data-lang="en">English</div>
+                    <div class="language-tab" data-lang="de">German</div>
+                    <div class="language-tab" data-lang="fr">French</div>
+                    <div class="language-tab" data-lang="es">Spanish</div>
+                    <div class="language-tab" data-lang="ja">Japanese</div>
+                </div>
+                
                 <form th:action="@{/admin/blogs/save}" method="post" th:object="${blog}">
                     <input type="hidden" name="originalSlug" th:value="${blog.slug}">
                     
-                    <div class="form-group">
-                        <label for="title" class="form-label">Title *</label>
-                        <input type="text" id="title" name="title" class="form-control" 
-                               th:field="*{title}" required>
-                        <div class="help-text">The main title of your blog post</div>
-                    </div>
-                    
-                    <div class="form-row">
+                    <!-- English Content (default) -->
+                    <div class="language-content active" data-lang="en">
                         <div class="form-group">
-                            <label for="author" class="form-label">Author *</label>
-                            <input type="text" id="author" name="author" class="form-control" 
-                                   th:field="*{author}" required>
+                            <label for="title" class="form-label">Title *</label>
+                            <input type="text" id="title" name="title" class="form-control" 
+                                   th:field="*{title}" required>
+                            <div class="help-text">The main title of your blog post</div>
                         </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="author" class="form-label">Author *</label>
+                                <input type="text" id="author" name="author" class="form-control" 
+                                       th:field="*{author}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="slug" class="form-label">Slug</label>
+                                <input type="text" id="slug" name="slug" class="form-control" 
+                                       th:field="*{slug}">
+                                <div class="help-text">URL-friendly version (auto-generated if empty)</div>
+                            </div>
+                        </div>
+                        
                         <div class="form-group">
-                            <label for="slug" class="form-label">Slug</label>
-                            <input type="text" id="slug" name="slug" class="form-control" 
-                                   th:field="*{slug}">
-                            <div class="help-text">URL-friendly version (auto-generated if empty)</div>
+                            <label for="metaDescription" class="form-label">Meta Description *</label>
+                            <textarea id="metaDescription" name="metaDescription" class="form-control" 
+                                      rows="3" th:field="*{metaDescription}" required></textarea>
+                            <div class="help-text">SEO description for search engines (150-160 characters recommended)</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaTitle" class="form-label">Meta Title</label>
+                            <input type="text" id="metaTitle" name="metaTitle" class="form-control" 
+                                   th:field="*{metaTitle}">
+                            <div class="help-text">SEO title for search engines (60 characters recommended)</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tags" class="form-label">Tags</label>
+                            <input type="text" id="tags" name="tags" class="form-control" 
+                                   th:value="${blog.tags != null ? #strings.listJoin(blog.tags, ', ') : ''}">
+                            <div class="help-text">Comma-separated tags (e.g. pet tracker, GPS, dogs)</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content" class="form-label">Content *</label>
+                            <textarea id="content" name="content" class="form-control large" 
+                                      th:field="*{content}" required></textarea>
+                            <div class="help-text">Full blog post content (HTML supported)</div>
                         </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="metaDescription" class="form-label">Meta Description *</label>
-                        <textarea id="metaDescription" name="metaDescription" class="form-control" 
-                                  rows="3" th:field="*{metaDescription}" required></textarea>
-                        <div class="help-text">SEO description for search engines (150-160 characters recommended)</div>
+                    <!-- German Content -->
+                    <div class="language-content" data-lang="de">
+                        <div class="form-group">
+                            <label for="title_de" class="form-label">Title (German) *</label>
+                            <input type="text" id="title_de" name="localizedContent[de].title" class="form-control" 
+                                   th:value="${blog.localizedContent != null && blog.localizedContent['de'] != null ? blog.localizedContent['de'].title : ''}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaDescription_de" class="form-label">Meta Description (German) *</label>
+                            <textarea id="metaDescription_de" name="localizedContent[de].metaDescription" class="form-control" 
+                                      rows="3" th:text="${blog.localizedContent != null && blog.localizedContent['de'] != null ? blog.localizedContent['de'].metaDescription : ''}" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaTitle_de" class="form-label">Meta Title (German)</label>
+                            <input type="text" id="metaTitle_de" name="localizedContent[de].metaTitle" class="form-control" 
+                                   th:value="${blog.localizedContent != null && blog.localizedContent['de'] != null ? blog.localizedContent['de'].metaTitle : ''}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content_de" class="form-label">Content (German) *</label>
+                            <textarea id="content_de" name="localizedContent[de].content" class="form-control large" 
+                                      th:text="${blog.localizedContent != null && blog.localizedContent['de'] != null ? blog.localizedContent['de'].content : ''}" required></textarea>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="metaTitle" class="form-label">Meta Title</label>
-                        <input type="text" id="metaTitle" name="metaTitle" class="form-control" 
-                               th:field="*{metaTitle}">
-                        <div class="help-text">SEO title for search engines (60 characters recommended)</div>
+                    <!-- French Content -->
+                    <div class="language-content" data-lang="fr">
+                        <div class="form-group">
+                            <label for="title_fr" class="form-label">Title (French) *</label>
+                            <input type="text" id="title_fr" name="localizedContent[fr].title" class="form-control" 
+                                   th:value="${blog.localizedContent != null && blog.localizedContent['fr'] != null ? blog.localizedContent['fr'].title : ''}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaDescription_fr" class="form-label">Meta Description (French) *</label>
+                            <textarea id="metaDescription_fr" name="localizedContent[fr].metaDescription" class="form-control" 
+                                      rows="3" th:text="${blog.localizedContent != null && blog.localizedContent['fr'] != null ? blog.localizedContent['fr'].metaDescription : ''}" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaTitle_fr" class="form-label">Meta Title (French)</label>
+                            <input type="text" id="metaTitle_fr" name="localizedContent[fr].metaTitle" class="form-control" 
+                                   th:value="${blog.localizedContent != null && blog.localizedContent['fr'] != null ? blog.localizedContent['fr'].metaTitle : ''}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content_fr" class="form-label">Content (French) *</label>
+                            <textarea id="content_fr" name="localizedContent[fr].content" class="form-control large" 
+                                      th:text="${blog.localizedContent != null && blog.localizedContent['fr'] != null ? blog.localizedContent['fr'].content : ''}" required></textarea>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="tags" class="form-label">Tags</label>
-                        <input type="text" id="tags" name="tags" class="form-control" 
-                               th:value="${blog.tags != null ? #strings.listJoin(blog.tags, ', ') : ''}">
-                        <div class="help-text">Comma-separated tags (e.g. pet tracker, GPS, dogs)</div>
+                    <!-- Spanish Content -->
+                    <div class="language-content" data-lang="es">
+                        <div class="form-group">
+                            <label for="title_es" class="form-label">Title (Spanish) *</label>
+                            <input type="text" id="title_es" name="localizedContent[es].title" class="form-control" 
+                                   th:value="${blog.localizedContent != null && blog.localizedContent['es'] != null ? blog.localizedContent['es'].title : ''}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaDescription_es" class="form-label">Meta Description (Spanish) *</label>
+                            <textarea id="metaDescription_es" name="localizedContent[es].metaDescription" class="form-control" 
+                                      rows="3" th:text="${blog.localizedContent != null && blog.localizedContent['es'] != null ? blog.localizedContent['es'].metaDescription : ''}" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaTitle_es" class="form-label">Meta Title (Spanish)</label>
+                            <input type="text" id="metaTitle_es" name="localizedContent[es].metaTitle" class="form-control" 
+                                   th:value="${blog.localizedContent != null && blog.localizedContent['es'] != null ? blog.localizedContent['es'].metaTitle : ''}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content_es" class="form-label">Content (Spanish) *</label>
+                            <textarea id="content_es" name="localizedContent[es].content" class="form-control large" 
+                                      th:text="${blog.localizedContent != null && blog.localizedContent['es'] != null ? blog.localizedContent['es'].content : ''}" required></textarea>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="content" class="form-label">Content *</label>
-                        <textarea id="content" name="content" class="form-control large" 
-                                  th:field="*{content}" required></textarea>
-                        <div class="help-text">Full blog post content (HTML supported)</div>
+                    <!-- Japanese Content -->
+                    <div class="language-content" data-lang="ja">
+                        <div class="form-group">
+                            <label for="title_ja" class="form-label">Title (Japanese) *</label>
+                            <input type="text" id="title_ja" name="localizedContent[ja].title" class="form-control" 
+                                   th:value="${blog.localizedContent != null && blog.localizedContent['ja'] != null ? blog.localizedContent['ja'].title : ''}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaDescription_ja" class="form-label">Meta Description (Japanese) *</label>
+                            <textarea id="metaDescription_ja" name="localizedContent[ja].metaDescription" class="form-control" 
+                                      rows="3" th:text="${blog.localizedContent != null && blog.localizedContent['ja'] != null ? blog.localizedContent['ja'].metaDescription : ''}" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaTitle_ja" class="form-label">Meta Title (Japanese)</label>
+                            <input type="text" id="metaTitle_ja" name="localizedContent[ja].metaTitle" class="form-control" 
+                                   th:value="${blog.localizedContent != null && blog.localizedContent['ja'] != null ? blog.localizedContent['ja'].metaTitle : ''}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content_ja" class="form-label">Content (Japanese) *</label>
+                            <textarea id="content_ja" name="localizedContent[ja].content" class="form-control large" 
+                                      th:text="${blog.localizedContent != null && blog.localizedContent['ja'] != null ? blog.localizedContent['ja'].content : ''}" required></textarea>
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -209,6 +352,25 @@
     </div>
     
     <script>
+        // Language tab switching
+        document.querySelectorAll('.language-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const lang = this.dataset.lang;
+                
+                // Update active tab
+                document.querySelectorAll('.language-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show active content
+                document.querySelectorAll('.language-content').forEach(content => {
+                    content.classList.remove('active');
+                    if (content.dataset.lang === lang) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+        
         // Auto-generate slug from title
         document.getElementById('title').addEventListener('input', function() {
             const title = this.value;

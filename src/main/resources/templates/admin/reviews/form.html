@@ -119,6 +119,30 @@
         .rating-stars.active {
             color: #f6ad55;
         }
+        .language-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 1rem;
+        }
+        .language-tab {
+            padding: 0.5rem 1rem;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .language-tab.active {
+            background-color: #3182ce;
+            color: white;
+        }
+        .language-content {
+            display: none;
+        }
+        .language-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -152,101 +176,296 @@
             </div>
             
             <div class="form-container">
+                <div class="language-tabs">
+                    <div class="language-tab active" data-lang="en">English</div>
+                    <div class="language-tab" data-lang="de">German</div>
+                    <div class="language-tab" data-lang="fr">French</div>
+                    <div class="language-tab" data-lang="es">Spanish</div>
+                    <div class="language-tab" data-lang="ja">Japanese</div>
+                </div>
+                
                 <form th:action="@{/admin/reviews/save}" method="post" th:object="${review}">
                     <input type="hidden" name="originalSlug" th:value="${review.slug}">
                     
-                    <div class="form-group">
-                        <label for="title" class="form-label">Review Title *</label>
-                        <input type="text" id="title" name="title" class="form-control" 
-                               th:field="*{title}" required>
-                        <div class="help-text">The main title of your product review</div>
-                    </div>
-                    
-                    <div class="form-row">
+                    <!-- English Content (default) -->
+                    <div class="language-content active" data-lang="en">
                         <div class="form-group">
-                            <label for="productName" class="form-label">Product Name *</label>
-                            <input type="text" id="productName" name="productName" class="form-control" 
-                                   th:field="*{productName}" required>
+                            <label for="title" class="form-label">Review Title *</label>
+                            <input type="text" id="title" name="title" class="form-control" 
+                                   th:field="*{title}" required>
+                            <div class="help-text">The main title of your product review</div>
                         </div>
-                        <div class="form-group">
-                            <label for="productBrand" class="form-label">Product Brand *</label>
-                            <input type="text" id="productBrand" name="productBrand" class="form-control" 
-                                   th:field="*{productBrand}" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row-3">
-                        <div class="form-group">
-                            <label for="author" class="form-label">Author *</label>
-                            <input type="text" id="author" name="author" class="form-control" 
-                                   th:field="*{author}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="rating" class="form-label">Rating *</label>
-                            <div class="rating-input">
-                                <input type="number" id="rating" name="rating" class="form-control" 
-                                       th:field="*{rating}" min="1" max="5" step="0.1" required 
-                                       style="max-width: 100px;">
-                                <div class="rating-stars" id="ratingStars">★★★★★</div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="productName" class="form-label">Product Name *</label>
+                                <input type="text" id="productName" name="productName" class="form-control" 
+                                       th:field="*{productName}" required>
                             </div>
-                            <div class="help-text">1-5 stars (0.1 increments allowed)</div>
+                            <div class="form-group">
+                                <label for="productBrand" class="form-label">Product Brand *</label>
+                                <input type="text" id="productBrand" name="productBrand" class="form-control" 
+                                       th:field="*{productBrand}" required>
+                            </div>
                         </div>
+                        
+                        <div class="form-row-3">
+                            <div class="form-group">
+                                <label for="author" class="form-label">Author *</label>
+                                <input type="text" id="author" name="author" class="form-control" 
+                                       th:field="*{author}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="rating" class="form-label">Rating *</label>
+                                <div class="rating-input">
+                                    <input type="number" id="rating" name="rating" class="form-control" 
+                                           th:field="*{rating}" min="1" max="5" step="0.1" required 
+                                           style="max-width: 100px;">
+                                    <div class="rating-stars" id="ratingStars">★★★★★</div>
+                                </div>
+                                <div class="help-text">1-5 stars (0.1 increments allowed)</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="slug" class="form-label">Slug</label>
+                                <input type="text" id="slug" name="slug" class="form-control" 
+                                       th:field="*{slug}">
+                                <div class="help-text">URL-friendly version (auto-generated if empty)</div>
+                            </div>
+                        </div>
+                        
                         <div class="form-group">
-                            <label for="slug" class="form-label">Slug</label>
-                            <input type="text" id="slug" name="slug" class="form-control" 
-                                   th:field="*{slug}">
-                            <div class="help-text">URL-friendly version (auto-generated if empty)</div>
+                            <label for="metaDescription" class="form-label">Meta Description *</label>
+                            <textarea id="metaDescription" name="metaDescription" class="form-control" 
+                                      rows="3" th:field="*{metaDescription}" required></textarea>
+                            <div class="help-text">SEO description for search engines (150-160 characters recommended)</div>
                         </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="metaDescription" class="form-label">Meta Description *</label>
-                        <textarea id="metaDescription" name="metaDescription" class="form-control" 
-                                  rows="3" th:field="*{metaDescription}" required></textarea>
-                        <div class="help-text">SEO description for search engines (150-160 characters recommended)</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="metaTitle" class="form-label">Meta Title</label>
-                        <input type="text" id="metaTitle" name="metaTitle" class="form-control" 
-                               th:field="*{metaTitle}">
-                        <div class="help-text">SEO title for search engines (60 characters recommended)</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="tags" class="form-label">Tags</label>
-                        <input type="text" id="tags" name="tags" class="form-control" 
-                               th:value="${review.tags != null ? #strings.listJoin(review.tags, ', ') : ''}">
-                        <div class="help-text">Comma-separated tags (e.g. pet tracker, GPS, waterproof)</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="content" class="form-label">Review Content *</label>
-                        <textarea id="content" name="content" class="form-control large" 
-                                  th:field="*{content}" required></textarea>
-                        <div class="help-text">Main review content (HTML supported)</div>
-                    </div>
-                    
-                    <div class="form-row">
+                        
                         <div class="form-group">
-                            <label for="pros" class="form-label">Pros</label>
-                            <textarea id="pros" name="pros" class="form-control" 
-                                      rows="4" th:field="*{pros}"></textarea>
-                            <div class="help-text">What's good about this product</div>
+                            <label for="metaTitle" class="form-label">Meta Title</label>
+                            <input type="text" id="metaTitle" name="metaTitle" class="form-control" 
+                                   th:field="*{metaTitle}">
+                            <div class="help-text">SEO title for search engines (60 characters recommended)</div>
                         </div>
+                        
                         <div class="form-group">
-                            <label for="cons" class="form-label">Cons</label>
-                            <textarea id="cons" name="cons" class="form-control" 
-                                      rows="4" th:field="*{cons}"></textarea>
-                            <div class="help-text">What could be improved</div>
+                            <label for="tags" class="form-label">Tags</label>
+                            <input type="text" id="tags" name="tags" class="form-control" 
+                                   th:value="${review.tags != null ? #strings.listJoin(review.tags, ', ') : ''}">
+                            <div class="help-text">Comma-separated tags (e.g. pet tracker, GPS, waterproof)</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content" class="form-label">Review Content *</label>
+                            <textarea id="content" name="content" class="form-control large" 
+                                      th:field="*{content}" required></textarea>
+                            <div class="help-text">Main review content (HTML supported)</div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="pros" class="form-label">Pros</label>
+                                <textarea id="pros" name="pros" class="form-control" 
+                                          rows="4" th:field="*{pros}"></textarea>
+                                <div class="help-text">What's good about this product</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="cons" class="form-label">Cons</label>
+                                <textarea id="cons" name="cons" class="form-control" 
+                                          rows="4" th:field="*{cons}"></textarea>
+                                <div class="help-text">What could be improved</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="conclusion" class="form-label">Conclusion</label>
+                            <textarea id="conclusion" name="conclusion" class="form-control" 
+                                      rows="3" th:field="*{conclusion}"></textarea>
+                            <div class="help-text">Final thoughts and recommendation</div>
                         </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="conclusion" class="form-label">Conclusion</label>
-                        <textarea id="conclusion" name="conclusion" class="form-control" 
-                                  rows="3" th:field="*{conclusion}"></textarea>
-                        <div class="help-text">Final thoughts and recommendation</div>
+                    <!-- German Content -->
+                    <div class="language-content" data-lang="de">
+                        <div class="form-group">
+                            <label for="title_de" class="form-label">Review Title (German) *</label>
+                            <input type="text" id="title_de" name="localizedContent[de].title" class="form-control" 
+                                   th:value="${review.localizedContent != null && review.localizedContent['de'] != null ? review.localizedContent['de'].title : ''}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaDescription_de" class="form-label">Meta Description (German) *</label>
+                            <textarea id="metaDescription_de" name="localizedContent[de].metaDescription" class="form-control" 
+                                      rows="3" th:text="${review.localizedContent != null && review.localizedContent['de'] != null ? review.localizedContent['de'].metaDescription : ''}" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaTitle_de" class="form-label">Meta Title (German)</label>
+                            <input type="text" id="metaTitle_de" name="localizedContent[de].metaTitle" class="form-control" 
+                                   th:value="${review.localizedContent != null && review.localizedContent['de'] != null ? review.localizedContent['de'].metaTitle : ''}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content_de" class="form-label">Review Content (German) *</label>
+                            <textarea id="content_de" name="localizedContent[de].content" class="form-control large" 
+                                      th:text="${review.localizedContent != null && review.localizedContent['de'] != null ? review.localizedContent['de'].content : ''}" required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="pros_de" class="form-label">Pros (German)</label>
+                                <textarea id="pros_de" name="localizedContent[de].pros" class="form-control" 
+                                          rows="4" th:text="${review.localizedContent != null && review.localizedContent['de'] != null ? review.localizedContent['de'].pros : ''}"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="cons_de" class="form-label">Cons (German)</label>
+                                <textarea id="cons_de" name="localizedContent[de].cons" class="form-control" 
+                                          rows="4" th:text="${review.localizedContent != null && review.localizedContent['de'] != null ? review.localizedContent['de'].cons : ''}"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="conclusion_de" class="form-label">Conclusion (German)</label>
+                            <textarea id="conclusion_de" name="localizedContent[de].conclusion" class="form-control" 
+                                      rows="3" th:text="${review.localizedContent != null && review.localizedContent['de'] != null ? review.localizedContent['de'].conclusion : ''}"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- French Content -->
+                    <div class="language-content" data-lang="fr">
+                        <div class="form-group">
+                            <label for="title_fr" class="form-label">Review Title (French) *</label>
+                            <input type="text" id="title_fr" name="localizedContent[fr].title" class="form-control" 
+                                   th:value="${review.localizedContent != null && review.localizedContent['fr'] != null ? review.localizedContent['fr'].title : ''}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaDescription_fr" class="form-label">Meta Description (French) *</label>
+                            <textarea id="metaDescription_fr" name="localizedContent[fr].metaDescription" class="form-control" 
+                                      rows="3" th:text="${review.localizedContent != null && review.localizedContent['fr'] != null ? review.localizedContent['fr'].metaDescription : ''}" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaTitle_fr" class="form-label">Meta Title (French)</label>
+                            <input type="text" id="metaTitle_fr" name="localizedContent[fr].metaTitle" class="form-control" 
+                                   th:value="${review.localizedContent != null && review.localizedContent['fr'] != null ? review.localizedContent['fr'].metaTitle : ''}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content_fr" class="form-label">Review Content (French) *</label>
+                            <textarea id="content_fr" name="localizedContent[fr].content" class="form-control large" 
+                                      th:text="${review.localizedContent != null && review.localizedContent['fr'] != null ? review.localizedContent['fr'].content : ''}" required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="pros_fr" class="form-label">Pros (French)</label>
+                                <textarea id="pros_fr" name="localizedContent[fr].pros" class="form-control" 
+                                          rows="4" th:text="${review.localizedContent != null && review.localizedContent['fr'] != null ? review.localizedContent['fr'].pros : ''}"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="cons_fr" class="form-label">Cons (French)</label>
+                                <textarea id="cons_fr" name="localizedContent[fr].cons" class="form-control" 
+                                          rows="4" th:text="${review.localizedContent != null && review.localizedContent['fr'] != null ? review.localizedContent['fr'].cons : ''}"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="conclusion_fr" class="form-label">Conclusion (French)</label>
+                            <textarea id="conclusion_fr" name="localizedContent[fr].conclusion" class="form-control" 
+                                      rows="3" th:text="${review.localizedContent != null && review.localizedContent['fr'] != null ? review.localizedContent['fr'].conclusion : ''}"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Spanish Content -->
+                    <div class="language-content" data-lang="es">
+                        <div class="form-group">
+                            <label for="title_es" class="form-label">Review Title (Spanish) *</label>
+                            <input type="text" id="title_es" name="localizedContent[es].title" class="form-control" 
+                                   th:value="${review.localizedContent != null && review.localizedContent['es'] != null ? review.localizedContent['es'].title : ''}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaDescription_es" class="form-label">Meta Description (Spanish) *</label>
+                            <textarea id="metaDescription_es" name="localizedContent[es].metaDescription" class="form-control" 
+                                      rows="3" th:text="${review.localizedContent != null && review.localizedContent['es'] != null ? review.localizedContent['es'].metaDescription : ''}" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaTitle_es" class="form-label">Meta Title (Spanish)</label>
+                            <input type="text" id="metaTitle_es" name="localizedContent[es].metaTitle" class="form-control" 
+                                   th:value="${review.localizedContent != null && review.localizedContent['es'] != null ? review.localizedContent['es'].metaTitle : ''}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content_es" class="form-label">Review Content (Spanish) *</label>
+                            <textarea id="content_es" name="localizedContent[es].content" class="form-control large" 
+                                      th:text="${review.localizedContent != null && review.localizedContent['es'] != null ? review.localizedContent['es'].content : ''}" required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="pros_es" class="form-label">Pros (Spanish)</label>
+                                <textarea id="pros_es" name="localizedContent[es].pros" class="form-control" 
+                                          rows="4" th:text="${review.localizedContent != null && review.localizedContent['es'] != null ? review.localizedContent['es'].pros : ''}"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="cons_es" class="form-label">Cons (Spanish)</label>
+                                <textarea id="cons_es" name="localizedContent[es].cons" class="form-control" 
+                                          rows="4" th:text="${review.localizedContent != null && review.localizedContent['es'] != null ? review.localizedContent['es'].cons : ''}"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="conclusion_es" class="form-label">Conclusion (Spanish)</label>
+                            <textarea id="conclusion_es" name="localizedContent[es].conclusion" class="form-control" 
+                                      rows="3" th:text="${review.localizedContent != null && review.localizedContent['es'] != null ? review.localizedContent['es'].conclusion : ''}"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Japanese Content -->
+                    <div class="language-content" data-lang="ja">
+                        <div class="form-group">
+                            <label for="title_ja" class="form-label">Review Title (Japanese) *</label>
+                            <input type="text" id="title_ja" name="localizedContent[ja].title" class="form-control" 
+                                   th:value="${review.localizedContent != null && review.localizedContent['ja'] != null ? review.localizedContent['ja'].title : ''}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaDescription_ja" class="form-label">Meta Description (Japanese) *</label>
+                            <textarea id="metaDescription_ja" name="localizedContent[ja].metaDescription" class="form-control" 
+                                      rows="3" th:text="${review.localizedContent != null && review.localizedContent['ja'] != null ? review.localizedContent['ja'].metaDescription : ''}" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="metaTitle_ja" class="form-label">Meta Title (Japanese)</label>
+                            <input type="text" id="metaTitle_ja" name="localizedContent[ja].metaTitle" class="form-control" 
+                                   th:value="${review.localizedContent != null && review.localizedContent['ja'] != null ? review.localizedContent['ja'].metaTitle : ''}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content_ja" class="form-label">Review Content (Japanese) *</label>
+                            <textarea id="content_ja" name="localizedContent[ja].content" class="form-control large" 
+                                      th:text="${review.localizedContent != null && review.localizedContent['ja'] != null ? review.localizedContent['ja'].content : ''}" required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="pros_ja" class="form-label">Pros (Japanese)</label>
+                                <textarea id="pros_ja" name="localizedContent[ja].pros" class="form-control" 
+                                          rows="4" th:text="${review.localizedContent != null && review.localizedContent['ja'] != null ? review.localizedContent['ja'].pros : ''}"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="cons_ja" class="form-label">Cons (Japanese)</label>
+                                <textarea id="cons_ja" name="localizedContent[ja].cons" class="form-control" 
+                                          rows="4" th:text="${review.localizedContent != null && review.localizedContent['ja'] != null ? review.localizedContent['ja'].cons : ''}"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="conclusion_ja" class="form-label">Conclusion (Japanese)</label>
+                            <textarea id="conclusion_ja" name="localizedContent[ja].conclusion" class="form-control" 
+                                      rows="3" th:text="${review.localizedContent != null && review.localizedContent['ja'] != null ? review.localizedContent['ja'].conclusion : ''}"></textarea>
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -273,6 +492,25 @@
     </div>
     
     <script>
+        // Language tab switching
+        document.querySelectorAll('.language-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const lang = this.dataset.lang;
+                
+                // Update active tab
+                document.querySelectorAll('.language-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show active content
+                document.querySelectorAll('.language-content').forEach(content => {
+                    content.classList.remove('active');
+                    if (content.dataset.lang === lang) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+        
         // Auto-generate slug from title
         document.getElementById('title').addEventListener('input', function() {
             const title = this.value;

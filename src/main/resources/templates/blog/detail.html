@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${blogPost.metaTitle ?: blogPost.title}">Blog Post - Pet Tracker Reviews</title>
+    <title th:text="${pageTitle}">Blog Post - Pet Tracker Reviews</title>
     <meta name="description" th:content="${metaDescription}">
     <meta name="keywords" th:content="${keywords}">
-    <meta name="title" th:content="${blogPost.metaTitle ?: blogPost.title}">
+    <meta name="title" th:content="${pageTitle}">
 
     <!-- Canonical URL -->
     <link rel="canonical" th:href="@{'https://pettrackerreview.com/blogs/' + ${blogPost.slug}}" href="https://pettrackerreview.com/blogs/sample-post" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
-    <meta property="og:title" th:content="${blogPost.metaTitle ?: blogPost.title}">
-    <meta property="og:description" th:content="${blogPost.metaDescription}">
+    <meta property="og:title" th:content="${pageTitle}">
+    <meta property="og:description" th:content="${metaDescription}">
     <meta property="article:author" th:content="${blogPost.author}">
     <meta property="article:published_time" th:content="${blogPost.date}">
 
@@ -103,7 +103,7 @@
                         </div>
                     </header>
 
-                    <div class="article-body" th:utext="${blogPost.content}">
+                    <div class="article-body" th:utext="${blogPostContent ?: blogPost.content}">
 
                         Article content goes here...
                     </div>

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public class Review {
     private String title;
@@ -35,6 +36,9 @@ public class Review {
     
     // Changed from showOnHomepage to sortOrder for better control
     private int sortOrder = 0; // 0 means not displayed on homepage, positive values determine display order
+    
+    // Multilingual content support
+    private Map<String, LocalizedContent> localizedContent;
     
     // Constructors
     public Review() {}
@@ -182,6 +186,15 @@ public class Review {
         this.sortOrder = sortOrder;
     }
     
+    // Getter and setter for localizedContent
+    public Map<String, LocalizedContent> getLocalizedContent() {
+        return localizedContent;
+    }
+    
+    public void setLocalizedContent(Map<String, LocalizedContent> localizedContent) {
+        this.localizedContent = localizedContent;
+    }
+    
     // Helper method to check if review should be displayed on homepage
     public boolean isShowOnHomepage() {
         return sortOrder > 0;
@@ -234,6 +247,7 @@ public class Review {
                 ", metaTitle='" + metaTitle + '\'' +
                 ", slug='" + slug + '\'' +
                 ", sortOrder=" + sortOrder +
+                ", localizedContent=" + localizedContent +
                 '}';
     }
 }

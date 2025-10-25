@@ -1,6 +1,7 @@
 package com.pettrackerreview.controller;
 
 import com.pettrackerreview.model.BlogPost;
+import com.pettrackerreview.model.LocalizedContent;
 import com.pettrackerreview.model.Review;
 import com.pettrackerreview.service.YamlContentService;
 import com.pettrackerreview.util.CssVersionUtil;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -84,11 +86,34 @@ public class HomeController {
     }
     
     @GetMapping("/blogs/{slug}")
-    public String blogDetail(@PathVariable String slug, Model model) {
+    public String blogDetail(@PathVariable String slug, 
+                            @RequestParam(required = false) String lang,
+                            Model model, 
+                            Locale locale) {
         BlogPost blogPost = contentService.getBlogPostBySlug(slug);
         
         if (blogPost == null) {
             return "redirect:/blogs";
+        }
+        
+        // Use the lang parameter if provided, otherwise use the locale
+        String languageToUse = lang != null ? lang : (locale != null ? locale.getLanguage() : "en");
+        
+        // Check if we have localized content for the requested language
+        if (blogPost.getLocalizedContent() != null) {
+            LocalizedContent localizedContent = blogPost.getLocalizedContent().get(languageToUse);
+            if (localizedContent != null) {
+                // Override with localized content
+                if (localizedContent.getTitle() != null && !localizedContent.getTitle().isEmpty()) {
+                    model.addAttribute("pageTitle", localizedContent.getMetaTitle() != null && !localizedContent.getMetaTitle().isEmpty() ? localizedContent.getMetaTitle() : localizedContent.getTitle());
+                }
+                if (localizedContent.getMetaDescription() != null && !localizedContent.getMetaDescription().isEmpty()) {
+                    model.addAttribute("metaDescription", localizedContent.getMetaDescription());
+                }
+                if (localizedContent.getContent() != null && !localizedContent.getContent().isEmpty()) {
+                    model.addAttribute("blogPostContent", localizedContent.getContent());
+                }
+            }
         }
         
         // Get related posts by tags
@@ -102,8 +127,14 @@ public class HomeController {
         
         model.addAttribute("blogPost", blogPost);
         model.addAttribute("relatedPosts", relatedPosts);
-        model.addAttribute("pageTitle", blogPost.getMetaTitle() != null && !blogPost.getMetaTitle().isEmpty() ? blogPost.getMetaTitle() : blogPost.getTitle());
-        model.addAttribute("metaDescription", blogPost.getMetaDescription());
+        // If we haven't set page title from localized content, use default
+        if (!model.containsAttribute("pageTitle")) {
+            model.addAttribute("pageTitle", blogPost.getMetaTitle() != null && !blogPost.getMetaTitle().isEmpty() ? blogPost.getMetaTitle() : blogPost.getTitle());
+        }
+        // If we haven't set meta description from localized content, use default
+        if (!model.containsAttribute("metaDescription")) {
+            model.addAttribute("metaDescription", blogPost.getMetaDescription());
+        }
         model.addAttribute("keywords", String.join(", ", blogPost.getTags() != null ? blogPost.getTags() : java.util.Collections.emptyList()));
         model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());
         
@@ -139,11 +170,43 @@ public class HomeController {
     }
     
     @GetMapping("/reviews/{slug}")
-    public String reviewDetail(@PathVariable String slug, Model model) {
+    public String reviewDetail(@PathVariable String slug, 
+                              @RequestParam(required = false) String lang,
+                              Model model, 
+                              Locale locale) {
         Review review = contentService.getReviewBySlug(slug);
         
         if (review == null) {
             return "redirect:/reviews";
+        }
+        
+        // Use the lang parameter if provided, otherwise use the locale
+        String languageToUse = lang != null ? lang : (locale != null ? locale.getLanguage() : "en");
+        
+        // Check if we have localized content for the requested language
+        if (review.getLocalizedContent() != null) {
+            LocalizedContent localizedContent = review.getLocalizedContent().get(languageToUse);
+            if (localizedContent != null) {
+                // Override with localized content
+                if (localizedContent.getTitle() != null && !localizedContent.getTitle().isEmpty()) {
+                    model.addAttribute("pageTitle", localizedContent.getMetaTitle() != null && !localizedContent.getMetaTitle().isEmpty() ? localizedContent.getMetaTitle() : localizedContent.getTitle());
+                }
+                if (localizedContent.getMetaDescription() != null && !localizedContent.getMetaDescription().isEmpty()) {
+                    model.addAttribute("metaDescription", localizedContent.getMetaDescription());
+                }
+                if (localizedContent.getContent() != null && !localizedContent.getContent().isEmpty()) {
+                    model.addAttribute("reviewContent", localizedContent.getContent());
+                }
+                if (localizedContent.getPros() != null && !localizedContent.getPros().isEmpty()) {
+                    model.addAttribute("reviewPros", localizedContent.getPros());
+                }
+                if (localizedContent.getCons() != null && !localizedContent.getCons().isEmpty()) {
+                    model.addAttribute("reviewCons", localizedContent.getCons());
+                }
+                if (localizedContent.getConclusion() != null && !localizedContent.getConclusion().isEmpty()) {
+                    model.addAttribute("reviewConclusion", localizedContent.getConclusion());
+                }
+            }
         }
         
         // Get related reviews by tags or brand
@@ -158,8 +221,14 @@ public class HomeController {
         
         model.addAttribute("review", review);
         model.addAttribute("relatedReviews", relatedReviews);
-        model.addAttribute("pageTitle", review.getMetaTitle() != null && !review.getMetaTitle().isEmpty() ? review.getMetaTitle() : review.getTitle());
-        model.addAttribute("metaDescription", review.getMetaDescription());
+        // If we haven't set page title from localized content, use default
+        if (!model.containsAttribute("pageTitle")) {
+            model.addAttribute("pageTitle", review.getMetaTitle() != null && !review.getMetaTitle().isEmpty() ? review.getMetaTitle() : review.getTitle());
+        }
+        // If we haven't set meta description from localized content, use default
+        if (!model.containsAttribute("metaDescription")) {
+            model.addAttribute("metaDescription", review.getMetaDescription());
+        }
         model.addAttribute("keywords", String.join(", ", review.getTags() != null ? review.getTags() : java.util.Collections.emptyList()));
         model.addAttribute("cssVersion", cssVersionUtil.getVersionParam());
         
