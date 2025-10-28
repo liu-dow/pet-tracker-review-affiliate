@@ -86,7 +86,7 @@
                 <main class="review-content">
                     <header class="review-header">
                         <div class="product-info">
-                            <h1 th:text="${review.title}">Review Title</h1>
+                            <h1 th:text="${pageTitle ?: review.title}">Review Title</h1>
                             <div class="product-details">
                                 <span class="product-brand" th:text="${review.productBrand}">Brand</span>
                                 <span class="product-name" th:text="${review.productName}">Product</span>
