@@ -141,7 +141,6 @@ public class SeoService {
         // Sitemap location
         robots.append("\n# Sitemap location\n");
         robots.append("Sitemap: ").append(baseUrl).append("/sitemap.xml\n");
-        robots.append("Sitemap: ").append(baseUrl).append("/sitemap-index.xml\n");
 
         return robots.toString();
     }
