@@ -185,8 +185,8 @@
                     <div class="sidebar-section mobile-move-to-bottom">
                         <h3 th:text="#{home.popularTopics.title}">Stay Updated</h3>
                         <p th:text="#{home.latestReviews.description}">Get the latest pet tracker reviews delivered to your inbox.</p>
-                        <form class="newsletter-form">
-                            <input type="email" th:placeholder="#{footer.search}" class="form-input">
+                        <form class="newsletter-form" action="/newsletter/subscribe" method="post">
+                            <input type="email" name="email" th:placeholder="#{footer.search}" class="form-input" required>
                             <button type="submit" class="btn btn-primary" th:text="#{newsletter.subscribe}">Subscribe</button>
                         </form>
                     </div>
