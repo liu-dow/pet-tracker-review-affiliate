@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -35,14 +36,25 @@ public class HomeController {
     private CssVersionUtil cssVersionUtil;
     
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model, Locale locale) {
         // Get latest content for homepage
         List<BlogPost> latestBlogs = contentService.getLatestBlogPosts(6);
         List<Review> latestReviews = contentService.getLatestReviews(6);
         Set<String> validTags = contentService.getValidTags();
         
-        model.addAttribute("latestBlogs", latestBlogs);
-        model.addAttribute("latestReviews", latestReviews);
+        // Apply localization to blogs
+        String language = locale != null ? locale.getLanguage() : "en";
+        List<BlogPost> localizedBlogs = latestBlogs.stream()
+                .map(blog -> getLocalizedBlogPost(blog, language))
+                .collect(Collectors.toList());
+        
+        // Apply localization to reviews
+        List<Review> localizedReviews = latestReviews.stream()
+                .map(review -> getLocalizedReview(review, language))
+                .collect(Collectors.toList());
+        
+        model.addAttribute("latestBlogs", localizedBlogs);
+        model.addAttribute("latestReviews", localizedReviews);
         model.addAttribute("allTags", validTags);
         model.addAttribute("pageTitle", "Pet Tracker Reviews - Best GPS Trackers for Dogs & Cats");
         model.addAttribute("metaDescription", "Find the best pet trackers and GPS collars for your dogs and cats. In-depth reviews, comparisons, and buying guides to keep your pets safe.");
@@ -52,7 +64,7 @@ public class HomeController {
     }
     
     @GetMapping("/blogs")
-    public String blogList(Model model, @RequestParam(required = false) String tag) {
+    public String blogList(Model model, @RequestParam(required = false) String tag, Locale locale) {
         List<BlogPost> blogPosts;
         String pageTitle;
         String metaDescription;
@@ -73,9 +85,15 @@ public class HomeController {
             metaDescription = "Stay updated with the latest pet tracker news, guides, and tips. Learn how to keep your pets safe with GPS technology.";
         }
         
+        // Apply localization to blogs
+        String language = locale != null ? locale.getLanguage() : "en";
+        List<BlogPost> localizedBlogs = blogPosts.stream()
+                .map(blog -> getLocalizedBlogPost(blog, language))
+                .collect(Collectors.toList());
+        
         Set<String> blogTags = contentService.getBlogTags(); // 使用博客标签
         
-        model.addAttribute("blogPosts", blogPosts);
+        model.addAttribute("blogPosts", localizedBlogs);
         model.addAttribute("allTags", blogTags); // 使用博客标签
         model.addAttribute("selectedTag", tag);
         model.addAttribute("pageTitle", pageTitle);
@@ -123,6 +141,7 @@ public class HomeController {
                        post.getTags() != null && blogPost.getTags() != null &&
                        post.getTags().stream().anyMatch(tag -> blogPost.getTags().contains(tag)))
                 .limit(3)
+                .map(post -> getLocalizedBlogPost(post, languageToUse)) // Apply localization to related posts
                 .collect(java.util.stream.Collectors.toList());
         
         model.addAttribute("blogPost", blogPost);
@@ -142,7 +161,7 @@ public class HomeController {
     }
     
     @GetMapping("/reviews")
-    public String reviewsList(Model model, @RequestParam(required = false) String tag) {
+    public String reviewsList(Model model, @RequestParam(required = false) String tag, Locale locale) {
         List<Review> reviews;
         String pageTitle;
         String metaDescription;
@@ -157,9 +176,15 @@ public class HomeController {
             metaDescription = "Comprehensive reviews of the best pet trackers and GPS collars. Find the perfect tracking device for your dog or cat.";
         }
         
+        // Apply localization to reviews
+        String language = locale != null ? locale.getLanguage() : "en";
+        List<Review> localizedReviews = reviews.stream()
+                .map(review -> getLocalizedReview(review, language))
+                .collect(Collectors.toList());
+        
         Set<String> reviewTags = contentService.getReviewTags(); // 使用评测标签
         
-        model.addAttribute("reviews", reviews);
+        model.addAttribute("reviews", localizedReviews);
         model.addAttribute("allTags", reviewTags); // 使用评测标签
         model.addAttribute("selectedTag", tag);
         model.addAttribute("pageTitle", pageTitle);
@@ -217,6 +242,7 @@ public class HomeController {
                         (r.getTags() != null && review.getTags() != null &&
                          r.getTags().stream().anyMatch(tag -> review.getTags().contains(tag)))))
                 .limit(3)
+                .map(r -> getLocalizedReview(r, languageToUse)) // Apply localization to related reviews
                 .collect(java.util.stream.Collectors.toList());
         
         model.addAttribute("review", review);
@@ -352,5 +378,72 @@ public class HomeController {
      */
     private boolean isValidEmail(String email) {
         return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+    }
+    
+    /**
+     * Get localized version of a blog post
+     */
+    private BlogPost getLocalizedBlogPost(BlogPost blogPost, String language) {
+        if (blogPost.getLocalizedContent() != null) {
+            LocalizedContent localizedContent = blogPost.getLocalizedContent().get(language);
+            if (localizedContent != null) {
+                // Create a copy of the blog post with localized content
+                BlogPost localizedBlogPost = new BlogPost();
+                localizedBlogPost.setTitle(localizedContent.getTitle() != null && !localizedContent.getTitle().isEmpty() ? 
+                        localizedContent.getTitle() : blogPost.getTitle());
+                localizedBlogPost.setAuthor(blogPost.getAuthor());
+                localizedBlogPost.setDate(blogPost.getDate());
+                localizedBlogPost.setTags(blogPost.getTags());
+                localizedBlogPost.setMetaDescription(localizedContent.getMetaDescription() != null && !localizedContent.getMetaDescription().isEmpty() ? 
+                        localizedContent.getMetaDescription() : blogPost.getMetaDescription());
+                localizedBlogPost.setMetaTitle(localizedContent.getMetaTitle() != null && !localizedContent.getMetaTitle().isEmpty() ? 
+                        localizedContent.getMetaTitle() : blogPost.getMetaTitle());
+                localizedBlogPost.setContent(localizedContent.getContent() != null && !localizedContent.getContent().isEmpty() ? 
+                        localizedContent.getContent() : blogPost.getContent());
+                localizedBlogPost.setSlug(blogPost.getSlug());
+                localizedBlogPost.setSortOrder(blogPost.getSortOrder());
+                localizedBlogPost.setLocalizedContent(blogPost.getLocalizedContent());
+                return localizedBlogPost;
+            }
+        }
+        return blogPost;
+    }
+    
+    /**
+     * Get localized version of a review
+     */
+    private Review getLocalizedReview(Review review, String language) {
+        if (review.getLocalizedContent() != null) {
+            LocalizedContent localizedContent = review.getLocalizedContent().get(language);
+            if (localizedContent != null) {
+                // Create a copy of the review with localized content
+                Review localizedReview = new Review();
+                localizedReview.setTitle(localizedContent.getTitle() != null && !localizedContent.getTitle().isEmpty() ? 
+                        localizedContent.getTitle() : review.getTitle());
+                localizedReview.setAuthor(review.getAuthor());
+                localizedReview.setDate(review.getDate());
+                localizedReview.setTags(review.getTags());
+                localizedReview.setMetaDescription(localizedContent.getMetaDescription() != null && !localizedContent.getMetaDescription().isEmpty() ? 
+                        localizedContent.getMetaDescription() : review.getMetaDescription());
+                localizedReview.setMetaTitle(localizedContent.getMetaTitle() != null && !localizedContent.getMetaTitle().isEmpty() ? 
+                        localizedContent.getMetaTitle() : review.getMetaTitle());
+                localizedReview.setContent(localizedContent.getContent() != null && !localizedContent.getContent().isEmpty() ? 
+                        localizedContent.getContent() : review.getContent());
+                localizedReview.setSlug(review.getSlug());
+                localizedReview.setProductName(review.getProductName());
+                localizedReview.setProductBrand(review.getProductBrand());
+                localizedReview.setRating(review.getRating());
+                localizedReview.setPros(localizedContent.getPros() != null && !localizedContent.getPros().isEmpty() ? 
+                        localizedContent.getPros() : review.getPros());
+                localizedReview.setCons(localizedContent.getCons() != null && !localizedContent.getCons().isEmpty() ? 
+                        localizedContent.getCons() : review.getCons());
+                localizedReview.setConclusion(localizedContent.getConclusion() != null && !localizedContent.getConclusion().isEmpty() ? 
+                        localizedContent.getConclusion() : review.getConclusion());
+                localizedReview.setSortOrder(review.getSortOrder());
+                localizedReview.setLocalizedContent(review.getLocalizedContent());
+                return localizedReview;
+            }
+        }
+        return review;
     }
 }
